@@ -906,7 +906,7 @@ void FAnimGraphEditor::DrawDetails()
 		bool bLooping = Value["Looping"].get<bool>();
 		if (ImGui::Checkbox("Loop", &bLooping)) { Value["Looping"] = bLooping; bDirty = true; }
 		float Speed = Value["Speed"].get<float>(), X = Value["X"].get<float>(), Y = Value["Y"].get<float>();
-		if (ImGui::DragFloat("Speed", &Speed, .01f, .01f, 10.f, "%.2f", ImGuiSliderFlags_AlwaysClamp)) { Value["Speed"] = Speed; bDirty = true; }
+		if (ImGui::DragFloat("Speed", &Speed, .01f, -10.0f, 10.f, "%.2f", ImGuiSliderFlags_AlwaysClamp)) { Value["Speed"] = Speed; bDirty = true; }
 		if (ImGui::DragFloat("X", &X, 1.f)) { Value["X"] = X; bDirty = true; }
 		if (ImGui::DragFloat("Y", &Y, 1.f)) { Value["Y"] = Y; bDirty = true; }
 	}
