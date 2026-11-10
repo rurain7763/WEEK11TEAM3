@@ -181,6 +181,15 @@ UAnimInstance* UAnimGraph::CreateAnimInstance()
 
 	Instance->SetRoot(RootNodeData);
 
+	for (const auto& NodeData : Nodes) {
+		if (NodeData.Type != EAnimNodeDataType::AnimStateMachine)  continue;
+		FAnimNode_Base** Found = NodeInstances.Find(NodeData.NodeID);
+		if (!Found) continue;
+
+		const auto & ActualData = StateMachines[NodeData.ActualDataIndex];
+		Instance->AddStateMachine(FName(ActualData.Name), static_cast<FAnimNode_StateMachine*> (*Found));
+	}
+
 	for (const FAnimParameterData& ParamData : Parameters)
 	{
 		switch (ParamData.Type)

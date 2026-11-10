@@ -6,8 +6,10 @@
 #include "Animation/AnimParameter.h"
 #include "Animation/AnimationTypes.h"
 #include "Core/Delegate.h"
+#include "Graph/AnimGraphData.h"
 
 struct FAnimNode_Base;
+struct FAnimNode_StateMachine;
 
 class UAnimInstance : public UObject
 {
@@ -20,6 +22,10 @@ public:
 	void SetRoot(FAnimNode_Base* InRoot)
 	{
 		RootNode = InRoot;
+	}
+
+	void AddStateMachine(const FName& InName, FAnimNode_StateMachine* InStateMachine) {
+		StateMachines.Add(InName, InStateMachine);
 	}
 
 	virtual void NativeInitializeAnimation();
@@ -78,6 +84,7 @@ protected:
 	TMulticastDelegate<const FAnimNotifyEvent&> OnFireNotify;
 
 	FAnimNode_Base* RootNode = nullptr;
+	TMap<FName, FAnimNode_StateMachine*, FNameHash> StateMachines;
 	FAnimationUpdateContext UpdateContext;
 	TArray<FAnimNotifyEvent*> EventQueue;
 	FAnimParameterTable ParameterTable;
