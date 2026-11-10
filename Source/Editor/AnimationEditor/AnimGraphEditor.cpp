@@ -1,6 +1,10 @@
 #include "EnginePCH.h"
 #include "AnimGraphEditor.h"
 #include "Animation/AnimSequence.h"
+#include "Animation/Graph/AnimGraph.h"
+#include "Asset/AssetManager.h"
+#include "Serialization/JsonArchive.h"
+#include "UObject/UObjectGlobals.h"
 #include "UObject/UObjectIterator.h"
 #include "Core/PathUtils.h"
 
@@ -104,6 +108,13 @@ bool FAnimGraphEditor::Load()
 		std::ifstream File(PathUtils::FromUtf8(Path));
 		if (!File) throw std::runtime_error("Could not open the graph file.");
 		File >> Document;
+		// Keep editor layout from disk, but display the same asset used by PIE.
+		EditingGraph = UAssetManager::Get().LoadAnimGraph(Path);
+		if (!EditingGraph || !FJsonArchive::SaveAnimGraphToBytes(EditingGraph, SavedGraphBytes))
+			throw std::runtime_error("Could not load the AnimGraph asset.");
+		const auto AssetDocument = nlohmann::json::parse(SavedGraphBytes.begin(), SavedGraphBytes.end());
+		Document["AnimGraph"] = AssetDocument.at("AnimGraph");
+		AppliedGraphText = Document["AnimGraph"].dump();
 		if (Document.at("Version").get<int32>() != 1) throw std::runtime_error("Unsupported AnimGraph version.");
 		auto& Graph = Document.at("AnimGraph");
 		Graph.at("RootNodeID").get<int32>();
@@ -354,6 +365,9 @@ bool FAnimGraphEditor::ValidateForSave()
 					{ Status = "Select a valid parameter for every transition."; return false; }
 					const float Duration = Transition.at("CrossfadeDuration").get<float>();
 					if (!std::isfinite(Duration) || Duration < 0.f) { Status = "Crossfade duration must be non-negative."; return false; }
+					const float ExitTime = Transition.value("ExitTime", 1.f);
+					if (Transition.value("HasExitTime", false) && (!std::isfinite(ExitTime) || ExitTime < 0.f || ExitTime > 1.f))
+					{ Status = "Exit time must be between 0 and 1."; return false; }
 				}
 		}
 		if (Node->Type == 0 && Data(*Node)["SequencePath"].get<FString>().empty())
@@ -371,6 +385,57 @@ bool FAnimGraphEditor::ValidateForSave()
 	return true;
 }
 
+bool FAnimGraphEditor::ApplyGraphDocument()
+{
+	if (!EditingGraph) return false;
+	try
+	{
+		const FString GraphText = Document.at("AnimGraph").dump();
+		if (GraphText == AppliedGraphText) return true;
+		// Deserialize into a staging asset so a failed conversion cannot partially
+		// overwrite the shared asset referenced by scene components.
+		const FString Text = Document.dump();
+		TArray<uint8> Bytes;
+		Bytes.SetNum(static_cast<int32>(Text.size()));
+		std::memcpy(Bytes.GetData(), Text.data(), Text.size());
+		UAnimGraph* Staged = NewObject<UAnimGraph>();
+		bool bConverted = false;
+		try { bConverted = FJsonArchive::LoadAnimGraphFromBytes(Staged, Bytes); }
+		catch (...) { delete Staged; throw; }
+		if (!bConverted)
+		{
+			delete Staged;
+			throw std::runtime_error("Could not apply graph edits to the asset.");
+		}
+		EditingGraph->SetRootNodeID(Staged->GetRootNodeID());
+		EditingGraph->GetNodes() = std::move(Staged->GetNodes());
+		EditingGraph->GetAnimSequencePlayers() = std::move(Staged->GetAnimSequencePlayers());
+		EditingGraph->GetAnimTwoWayBlends() = std::move(Staged->GetAnimTwoWayBlends());
+		EditingGraph->GetBlendSpacePlayers() = std::move(Staged->GetBlendSpacePlayers());
+		EditingGraph->GetAnimStateMachines() = std::move(Staged->GetAnimStateMachines());
+		EditingGraph->GetAnimParameters() = std::move(Staged->GetAnimParameters());
+		delete Staged;
+		AppliedGraphText = GraphText;
+		return true;
+	}
+	catch (const std::exception& Error)
+	{
+		bStatusError = true; Status = Error.what(); return false;
+	}
+}
+
+bool FAnimGraphEditor::RestoreSavedGraph()
+{
+	if (!EditingGraph || !FJsonArchive::LoadAnimGraphFromBytes(EditingGraph, SavedGraphBytes))
+	{
+		bStatusError = true; Status = "Could not discard graph edits."; return false;
+	}
+	const auto Saved = nlohmann::json::parse(SavedGraphBytes.begin(), SavedGraphBytes.end());
+	Document["AnimGraph"] = Saved.at("AnimGraph");
+	AppliedGraphText = Document["AnimGraph"].dump();
+	return true;
+}
+
 bool FAnimGraphEditor::Save()
 {
 	bStatusError = true;
@@ -378,10 +443,17 @@ bool FAnimGraphEditor::Save()
 	std::filesystem::path TemporaryPath;
 	try
 	{
-		auto& Layout = Document["Editor"]["Nodes"];
+		if (!ApplyGraphDocument()) return false;
+		TArray<uint8> AssetBytes;
+		if (!FJsonArchive::SaveAnimGraphToBytes(EditingGraph, AssetBytes))
+			throw std::runtime_error("Could not serialize the AnimGraph asset.");
+		// Save runtime fields from the actual asset, then attach editor-only layout.
+		auto Output = nlohmann::json::parse(AssetBytes.begin(), AssetBytes.end());
+		if (Document.contains("Editor")) Output["Editor"] = Document["Editor"];
+		auto& Layout = Output["Editor"]["Nodes"];
 		Layout = nlohmann::json::array();
 		for (const auto& Node : Nodes) Layout.push_back({ {"NodeID", Node->ID}, {"X", Node->Position.x}, {"Y", Node->Position.y} });
-		auto& StateLayout = Document["Editor"]["States"];
+		auto& StateLayout = Output["Editor"]["States"];
 		StateLayout = nlohmann::json::array();
 		for (const auto& Node : Nodes) if (Node->Type == 3)
 		{
@@ -394,12 +466,15 @@ bool FAnimGraphEditor::Save()
 		for (int32 Index = 1; std::filesystem::exists(TemporaryPath); ++Index)
 			TemporaryPath = Destination.wstring() + L".tmp" + std::to_wstring(Index);
 		std::ofstream File(TemporaryPath, std::ios::binary);
-		const FString Text = Document.dump(4);
+		const FString Text = Output.dump(4);
 		File.write(Text.data(), static_cast<std::streamsize>(Text.size())); File.flush();
 		if (!File) throw std::runtime_error("Could not save the graph file.");
 		File.close();
 		if (!File || !MoveFileExW(TemporaryPath.c_str(), Destination.c_str(), MOVEFILE_REPLACE_EXISTING | MOVEFILE_WRITE_THROUGH))
 			throw std::runtime_error("Could not replace the graph file; original file was kept.");
+		SavedGraphBytes = std::move(AssetBytes);
+		Document = std::move(Output);
+		AppliedGraphText = Document["AnimGraph"].dump();
 		bDirty = false; bStatusError = false; Status = "Saved.";
 		return true;
 	}
@@ -429,7 +504,7 @@ void FAnimGraphEditor::DrawCloseConfirmation()
 			if (Save()) { bCloseApproved = true; ImGui::CloseCurrentPopup(); }
 		}
 		ImGui::SameLine();
-		if (ImGui::Button("Discard")) { bCloseApproved = true; ImGui::CloseCurrentPopup(); }
+		if (ImGui::Button("Discard") && RestoreSavedGraph()) { bCloseApproved = true; ImGui::CloseCurrentPopup(); }
 		ImGui::SameLine();
 		if (ImGui::Button("Cancel")) ImGui::CloseCurrentPopup();
 		if (bStatusError && !Status.empty()) ImGui::TextWrapped("%s", Status.c_str());
@@ -558,8 +633,9 @@ void FAnimGraphEditor::AddTransition(FNode& Machine, int32 From, int32 To)
 	if (Parameters.empty()) Parameters.push_back({ {"Name", "Action"}, {"Type", 0}, {"Value", 0} });
 	const auto& Parameter = Parameters[0];
 	const int32 Type = Parameter["Type"].get<int32>();
-	nlohmann::json Value = Type == 1 ? nlohmann::json(true) : Type == 2 ? nlohmann::json(0.f) : nlohmann::json(To);
+	nlohmann::json Value = (Type == 1 || Type == 3) ? nlohmann::json(true) : Type == 2 ? nlohmann::json(0.f) : nlohmann::json(To);
 	Data(Machine)[Field].push_back({ {"PreviousStateID", From}, {"NextStateID", To}, {"CrossfadeDuration", .2f},
+		{"HasExitTime", false}, {"ExitTime", 1.f},
 		{"Condition", { {"ParameterName", Parameter["Name"]}, {"ComparisonOperator", 0}, {"Value", Value} }} });
 	bDirty = true;
 }
@@ -686,6 +762,20 @@ void FAnimGraphEditor::DrawTransitions(FNode& Machine, const char* Field)
 			float Duration = Transition["CrossfadeDuration"].get<float>();
 			if (ImGui::DragFloat("Crossfade (s)", &Duration, .01f, 0.f, 10.f, "%.2f", ImGuiSliderFlags_AlwaysClamp))
 			{ Transition["CrossfadeDuration"] = Duration; bDirty = true; }
+			bool bHasExitTime = Transition.value("HasExitTime", false);
+			if (ImGui::Checkbox("Has Exit Time", &bHasExitTime))
+			{
+				Transition["HasExitTime"] = bHasExitTime;
+				Transition["ExitTime"] = Transition.value("ExitTime", 1.f);
+				bDirty = true;
+			}
+			ImGui::BeginDisabled(!bHasExitTime);
+			float ExitTime = Transition.value("ExitTime", 1.f);
+			if (ImGui::DragFloat("Exit Time", &ExitTime, .01f, 0.f, 1.f, "%.2f", ImGuiSliderFlags_AlwaysClamp))
+			{ Transition["ExitTime"] = ExitTime; bDirty = true; }
+			ImGui::EndDisabled();
+			if (ImGui::IsItemHovered(ImGuiHoveredFlags_AllowWhenDisabled))
+				ImGui::SetTooltip("Normalized playback time: 0 = start, 1 = end. Parameter conditions still apply.");
 			auto& Condition = Transition["Condition"];
 			FString Name = Condition["ParameterName"].get<FString>();
 			if (ImGui::BeginCombo("Parameter", Name.empty() ? "Select parameter" : Name.c_str()))
@@ -697,17 +787,21 @@ void FAnimGraphEditor::DrawTransitions(FNode& Machine, const char* Field)
 					{
 						Condition["ParameterName"] = Candidate; Name = Candidate;
 						const int32 Type = Parameter["Type"].get<int32>();
-						Condition["Value"] = Type == 1 ? nlohmann::json(false) : Type == 2 ? nlohmann::json(0.f) : nlohmann::json(0);
+						Condition["Value"] = (Type == 1 || Type == 3) ? nlohmann::json(false) : Type == 2 ? nlohmann::json(0.f) : nlohmann::json(0);
 						bDirty = true;
 					}
 				}
 				ImGui::EndCombo();
 			}
-			int32 Operator = Condition["ComparisonOperator"].get<int32>();
-			if (ImGui::Combo("Compare", &Operator, Operators, 6)) { Condition["ComparisonOperator"] = Operator; bDirty = true; }
 			int32 Type = -1;
 			for (const auto& Parameter : Document["AnimGraph"]["Parameters"])
 				if (Parameter["Name"] == Name) Type = Parameter["Type"].get<int32>();
+			if (Type != 3)
+			{
+				int32 Operator = Condition["ComparisonOperator"].get<int32>();
+				if (ImGui::Combo("Compare", &Operator, Operators, 6)) { Condition["ComparisonOperator"] = Operator; bDirty = true; }
+			}
+			else ImGui::TextDisabled("Transitions when this Trigger is set; consumed on transition.");
 			if (Type == 0)
 			{
 				int32 Value = Condition["Value"].get<int32>();
@@ -792,7 +886,7 @@ void FAnimGraphEditor::DrawParameters()
 	if (!ImGui::CollapsingHeader("Parameters")) return;
 	auto& Parameters = Document["AnimGraph"]["Parameters"];
 	int32 Remove = -1;
-	const char* Types[] = { "Int", "Bool", "Float" };
+	const char* Types[] = { "Int", "Bool", "Float", "Trigger" };
 	for (int32 i = 0; i < static_cast<int32>(Parameters.size()); ++i)
 	{
 		auto& Parameter = Parameters[i];
@@ -801,10 +895,10 @@ void FAnimGraphEditor::DrawParameters()
 		const int32 PreviousType = Parameter["Type"].get<int32>();
 		bool bChanged = EditGraphText("Name", Parameter["Name"]);
 		int32 Type = PreviousType;
-		if (ImGui::Combo("Type", &Type, Types, 3))
+		if (ImGui::Combo("Type", &Type, Types, 4))
 		{
 			Parameter["Type"] = Type;
-			Parameter["Value"] = Type == 1 ? nlohmann::json(false) : Type == 2 ? nlohmann::json(0.f) : nlohmann::json(0);
+			Parameter["Value"] = (Type == 1 || Type == 3) ? nlohmann::json(false) : Type == 2 ? nlohmann::json(0.f) : nlohmann::json(0);
 			bChanged = true;
 		}
 		if (Type == 0)
@@ -817,11 +911,12 @@ void FAnimGraphEditor::DrawParameters()
 			bool Value = Parameter["Value"].get<bool>();
 			if (ImGui::Checkbox("Default", &Value)) { Parameter["Value"] = Value; bDirty = true; }
 		}
-		else
+		else if (Type == 2)
 		{
 			float Value = Parameter["Value"].get<float>();
 			if (ImGui::DragFloat("Default", &Value, .1f)) { Parameter["Value"] = Value; bDirty = true; }
 		}
+		else if (Type == 3) ImGui::TextDisabled("Trigger starts unset; set by gameplay and consumed on transition.");
 		bool bReferenced = false;
 		for (auto& Machine : Document["AnimGraph"]["StateMachines"])
 			for (const char* Field : { "AnyTransitions", "Transitions" })
@@ -855,6 +950,19 @@ void FAnimGraphEditor::DrawParameters()
 			for (const auto& Parameter : Parameters) if (Parameter["Name"] == Name) bExists = true;
 		} while (bExists);
 		Parameters.push_back({ {"Name", Name}, {"Type", 0}, {"Value", 0} }); bDirty = true;
+	}
+	ImGui::SameLine();
+	if (ImGui::Button("Add Trigger"))
+	{
+		int32 Index = static_cast<int32>(Parameters.size());
+		FString Name;
+		bool bExists;
+		do
+		{
+			Name = "Trigger" + std::to_string(Index++); bExists = false;
+			for (const auto& Parameter : Parameters) if (Parameter["Name"] == Name) bExists = true;
+		} while (bExists);
+		Parameters.push_back({ {"Name", Name}, {"Type", 3}, {"Value", false} }); bDirty = true;
 	}
 }
 
@@ -948,4 +1056,5 @@ void FAnimGraphEditor::OnRender()
 		if (ImGui::Begin(PropertiesName.c_str())) DrawDetails();
 		ImGui::End();
 	}
+	if (bLoaded && !bCloseApproved) ApplyGraphDocument();
 }

@@ -54,3 +54,8 @@ FIndexBuffer* USkeletalMesh::GetIndexBuffer() const
 {
 	return IndexBuffer.get();
 }
+
+const TArray<FModelVertexInfluences>& USkeletalMesh::GetWeightsArray() const
+{
+	return VertexInfluencesList;
+}

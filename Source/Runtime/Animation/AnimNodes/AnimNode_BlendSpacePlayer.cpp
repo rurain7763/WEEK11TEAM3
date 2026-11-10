@@ -136,3 +136,8 @@ float FAnimNode_BlendSpacePlayer::GetCurrentAssetDuration()
 
 	return MaxSample->Animation->GetDuration();
 }
+
+float FAnimNode_BlendSpacePlayer::GetNormalizedTime() const
+{
+	return NormalizedTime;
+}

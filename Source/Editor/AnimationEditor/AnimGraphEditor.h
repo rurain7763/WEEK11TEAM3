@@ -6,8 +6,9 @@
 #include "ImNodesEz.h"
 
 class UAnimSequence;
+class UAnimGraph;
 
-// Edits the existing AnimGraph JSON schema; runtime graph construction stays in UAnimGraph.
+// Edits the loaded asset through a JSON UI buffer; runtime construction stays in UAnimGraph.
 class FAnimGraphEditor : public IEditorPanel
 {
 public:
@@ -42,6 +43,8 @@ private:
 	};
 	bool Load();
 	bool Save();
+	bool ApplyGraphDocument();
+	bool RestoreSavedGraph();
 	void DrawToolbar();
 	void DrawCanvas();
 	void DrawDetails();
@@ -70,6 +73,9 @@ private:
 	FString PanelName;
 	FString Status;
 	nlohmann::json Document;
+	UAnimGraph* EditingGraph = nullptr; // AssetManager owns this shared asset.
+	TArray<uint8> SavedGraphBytes;
+	FString AppliedGraphText;
 	TArray<TUniquePtr<FNode>> Nodes;
 	TArray<UAnimSequence*> Sequences;
 	TArray<FString> BlendSpacePaths;

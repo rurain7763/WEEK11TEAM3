@@ -3,6 +3,8 @@
 #include "Editor/Viewports/ViewportsPanel.h"
 
 #include "Engine/World.h"
+#include "Component/SkinnedMeshComponent.h"
+#include "Core/StatOverlay.h"
 
 // 종료 시 렌더·에디터·뷰포트 설정을 함께 저장한다.
 FSettingsPanel::~FSettingsPanel()
@@ -69,6 +71,20 @@ void FSettingsPanel::OnRender()
 	ImGui::Checkbox("Depth View", &Settings.bDepthView);
 	ImGui::Checkbox("Linear Workflow", &Settings.bLinearWorkflow);
 	ImGui::SetItemTooltip("Off: no sRGB decode/encode (gamma-space rendering), for comparison.");
+
+	if (ImGui::Checkbox("CPU Skinning", &Settings.bCPUSkinning))
+	{
+		USkinnedMeshComponent::SetGlobalCPUSkinning(Settings.bCPUSkinning);
+	}
+	ImGui::SetItemTooltip("On: every skinned mesh is skinned on the CPU. Off: per-component setting (GPU by default).");
+
+	// 콘솔 'stat skinning'으로 바꿔도 체크 상태가 맞도록 매 프레임 실제 값을 읽는다
+	Settings.bShowSkinningStats = FStatOverlay::IsEnabled(EStatFlags::Skinning);
+	if (ImGui::Checkbox("Skinning Stats", &Settings.bShowSkinningStats))
+	{
+		FStatOverlay::SetEnabled(EStatFlags::Skinning, Settings.bShowSkinningStats);
+	}
+	ImGui::SetItemTooltip("Overlay comparing CPU and GPU skinning cost.");
 	// 톤매핑은 View별 Lit에서만 적용되므로, 보이는 View 중 Lit이 하나라도 있어야 조작할 의미가 있다
 	bool bAnyLitView = ViewportsPanel == nullptr;
 	for (int32 Index = 0; ViewportsPanel && Index < FViewportsPanel::ViewCount; ++Index)
@@ -190,6 +206,7 @@ bool FSettingsPanel::SaveSettings() const
 	File << "DepthView=" << Settings.bDepthView << "\n";
 	File << "DrawShadows=" << Settings.bDrawShadows << "\n";
 	File << "LinearWorkflow=" << Settings.bLinearWorkflow << "\n";
+	File << "CPUSkinning=" << Settings.bCPUSkinning << "\n";
 	File << "ToneMapping=" << Settings.bToneMapping << "\n";
 	File << "ExposureEV=" << Settings.ExposureEV << "\n";
 	File << "\n";
@@ -348,6 +365,11 @@ bool FSettingsPanel::LoadSettings()
 				else if (Key == "DepthView") Settings.bDepthView = std::stoi(ValueStr);
 				else if (Key == "DrawShadows") Settings.bDrawShadows = std::stoi(ValueStr);
 				else if (Key == "LinearWorkflow") Settings.bLinearWorkflow = std::stoi(ValueStr);
+				else if (Key == "CPUSkinning")
+				{
+					Settings.bCPUSkinning = ValueStr != "0";
+					USkinnedMeshComponent::SetGlobalCPUSkinning(Settings.bCPUSkinning);
+				}
 				else if (Key == "ToneMapping") Settings.bToneMapping = std::stoi(ValueStr);
 				else if (Key == "ExposureEV") Settings.ExposureEV = std::stof(ValueStr);
 

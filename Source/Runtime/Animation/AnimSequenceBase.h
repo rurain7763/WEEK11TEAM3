@@ -18,6 +18,33 @@ public:
 		DataModel = InDataModel;
 	}
 
+	virtual void Serialize(FStructuredArchive::FRecord Record) override;
+
+	void AddNotify(const FAnimNotifyEvent& InNotify)
+	{
+		Notifies.Emplace(InNotify);
+	}
+
+	void RemoveNotify(const FName& InName)
+	{
+		auto It = std::find_if(Notifies.begin(), Notifies.end(), [&InName](const FAnimNotifyEvent& Event) { return Event.Name == InName; });
+		if (It != Notifies.end())
+		{
+			int32 Index = std::distance(Notifies.begin(), It);
+			Notifies.RemoveAt(Index);
+		}
+	}
+
+	void RemoveNotify(int32 InIndex)
+	{
+		Notifies.RemoveAt(InIndex);
+	}
+
+	void SortNotifies()
+	{
+		std::sort(Notifies.begin(), Notifies.end(), [](const FAnimNotifyEvent& A, const FAnimNotifyEvent& B) { return A.TriggerTime < B.TriggerTime; });
+	}
+
 	virtual float GetDuration() const override;
 
 	virtual void GetAnimationPose(const FAnimExtractContext& ExtractionContext, FPoseContext& PoseData) const = 0;
@@ -37,6 +64,11 @@ public:
 	UAnimDataModel* GetDataModel() const
 	{
 		return DataModel;
+	}
+
+	const TArray<FAnimNotifyEvent>& GetNotifies() const
+	{
+		return Notifies;
 	}
 
 private:

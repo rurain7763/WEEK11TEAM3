@@ -23,7 +23,9 @@ struct FAnimNode_StateMachine : public FAnimNode_Base
 
 	void Update(FAnimationUpdateContext& UpdateContext) override;
 
-	FAnimStateTransition* EvaluateTransitions(const TArray<FAnimStateTransition>& Transitions, const FAnimParameterTable& ParameterTable) const;
+	FAnimStateTransition* EvaluateTransitions(const TArray<FAnimStateTransition>& Transitions, const FAnimParameterTable& ParameterTable, bool& OutIsTriggerTransition) const;
 
 	void Evaluate(FPoseContext& OutPoseContext) override;
+
+	virtual float GetNormalizedTime() const override;
 };

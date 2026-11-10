@@ -39,6 +39,7 @@ bool FBlendSpaceEditor::Init()
 	BlendSpace = NewObject<UBlendSpace1D>();
 	bLoaded = FJsonArchive::LoadBlend1DGraph(BlendSpace, Path);
 	if (!bLoaded) { Status = "Could not load BlendSpace1D."; return false; }
+	BlendSpace->SetAssetFilePath(Path);
 	Samples = BlendSpace->GetBlendSamples();
 	BlendSpace->SortBlendSamples();
 	Player.SetBlendSpace(BlendSpace);

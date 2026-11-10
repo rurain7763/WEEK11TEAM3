@@ -56,6 +56,21 @@
         ],
         "Parameters": [
             {
+                "Name": "Attack",
+                "Type": 3,
+                "Value": false
+            },
+            {
+                "Name": "Hit",
+                "Type": 3,
+                "Value": false
+            },
+            {
+                "Name": "Jump",
+                "Type": 3,
+                "Value": false
+            },
+            {
                 "Name": "Action",
                 "Type": 0,
                 "Value": 0
@@ -69,10 +84,12 @@
                     {
                         "Condition": {
                             "ComparisonOperator": 0,
-                            "ParameterName": "Action",
-                            "Value": 2
+                            "ParameterName": "Hit",
+                            "Value": false
                         },
-                        "CrossfadeDuration": 0.1,
+                        "CrossfadeDuration": 0.10000000149011612,
+                        "ExitTime": 1.0,
+                        "HasExitTime": false,
                         "NextStateID": 2,
                         "PreviousStateID": -1
                     }
@@ -104,90 +121,108 @@
                     {
                         "Condition": {
                             "ComparisonOperator": 0,
-                            "ParameterName": "Action",
-                            "Value": 1
+                            "ParameterName": "Attack",
+                            "Value": false
                         },
-                        "CrossfadeDuration": 0.2,
+                        "CrossfadeDuration": 0.20000000298023224,
+                        "ExitTime": 1.0,
+                        "HasExitTime": false,
                         "NextStateID": 1,
                         "PreviousStateID": 0
                     },
                     {
                         "Condition": {
                             "ComparisonOperator": 0,
-                            "ParameterName": "Action",
-                            "Value": 3
+                            "ParameterName": "Jump",
+                            "Value": false
                         },
-                        "CrossfadeDuration": 0.2,
+                        "CrossfadeDuration": 0.20000000298023224,
+                        "ExitTime": 1.0,
+                        "HasExitTime": false,
                         "NextStateID": 3,
                         "PreviousStateID": 0
                     },
                     {
                         "Condition": {
-                            "ComparisonOperator": 0,
+                            "ComparisonOperator": 4,
                             "ParameterName": "Action",
                             "Value": 0
                         },
-                        "CrossfadeDuration": 0.2,
+                        "CrossfadeDuration": 0.20000000298023224,
+                        "ExitTime": 1.0,
+                        "HasExitTime": true,
                         "NextStateID": 0,
                         "PreviousStateID": 1
                     },
                     {
                         "Condition": {
                             "ComparisonOperator": 0,
-                            "ParameterName": "Action",
-                            "Value": 3
+                            "ParameterName": "Jump",
+                            "Value": false
                         },
-                        "CrossfadeDuration": 0.2,
+                        "CrossfadeDuration": 0.20000000298023224,
+                        "ExitTime": 1.0,
+                        "HasExitTime": false,
                         "NextStateID": 3,
                         "PreviousStateID": 1
                     },
                     {
                         "Condition": {
-                            "ComparisonOperator": 0,
+                            "ComparisonOperator": 4,
                             "ParameterName": "Action",
                             "Value": 0
                         },
-                        "CrossfadeDuration": 0.2,
+                        "CrossfadeDuration": 0.20000000298023224,
+                        "ExitTime": 1.0,
+                        "HasExitTime": true,
                         "NextStateID": 0,
                         "PreviousStateID": 2
                     },
                     {
                         "Condition": {
                             "ComparisonOperator": 0,
-                            "ParameterName": "Action",
-                            "Value": 1
+                            "ParameterName": "Attack",
+                            "Value": false
                         },
-                        "CrossfadeDuration": 0.2,
+                        "CrossfadeDuration": 0.20000000298023224,
+                        "ExitTime": 1.0,
+                        "HasExitTime": false,
                         "NextStateID": 1,
                         "PreviousStateID": 2
                     },
                     {
                         "Condition": {
                             "ComparisonOperator": 0,
-                            "ParameterName": "Action",
-                            "Value": 3
+                            "ParameterName": "Jump",
+                            "Value": false
                         },
-                        "CrossfadeDuration": 0.2,
+                        "CrossfadeDuration": 0.20000000298023224,
+                        "ExitTime": 1.0,
+                        "HasExitTime": false,
                         "NextStateID": 3,
                         "PreviousStateID": 2
                     },
                     {
                         "Condition": {
-                            "ComparisonOperator": 0,
+                            "ComparisonOperator": 4,
                             "ParameterName": "Action",
                             "Value": 0
                         },
-                        "CrossfadeDuration": 0.2,
+                        "CrossfadeDuration": 0.20000000298023224,
+                        "ExitTime": 1.0,
+                        "HasExitTime": true,
                         "NextStateID": 0,
                         "PreviousStateID": 3
                     },
                     {
                         "Condition": {
                             "ComparisonOperator": 0,
-                            "ParameterName": "Action",
-                            "Value": 1
+                            "ParameterName": "Attack",
+                            "Value": false
                         },
-                        "CrossfadeDuration": 0.2,
+                        "CrossfadeDuration": 0.20000000298023224,
+                        "ExitTime": 1.0,
+                        "HasExitTime": false,
                         "NextStateID": 1,
                         "PreviousStateID": 3
                     }

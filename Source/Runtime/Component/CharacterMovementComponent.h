@@ -24,6 +24,12 @@ public:
 	// 콜리전 바로 아래에 걸을 수 있는 바닥이 있는가 (아래로 짧게 sweep해서 확인)
 	bool IsGrounded() const;
 
+	virtual void SetUpdatedComponent(USceneComponent* InUpdatedComponent) override
+	{
+		Super::SetUpdatedComponent(InUpdatedComponent);
+		CollisionComponent = Cast<UPrimitiveComponent>(InUpdatedComponent);
+	}
+
 	void SetCollisionComponent(UPrimitiveComponent* InCollisionComponent);
 	void SetMeshComponent(USkeletalMeshComponent* InMeshComponent);
 

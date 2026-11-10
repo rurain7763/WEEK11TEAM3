@@ -14,6 +14,46 @@ class UAnimGraph : public UAsset
 public:
 	virtual void Serialize(FStructuredArchive::FRecord Record) override;
 
+	inline void SetRootNodeID(int32 InRootNodeID)
+	{
+		RootNodeID = InRootNodeID;
+	}
+
+	inline int32 GetRootNodeID() const
+	{
+		return RootNodeID;
+	}
+
+	inline TArray<FAnimNodeData>& GetNodes()
+	{
+		return Nodes;
+	}
+
+	inline TArray<FAnimSequencePlayerData>& GetAnimSequencePlayers()
+	{
+		return AnimSequencePlayers;
+	}
+
+	inline TArray<FAnimTwoWayBlendData>& GetAnimTwoWayBlends()
+	{
+		return AnimTwoWayBlends;
+	}
+
+	inline TArray<FBlendSpacePlayerData>& GetBlendSpacePlayers()
+	{
+		return BlendSpacePlayers;
+	}
+
+	inline TArray<FAnimStateMachineData>& GetAnimStateMachines()
+	{
+		return StateMachines;
+	}
+
+	inline TArray<FAnimParameterData>& GetAnimParameters()
+	{
+		return Parameters;
+	}
+
 	UAnimInstance* CreateAnimInstance();
 
 private:
