@@ -15,6 +15,8 @@
 #include <format>
 
 #include "Core/Stats/EditorStats.h"
+#include "Core/Stats/SkinningStats.h"
+#include "Component/SkinnedMeshComponent.h"
 
 namespace
 {
@@ -770,6 +772,36 @@ void FViewportsPanel::DrawStatOverlay(ImDrawList* DrawList, const ImVec2& ViewMi
 		Lines.Add({ "Decal", TitleColor });
 		Lines.Add({ std::format("  Draw Calls (All Views): {}", Decal.DrawCount), ValueColor});
 		Lines.Add({ std::format("  CPU Submission: {:.2f} ms", Decal.DrawTime), ValueColor});
+	}
+
+	if (FStatOverlay::IsEnabled(EStatFlags::Skinning))
+	{
+		const FSkinningFrameStats& Skin = FSkinningStats::Get();
+		// 시간은 120프레임 평균을 쓴다. 매 프레임 값은 흔들려서 읽기 어렵다
+		const auto AvgMs = [](TStatId Id)
+		{
+			const FCycleStatData* Data = FStatRegistry::Find(Id);
+			return Data ? Data->GetRecentAverageMs() : 0.0;
+		};
+
+		const double CPUVertMs = AvgMs(STAT_SkinningCPUVertices);
+		const double CPUUploadMs = AvgMs(STAT_SkinningCPUUpload);
+		const double GPUBoneMs = AvgMs(STAT_SkinningGPUBoneUpload);
+
+		Lines.Add({ std::format("Skinning (Global: {})",
+			USkinnedMeshComponent::IsGlobalCPUSkinning() ? "CPU" : "GPU"), TitleColor });
+
+		Lines.Add({ std::format("  CPU  Meshes {} / Verts {}", Skin.CPUSkinnedMeshes, Skin.CPUSkinnedVertices), ValueColor });
+		Lines.Add({ std::format("       Skin {:.3f} ms + Upload {:.3f} ms = {:.3f} ms",
+			CPUVertMs, CPUUploadMs, CPUVertMs + CPUUploadMs), ValueColor });
+		Lines.Add({ std::format("       Upload {:.2f} MB/frame",
+			static_cast<double>(Skin.CPUUploadBytes) / BytesPerMegabyte), ValueColor });
+
+		Lines.Add({ std::format("  GPU  Meshes {} / Bones {}", Skin.GPUSkinnedMeshes, Skin.GPUSkinnedBones), ValueColor });
+		Lines.Add({ std::format("       Bone Upload {:.3f} ms ({:.1f} KB/frame)",
+			GPUBoneMs, static_cast<double>(Skin.GPUUploadBytes) / 1024.0), ValueColor });
+
+		Lines.Add({ std::format("  Scene GPU Time {:.2f} ms", FSkinningStats::GetSceneGPUMs()), ValueColor });
 	}
 
 	struct FProfileStatLine

@@ -8,6 +8,7 @@
 #include "Render/Renderer.h"
 #include "Engine/Scene.h"
 #include "Render/Buffer.h"
+#include "Core/Stats/SkinningStats.h"
 
 FPrimitiveSceneProxy::FPrimitiveSceneProxy(UPrimitiveComponent* InComponent)
     : Component(InComponent)
@@ -197,6 +198,8 @@ void FSkeletalMeshSceneProxy::BindSRVs() const
 
 bool FSkeletalMeshSceneProxy::UpdateBoneMatrixBuffer()
 {
+    SCOPE_CYCLE_COUNTER(STAT_SkinningGPUBoneUpload);
+
     const auto* ActualComponent = Cast<USkeletalMeshComponent>(GetComponent());
     const TArray<FMatrix>& BoneMatrices = ActualComponent->GetSkinningMatrices();
     const uint32 Count = BoneMatrices.Num();
@@ -245,6 +248,7 @@ bool FSkeletalMeshSceneProxy::UpdateBoneMatrixBuffer()
     const D3D11_BOX UploadRange{ 0, 0, 0, static_cast<UINT>(Count * sizeof(FMatrix)), 1, 1 };
     Context->UpdateSubresource(BoneMatrixBuffer.Get(), 0, &UploadRange, BoneMatrices.GetData(), 0, 0);
 
+    FSkinningStats::AddGPUMesh(static_cast<int32>(Count), static_cast<int64>(Count) * sizeof(FMatrix));
     return true;
 }
 

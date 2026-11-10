@@ -52,9 +52,12 @@ public:
 	virtual void PostEditChangeProperty(const FProperty& Property) override;
 	
 	void SetCPUSkinningEnabled(bool bEnable);
-	bool IsCPUSkinningEnabled() const { return bCPUSkinning; }
+	bool IsCPUSkinningEnabled() const { return bCPUSkinning || bGlobalCPUSkinning; }
 
 	FVertexBuffer* GetCPUSkinVertexBuffer() { return CPUSkinVertexBuffer.get(); }
+
+	static void SetGlobalCPUSkinning(bool bEnable);
+	static bool IsGlobalCPUSkinning() { return bGlobalCPUSkinning; }
 
 protected:
 	USkeletalMesh* SkeletalMesh = nullptr;
@@ -73,4 +76,6 @@ private:
 
 	TArray<FVertexPNCT> CPUSkinningVertices;
 	TUniquePtr<FVertexBuffer> CPUSkinVertexBuffer;
+
+	static inline bool bGlobalCPUSkinning = false;
 };

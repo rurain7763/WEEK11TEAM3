@@ -7,6 +7,9 @@
 
 #include "Render/RenderCommand.h"
 
+#include "UObject/UObjectIterator.h"
+#include "Core/Stats/SkinningStats.h"
+
 #include <algorithm>
 
 namespace
@@ -221,7 +224,7 @@ void USkinnedMeshComponent::UpdateBoneMatrices()
 		SkinningMatrices[i] = Bone.InverseBindTransform * NodeGlobalTransforms[Bone.NodeIndex];
 	}
 	
-	if (bCPUSkinning)
+	if (IsCPUSkinningEnabled())
 	{
 		UpdateSkinnedVertices();
 	}
@@ -332,6 +335,22 @@ void USkinnedMeshComponent::SetCPUSkinningEnabled(bool bEnable)
 	UpdateBoneMatrices();
 }
 
+void USkinnedMeshComponent::SetGlobalCPUSkinning(bool bEnable)
+{
+	if (bGlobalCPUSkinning == bEnable)
+	{
+		return;
+	}
+	bGlobalCPUSkinning = bEnable;
+
+	// Global 플래그가 수정되면 모든 컴포넌트에 대해서 플래그를 반영할 수 있게 호출.
+	// 애니메이션이 재생되지 않는 컴포넌트들을 위함. 
+	for (TObjectIterator<USkinnedMeshComponent> It; It; ++It)
+	{
+		It->UpdateBoneMatrices();
+	}
+}
+
 void USkinnedMeshComponent::UpdateSkinnedVertices()
 {
 	if (!SkeletalMesh)
@@ -345,6 +364,9 @@ void USkinnedMeshComponent::UpdateSkinnedVertices()
 	const int32 BoneCount = SkinningMatrices.Num();
 
 	CPUSkinningVertices.SetNum(VertexCount);
+
+	// 정점 계산 구간 (stat skinning / stat profile)
+	FScopeCycleCounter SkinTimer(STAT_SkinningCPUVertices);
 
 	for (int32 v = 0; v < VertexCount; ++v)
 	{
@@ -392,6 +414,8 @@ void USkinnedMeshComponent::UpdateSkinnedVertices()
 		Out.Tangent = FVector4(T.X, T.Y, T.Z, Bind.Tangent.W);
 	}
 
+	SkinTimer.Finish();
+
 	// 버퍼 업데이트
 	const uint32 ByteSize = sizeof(FVertexPNCT) * static_cast<uint32>(VertexCount);
 	if (ByteSize == 0)
@@ -399,10 +423,16 @@ void USkinnedMeshComponent::UpdateSkinnedVertices()
 		return;
 	}
 
-	if (!CPUSkinVertexBuffer || CPUSkinVertexBuffer->GetBufferSize() < ByteSize)
 	{
-		CPUSkinVertexBuffer = RenderCommand::CreateDynamicVertexBuffer(ByteSize, sizeof(FVertexPNCT));
+		SCOPE_CYCLE_COUNTER(STAT_SkinningCPUUpload);
+
+		if (!CPUSkinVertexBuffer || CPUSkinVertexBuffer->GetBufferSize() < ByteSize)
+		{
+			CPUSkinVertexBuffer = RenderCommand::CreateDynamicVertexBuffer(ByteSize, sizeof(FVertexPNCT));
+		}
+
+		RenderCommand::UpdateBufferData(CPUSkinVertexBuffer.get(), CPUSkinningVertices.GetData(), ByteSize);
 	}
 
-	RenderCommand::UpdateBufferData(CPUSkinVertexBuffer.get(), CPUSkinningVertices.GetData(), ByteSize);
+	FSkinningStats::AddCPUMesh(VertexCount, ByteSize);
 }
