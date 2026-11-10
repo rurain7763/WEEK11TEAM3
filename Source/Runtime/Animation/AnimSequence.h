@@ -10,6 +10,13 @@ class UAnimSequence : public UAnimSequenceBase
 	DECLARE_CLASS(UAnimSequence, UAnimSequenceBase)
 
 public:
+	virtual void Serialize(FStructuredArchive::FRecord Record) override;
+
+	void EnableRootMotion(bool bEnable)
+	{
+		bEnableRootMotion = bEnable;
+	}
+
 	void GetAnimationPose(const FAnimExtractContext& ExtractionContext, FPoseContext& PoseData) const override;
 
 	FTransform ExtractRootMotion(const FAnimExtractContext& ExtractionContext, float Duration, float DeltaTime);

@@ -3,7 +3,7 @@
         "Properties": {},
         "Samples": [
             {
-                "Animation": "Models/FbxTest/UAL1_RM_Armature|Idle_Paper",
+                "Animation": "Models/FbxTest/UAL1_RM_Armature|Jump_Land",
                 "SampleValue": {
                     "X": 0.0,
                     "Y": 0.0,
@@ -11,7 +11,7 @@
                 }
             },
             {
-                "Animation": "Models/FbxTest/UAL1_RM_Armature|Climb_Enter",
+                "Animation": "Models/FbxTest/UAL1_RM_Armature|Jump_Loop",
                 "SampleValue": {
                     "X": 100.0,
                     "Y": 0.0,

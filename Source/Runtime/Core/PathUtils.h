@@ -5,6 +5,20 @@
 
 namespace PathUtils
 {
+    // Windows 파일명 금지 문자와 제어 문자를 '_'로 치환한다.
+    inline FString MakeSafeFileName(std::string_view Name)
+    {
+        FString Result(Name);
+        for (char& Character : Result)
+        {
+            if (static_cast<unsigned char>(Character) < 32 || std::string_view("<>:\"/\\|?*").find(Character) != std::string_view::npos)
+            {
+                Character = '_';
+            }
+        }
+        return Result;
+    }
+
     // 엔진 UTF-8 경로의 Windows native 경로 변환
     inline std::filesystem::path FromUtf8(std::string_view Path)
     {

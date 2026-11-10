@@ -3,6 +3,7 @@
 #include "Editor/EditorUI/EditorPanel.h"
 #include "Core/EngineString.h"
 #include "Containers/Array.h"
+#include <unordered_set>
 
 class UAnimSequence;
 class USkeleton;
@@ -45,4 +46,8 @@ private:
 	bool bLooping = true;
 	bool bPlaying = false;
 	bool bRefreshAssetsRequested = false;
+	char NotifyName[128] = "Notify";
+	int32 SelectedNotify = -1;
+	FString SaveStatus;
+	std::unordered_set<UAnimSequence*> ModifiedSequences;
 };
