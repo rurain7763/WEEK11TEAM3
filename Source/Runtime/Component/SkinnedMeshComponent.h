@@ -14,6 +14,7 @@ class USkinnedMeshComponent : public UMeshComponent
 	REFLECT_START(USkinnedMeshComponent)
 		PROPERTY(SkeletalMesh)
 		PROPERTY(Skeleton)
+		PROPERTY(bCPUSkinning)
 	REFLECT_END()
 
 public:
@@ -34,7 +35,7 @@ public:
 
 	virtual UMaterial* GetDefaultMaterial(int32 SlotIndex) const override;
 
-	const TArray<FMatrix>& GetBoneMatrices() const;
+	const TArray<FMatrix>& GetSkinningMatrices() const;
 	const TArray<FMatrix>& GetLocalPose() const;
 
 	USkeletalMesh* GetSkeletalMesh();
@@ -48,12 +49,33 @@ public:
 	// 현재 포즈의 본을 선으로 그린다. 부모 관절에서 자식 관절로 잇고, 관절마다 짧은 XYZ 축을 표시한다
 	void DrawDebugSkeleton(FLineBatcher* LineBatcher, int32 SelectedBone = -1) const;
 
+	virtual void PostEditChangeProperty(const FProperty& Property) override;
+	
+	void SetCPUSkinningEnabled(bool bEnable);
+	bool IsCPUSkinningEnabled() const { return bCPUSkinning || bGlobalCPUSkinning; }
+
+	FVertexBuffer* GetCPUSkinVertexBuffer() { return CPUSkinVertexBuffer.get(); }
+
+	static void SetGlobalCPUSkinning(bool bEnable);
+	static bool IsGlobalCPUSkinning() { return bGlobalCPUSkinning; }
+
 protected:
 	USkeletalMesh* SkeletalMesh = nullptr;
 	USkeleton* Skeleton = nullptr;
+	bool bCPUSkinning = false;
 
 	// [노드] = 부모 기준 로컬 트랜스폼. 이 컴포넌트만의 포즈이며 처음에는 에셋 노드의 LocalTransform을 복사한다
 	TArray<FMatrix> LocalPose;
-	TArray<FMatrix> BoneMatrices;
+	TArray<FMatrix> SkinningMatrices;
 	TArray<FMatrix> NodeGlobalTransforms;
+
+
+private:
+	// CPU 스키닝
+	void UpdateSkinnedVertices();
+
+	TArray<FVertexPNCT> CPUSkinningVertices;
+	TUniquePtr<FVertexBuffer> CPUSkinVertexBuffer;
+
+	static inline bool bGlobalCPUSkinning = false;
 };

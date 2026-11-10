@@ -129,6 +129,9 @@ struct FPSInput
     float3 DiffuseLight : TEXCOORD2;
     float3 SpecularLight : TEXCOORD3;
 #endif
+#if USE_SKINNING
+    float HeatmapWeight : TEXCOORD4;
+#endif
 };
 
 struct FPSOutput
@@ -210,6 +213,15 @@ cbuffer ShadowFilterConstants : register(b6)
     float ShadowSearchScale;
     float ShadowFilterPadding;
 };
+
+#if USE_SKINNING
+cbuffer BoneWeightConstants : register(b8)
+{
+    uint BoneWeightEnabled;
+    int HeatmapBoneIndex;
+    uint2 BoneWeightPadding;
+};
+#endif
 
 StructuredBuffer<FPointLightInfo> StructuredPointLights : register(t8);
 StructuredBuffer<FSpotLightInfo> StructuredSpotLights : register(t9);
@@ -993,6 +1005,21 @@ FPSInput mainVS(FVSInput Input)
     ComputeLighting(N, Output.WorldPosition, V, Shininess, Output.DiffuseLight, Output.SpecularLight);
     
 #endif
+#if USE_SKINNING
+    Output.HeatmapWeight = 0.0f;
+
+    if (BoneWeightEnabled != 0u && HeatmapBoneIndex >= 0)
+    {
+        for (int i = 0; i < Input.BoneInfluenceCount; ++i)
+        {
+            if (Input.BoneIndices[i] == HeatmapBoneIndex)
+            {
+                Output.HeatmapWeight = Input.BoneWeights[i];
+                break;
+            }
+        }
+    }
+#endif
     return Output;
 }
 
@@ -1122,7 +1149,24 @@ FPSOutput mainPS(FPSInput Input)
     FinalColor = float4(Ka * AmbientLight.Color + Kd * DiffuseLight + Ks * SpecularLight, Alpha);
 #endif
     
-    Output.Color = FinalColor;
+Output.Color = FinalColor;
+    
+#if USE_SKINNING
+    if (BoneWeightEnabled != 0u)
+    {
+        const float Weight = saturate(Input.HeatmapWeight);
+        const float Ramp = Weight * 5.0f - 1.0f;
+    
+        const float PurpleRed = 0.6f * saturate(-Ramp);
+        const float Red   = PurpleRed + saturate(Ramp - 2.0f);
+        const float Green = saturate(min(Ramp, 4.0f - Ramp));
+        const float Blue  = saturate(2.0f - Ramp);
+    
+        Output.Color = float4(Red, Green, Blue, 1.0f);
+    }
+#endif
+    
+    //Output.Color = FinalColor;
     Output.Normal = float4(normalize(WorldNormal), 0.f);
     Output.ObjectMask = ObjectMask;
     

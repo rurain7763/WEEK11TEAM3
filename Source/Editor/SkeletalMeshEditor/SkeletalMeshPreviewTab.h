@@ -29,6 +29,7 @@ public:
 	void UpdateBoneGizmoTarget();
 	void UpdateBoneGizmo(bool bInputEnabled);
 	virtual const UObject* GetEditingAsset() const { return SkeletalMesh; };
+	void UpdateBoneWeightVisualization();
 private:
 	void DrawPreviewToolbar() override;
 	void TickPreview(float DeltaTime) override;
@@ -52,5 +53,5 @@ private:
 	FGizmo BoneGizmo;
 	// 선택 안 함은 -1이라 부호 있는 정수여야 한다
 	int32 SelectedBone = -1;
-
+	bool bShowBoneWeights = false;
 };

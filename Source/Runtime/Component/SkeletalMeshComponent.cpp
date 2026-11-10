@@ -185,7 +185,8 @@ void USkeletalMeshComponent::SubmitToRenderQueue(FRenderQueue& RenderQueue)
 		Packet.Proxy = Proxy;
 		Packet.Geometry.VertexBuffers[0] = LOD.VertexBuffers[0];
 		Packet.Geometry.VertexBuffers[1] = LOD.VertexBuffers[1];
-		Packet.Geometry.VertexBufferCount = 2;
+		// CPU 스킨이면 1개(스키닝된 정점), GPU 스킨이면 2개(원본 정점 + 가중치)
+		Packet.Geometry.VertexBufferCount = LOD.VertexBufferCount;
 		Packet.Geometry.IndexBuffer = LOD.IndexBuffer;
 		Packet.Geometry.StartIndex = Section.StartIndex;
 		Packet.Geometry.IndexCount = Section.IndexCount;
@@ -196,4 +197,16 @@ void USkeletalMeshComponent::SubmitToRenderQueue(FRenderQueue& RenderQueue)
 FPrimitiveSceneProxy* USkeletalMeshComponent::CreateSceneProxy()
 {
 	return new FSkeletalMeshSceneProxy(this);
+}
+
+void USkeletalMeshComponent::SetBoneWeightVisualization(bool bEnabled, int32 BoneIndex)
+{
+	if (bBoneWeightVisualizationEnabled == bEnabled && HeatmapBoneIndex == BoneIndex)
+	{
+		return;
+	}
+
+	bBoneWeightVisualizationEnabled = bEnabled;
+	HeatmapBoneIndex = BoneIndex;
+	MarkRenderStateDirty();
 }

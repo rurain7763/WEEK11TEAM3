@@ -21,6 +21,7 @@
 #include "Render/DecalRenderer.h"
 #include "Core/Stats/LightweightStats.h"
 #include "Core/StatOverlay.h"
+#include "Core/Stats/SkinningStats.h"
 
 DECLARE_CYCLE_STAT("Decal Draw Time", STAT_DecalDrawTime);
 
@@ -60,11 +61,19 @@ void FSceneRenderer::BeginFrame()
 
 	// 프레임 전체 뷰의 데칼 통계 초기화
 	FStatOverlay::SetDecalStats(FDecalStats{});
+
+	// 지난 프레임 동안 모은 스키닝 통계를 표시용으로 넘기고, 씬 GPU 시간을 갱신한다
+	FSkinningStats::EndFrame();
+	SceneGPUTimer.BeginFrame();
+	FSkinningStats::SetSceneGPUMs(SceneGPUTimer.GetSmoothedMs());
 }
 
 void FSceneRenderer::Render(UWorld& World, const FSceneView& SceneView, const FSceneRenderSettings& Settings,
 	const FSceneRenderTargets& Targets, FRenderQueue& RenderQueue)
 {
+	// 뷰가 여러 개면 구간이 합산된다
+	SceneGPUTimer.BeginScope();
+
 	FLightingConstants Lighting;
 	FShadowStats ShadowStats{};
 	TArray<FPointLightInfo> PointLights;
@@ -163,6 +172,8 @@ void FSceneRenderer::Render(UWorld& World, const FSceneView& SceneView, const FS
 		if (!bVisualizeData && Settings.bEnableFXAA)
 			RenderFXAAPass(Targets);
 	}
+
+	SceneGPUTimer.EndScope();
 }
 
 void FSceneRenderer::RenderSurfacePrepass(const FSceneView& SceneView, const FSceneRenderSettings& Settings, const FSceneRenderTargets& Targets)
