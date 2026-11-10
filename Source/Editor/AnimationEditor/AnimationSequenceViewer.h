@@ -45,4 +45,5 @@ private:
 	bool bLooping = true;
 	bool bPlaying = false;
 	bool bRefreshAssetsRequested = false;
+	bool bReversePlay = false;
 };
