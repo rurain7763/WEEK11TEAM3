@@ -56,4 +56,12 @@ protected:
 	TArray<FMatrix> LocalPose;
 	TArray<FMatrix> BoneMatrices;
 	TArray<FMatrix> NodeGlobalTransforms;
+
+
+private:
+	// CPU 스키닝
+	void UpdateSkinnedVertices();
+
+	TArray<FMatrix> SkinningMatrices;
+	TArray<FVertexPNCT> CPUSkinningVertices;
 };

@@ -30,6 +30,8 @@ public:
 
 	FIndexBuffer* GetIndexBuffer() const;
 
+	const TArray<FModelVertexInfluences>& GetWeightsArray() const;
+
 private:
 	USkeleton* Skeleton = nullptr;
 

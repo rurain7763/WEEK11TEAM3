@@ -219,6 +219,12 @@ void USkinnedMeshComponent::UpdateBoneMatrices()
 		BoneMatrices[i] = Bone.InverseBindTransform * NodeGlobalTransforms[Bone.NodeIndex];
 	}
 
+	SkinningMatrices.SetNum(Bones.Num());
+	for (int32 i = 0; i < Bones.Num(); ++i)
+	{
+		SkinningMatrices[i] = Bones[i].InverseBindTransform * BoneMatrices[i];
+	}
+	UpdateSkinnedVertices();
 	MarkRenderStateDirty();
 }
 
@@ -306,5 +312,58 @@ void USkinnedMeshComponent::DrawDebugSkeleton(FLineBatcher* LineBatcher, const i
 		}
 
 		DrawJointSphere(LineBatcher, Joint, JointRadius, Color);
+	}
+}
+
+void USkinnedMeshComponent::UpdateSkinnedVertices()
+{
+	if (!SkeletalMesh)
+	{
+		return;
+	}
+
+	const FModelMeshData& Source = SkeletalMesh->GetMeshData();
+	const TArray<FModelVertexInfluences>& Skin = SkeletalMesh->GetWeightsArray();
+	const int32 VertexCount = Source.Vertices.Num();
+	const int32 BoneCount = SkinningMatrices.Num();
+
+	CPUSkinningVertices.SetNum(VertexCount);
+
+	for (int32 v = 0; v < VertexCount; ++v)
+	{
+		const FVertexPNCT& Bind = Source.Vertices[v];
+		int32 Bones[MaxBoneInfluenceCount]{};
+		float Weights[MaxBoneInfluenceCount]{};
+		for (int32 i = 0; i < MaxBoneInfluenceCount; ++i)
+		{
+			Bones[i] = Skin[v].BoneIndices[i];
+			Weights[i] = Skin[v].Weights[i];
+		}
+		const FVector BindTangent(Bind.Tangent.X, Bind.Tangent.Y, Bind.Tangent.Z);
+		
+		FVector Position = FVector::ZeroVector;
+		FVector Normal = FVector::ZeroVector;
+		FVector Tangent = FVector::ZeroVector;
+
+		for (int32 i = 0; i < MaxBoneInfluenceCount; ++i)
+		{
+			const float W = Weights[i];
+			if (W <= 0.0f)
+			{
+				continue;
+			}
+
+			const FMatrix& M = SkinningMatrices[Bones[i]];
+			Position += M.TransformPosition(Bind.Position) * W;
+			Normal += M.TransformVector(Bind.Normal) * W;
+			Tangent += M.TransformVector(BindTangent) * W;
+		}
+
+		CPUSkinningVertices[v] = Bind;
+		CPUSkinningVertices[v].Position = Position;
+		CPUSkinningVertices[v].Normal = Normal;
+		
+		const FVector T = Tangent.GetSafeNormal();
+		CPUSkinningVertices[v].Tangent = FVector4(T.X, T.Y, T.Z, Bind.Tangent.W);
 	}
 }
