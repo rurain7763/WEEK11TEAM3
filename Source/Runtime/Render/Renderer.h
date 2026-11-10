@@ -159,6 +159,9 @@ private:
 	int32 LastVertexBufferCount;
 	FIndexBuffer* LastIndexBuffer;
 
+	FPipelineState ShadowStaticPipeline;
+	FPipelineState ShadowSkinningPipeline;
+
 	FShaderProgram* ViewModeShaders[2][2][2] = {};
 	FPipelineState SurfaceStaticPipeline;
 	FPipelineState SurfaceSkinningPipeline;

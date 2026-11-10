@@ -134,7 +134,11 @@ void USkeletalMeshComponent::TickComponent(float DeltaTime)
 	}
 
 	// Temporary parameter input only; playback remains entirely graph-driven.
-	if (AnimGraph) FAnimGraphActionInputTest::Update(AnimInstance, GetWorld(), GetOwner() ? GetOwner()->GetName() : GetName());
+	if (AnimGraph)
+	{
+		FAnimGraphActionInputTest::Update(AnimInstance, GetWorld(), GetOwner() ? GetOwner()->GetName() : GetName());
+	}
+
 	AnimInstance->NativeUpdateAnimation(DeltaTime);
 
 	FPoseContext PoseData;
@@ -193,4 +197,16 @@ void USkeletalMeshComponent::SubmitToRenderQueue(FRenderQueue& RenderQueue)
 FPrimitiveSceneProxy* USkeletalMeshComponent::CreateSceneProxy()
 {
 	return new FSkeletalMeshSceneProxy(this);
+}
+
+void USkeletalMeshComponent::SetBoneWeightVisualization(bool bEnabled, int32 BoneIndex)
+{
+	if (bBoneWeightVisualizationEnabled == bEnabled && HeatmapBoneIndex == BoneIndex)
+	{
+		return;
+	}
+
+	bBoneWeightVisualizationEnabled = bEnabled;
+	HeatmapBoneIndex = BoneIndex;
+	MarkRenderStateDirty();
 }

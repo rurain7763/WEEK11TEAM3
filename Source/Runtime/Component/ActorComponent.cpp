@@ -1,6 +1,6 @@
 #include "EnginePCH.h"
-
 #include "GameFramework/Actor.h"
+#include "Engine/World.h"
 
 UActorComponent::~UActorComponent()
 {
@@ -26,4 +26,15 @@ void UActorComponent::Serialize(FStructuredArchive::FRecord Record)
 		Record << SA_VALUE("Owner", OwnerObj);
 		Owner = static_cast<AActor*>(OwnerObj);
 	}
+}
+
+UWorld* UActorComponent::GetWorld() const
+{
+	AActor* Owner = GetOwner();
+	if (!Owner)
+	{
+		return nullptr;
+	}
+
+	return Owner->GetWorld();
 }

@@ -40,10 +40,16 @@ public:
 
 	FPrimitiveSceneProxy* CreateSceneProxy() override;
 
+	void SetBoneWeightVisualization(bool bEnabled, int32 BoneIndex);
+	bool IsBoneWeightVisualizationEnabled() const { return bBoneWeightVisualizationEnabled; }
+	int32 GetHeatmapBoneIndex() const { return HeatmapBoneIndex; }
+
 private:
 	void Play(bool bLooping);
 
 private:
 	UAnimGraph* AnimGraph = nullptr;
 	UAnimInstance* AnimInstance = nullptr;
+	bool bBoneWeightVisualizationEnabled = false;
+	int32 HeatmapBoneIndex = -1;
 };

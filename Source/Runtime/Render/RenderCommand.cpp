@@ -203,6 +203,18 @@ void RenderCommand::BindShaderResource(uint32 Slot, FTexture2D* Texture2D, EShad
 		// 감마 모드에서는 sRGB 텍스처를 디코딩하지 않고 저장된 값 그대로 샘플링한다. sRGB가 아닌 텍스처는 두 뷰가 같다.
 		 SRV = (ColorWorkflow::bLinear && !bRawData) ? Texture2D->GetSRV() : Texture2D->GetRawSRV();
 	}
+	
+	BindShaderResource(Slot, SRV, FlagBits);
+}
+
+void RenderCommand::BindShaderResource(uint32 Slot, UTexture2D* Texture2D, EShaderBindFlagBits FlagBits, bool bRawData)
+{
+	FTexture2D* TextureResource = Texture2D ? Texture2D->GetResource() : nullptr;
+	BindShaderResource(Slot, TextureResource, FlagBits, bRawData);
+}
+
+void RenderCommand::BindShaderResource(int32 Slot, ID3D11ShaderResourceView* SRV, EShaderBindFlagBits FlagBits)
+{
 	if (HasFlag(FlagBits, EShaderBindFlagBits::Vertex))
 	{
 		RenderDevice->GetContext()->VSSetShaderResources(Slot, 1, &SRV);
@@ -217,12 +229,6 @@ void RenderCommand::BindShaderResource(uint32 Slot, FTexture2D* Texture2D, EShad
 	{
 		RenderDevice->GetContext()->CSSetShaderResources(Slot, 1, &SRV);
 	}
-}
-
-void RenderCommand::BindShaderResource(uint32 Slot, UTexture2D* Texture2D, EShaderBindFlagBits FlagBits, bool bRawData)
-{
-	FTexture2D* TextureResource = Texture2D ? Texture2D->GetResource() : nullptr;
-	BindShaderResource(Slot, TextureResource, FlagBits, bRawData);
 }
 
 void RenderCommand::UnbindShaderResource(uint32 Slot, EShaderBindFlagBits FlagBits)
