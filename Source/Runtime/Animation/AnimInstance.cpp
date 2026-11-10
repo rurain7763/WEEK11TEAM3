@@ -1,6 +1,7 @@
 #include "EnginePCH.h"
 #include "Animation/AnimInstance.h"
 #include "Animation/AnimNodes/AnimNode_Base.h"
+#include "Animation/AnimNodes/AnimNode_StateMachine.h"
 
 void UAnimInstance::NativeInitializeAnimation()
 {
@@ -49,6 +50,14 @@ void UAnimInstance::DispatchQueuedAnimEvents()
 		OnFireNotify.Broadcast(*Notify);
 	}
 	EventQueue.Reset();
+}
+
+bool UAnimInstance::PlayState(const FName& InMachineName, const FName& InStateName, float CrossfadeDuration)
+{
+	FAnimNode_StateMachine **Found = StateMachines.Find(InMachineName);
+	if (Found == nullptr) return false;
+
+	return (*Found)->RequestState(InStateName, CrossfadeDuration);
 }
 
 FTransform UAnimInstance::ConsumeRootMotion()

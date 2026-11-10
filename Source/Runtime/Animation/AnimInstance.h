@@ -41,6 +41,8 @@ public:
 		return bHasRootMotion;
 	}
 
+	bool PlayState(const FName& InMachineName, const FName& InStateName, float CrossfadeDuration);
+
 	FTransform ConsumeRootMotion();
 
 	template <typename T>

@@ -327,6 +327,9 @@ void FLuaBindings::RegisterLuaBindings(sol::state& Lua, FLuaCoroutineScheduler* 
 		},
 		"GetInt", [](UAnimInstance& Anim, sol::string_view Name) {
 			return Anim.GetInt(FName(Name.data(), Name.size()));
+		},
+		"PlayState", [](UAnimInstance& Anim, sol::string_view Name, sol::string_view StateName, float CrossfadeDuration) {
+			return Anim.PlayState(FName(Name.data(), Name.size()), FName(StateName.data(), StateName.size()), CrossfadeDuration);
 		}
 	);
 

@@ -35,6 +35,9 @@ function Tick(deltaTime)
     elseif(Input.IsKeyPressed(KeyCode.Num8)) then
         animInstance:SetInt("Action", 3)
         Log("Jump -> " .. animInstance:GetInt("Action"))
+    elseif(Input.IsKeyPressed(KeyCode.Num9)) then
+        local ok = animInstance:PlayState("", "Attack", 0.2)
+        Log("PlayState -> " .. tostring(ok))
     end
 end
 
