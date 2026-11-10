@@ -73,6 +73,7 @@ void USkeleton::Initialize(const TArray<FModelNode>& InNodes, const TArray<FMode
 	Bones = InBones;
 	DefaultPosePath.clear();
 	PosePath.clear();
+	SetAssetFilePath("");
 }
 
 // 모델 경로에 연결된 기본 포즈 복원
@@ -80,6 +81,7 @@ void USkeleton::LoadDefaultPose(const FString& SourcePath)
 {
 	DefaultPosePath = std::filesystem::absolute(PathUtils::FromUtf8(SourcePath + ".pose")).lexically_normal();
 	PosePath = DefaultPosePath;
+	SetAssetFilePath(PathUtils::ToUtf8(PosePath));
 	std::ifstream File(PosePath, std::ios::binary);
 	if (!File)
 	{
@@ -91,6 +93,7 @@ void USkeleton::LoadDefaultPose(const FString& SourcePath)
 	{
 		const auto SavedPath = PathUtils::FromUtf8(Document["PosePath"].get<FString>());
 		PosePath = (DefaultPosePath.parent_path() / SavedPath).lexically_normal();
+		SetAssetFilePath(PathUtils::ToUtf8(PosePath));
 		std::ifstream PoseFile(PosePath, std::ios::binary);
 		Document = FJsonValue::parse(PoseFile, nullptr, false);
 	}
@@ -184,6 +187,7 @@ bool USkeleton::SaveDefaultPose(const TArray<FMatrix>& LocalPose, const std::fil
 	}
 
 	PosePath = SavePath;
+	SetAssetFilePath(PathUtils::ToUtf8(PosePath));
 	for (const FModelBone& Bone : Bones)
 	{
 		Nodes[Bone.NodeIndex].LocalTransform = LocalPose[Bone.NodeIndex];

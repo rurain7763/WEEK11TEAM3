@@ -5,6 +5,13 @@
 #include "Core/Misc/FrameTime.h"
 #include <stdexcept>
 
+void UAnimSequence::Serialize(FStructuredArchive::FRecord Record)
+{
+	Super::Serialize(Record);
+
+	Record << SA_VALUE("EnableRootMotion", bEnableRootMotion);
+}
+
 void UAnimSequence::GetAnimationPose(const FAnimExtractContext& ExtractionContext, FPoseContext& PoseData) const
 {
 	UAnimDataModel* Data = GetDataModel();

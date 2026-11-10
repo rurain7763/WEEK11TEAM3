@@ -4,6 +4,7 @@ class UObject;
 class UWorld;
 class AActor;
 class UMovieSceneSequence;
+class UAnimSequence;
 class UAnimGraph;
 class UBlendSpace1D;
 
@@ -25,6 +26,12 @@ public:
 
 	static bool LoadSequence(UMovieSceneSequence* Sequence, const FString& Path);
 	static bool LoadSequenceFromBytes(UMovieSceneSequence* Sequence, const TArray<uint8>& Bytes);
+
+	static bool SaveAnimSequence(UAnimSequence* Sequence, const FString& Path);
+	static bool SaveAnimSequenceToBytes(UAnimSequence* Sequence, TArray<uint8>& OutBytes);
+
+	static bool LoadAnimSequence(UAnimSequence* Sequence, const FString& Path);
+	static bool LoadAnimSequenceFromBytes(UAnimSequence* Sequence, const TArray<uint8>& Bytes);
 
 	static bool SaveAnimGraph(UAnimGraph* Graph, const FString& Path);
 	static bool SaveAnimGraphToBytes(UAnimGraph* Graph, TArray<uint8>& OutBytes);

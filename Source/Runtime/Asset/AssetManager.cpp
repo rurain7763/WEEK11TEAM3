@@ -507,6 +507,7 @@ UTexture2D* UAssetManager::LoadTexture(const FString& InPath, bool bGenerateMips
 
 	UTexture2D* Asset = NewObject<UTexture2D>();
 	Asset->SetResource(std::move(Resource));
+	Asset->SetAssetFilePath(InPath);
 	RegisterAsset(InPath, Asset);
 
 	return Asset;
@@ -534,6 +535,7 @@ UFont* UAssetManager::LoadFontAtlas(const FString& JsonPath, const FString& Atla
 	}
 
 	RegisterAsset(JsonPath, Font);
+	Font->SetAssetFilePath(JsonPath);
 	return Font;
 }
 
@@ -553,6 +555,7 @@ UStaticMesh* UAssetManager::LoadObjStaticMesh(const FString& Path)
 	}
 
 	Get().RegisterAsset(Key, Mesh);
+	Mesh->SetAssetFilePath(Path);
 	return Mesh;
 }
 
@@ -573,17 +576,19 @@ void UAssetManager::LoadFbxModel(const FString& Path)
 	UAsset* Mesh = nullptr;
 	if (ModelData.IsSkeletal)
 	{
+		std::filesystem::path FPath = PathUtils::FromUtf8(Path);
+		FString SafeMeshName = PathUtils::MakeSafeFileName(FPath.stem().generic_string());
+
 		USkeleton* Skeleton = CreateSkeleton(ModelData);
 		Skeleton->LoadDefaultPose(Path);
 
 		USkeletalMesh* Mesh = CreateSkeletalMesh(ModelData);
 		Mesh->SetSkeleton(Skeleton);
 
-		std::filesystem::path SkeletonPath = PathUtils::FromUtf8(Path);
-		SkeletonPath.replace_filename(std::format("{}_Skeleton", SkeletonPath.stem().generic_string()));
+		std::filesystem::path SkeletonPath = FPath;
+		SkeletonPath.replace_filename(std::format("{}_Skeleton", SafeMeshName));
 
-		const FString SkeletonKey = MakeAssetKey(SkeletonPath.generic_string());
-		RegisterAsset(SkeletonKey, Skeleton);
+		RegisterAsset(MakeAssetKey(SkeletonPath.generic_string()), Skeleton);
 
 		for (int32 i = 0; i < ModelData.Animations.Num(); i++)
 		{
@@ -592,19 +597,27 @@ void UAssetManager::LoadFbxModel(const FString& Path)
 			UAnimSequence* AnimSequence = CreateAnimSequence(ModelAnimation);
 			AnimSequence->SetSkeleton(Skeleton);
 
-			std::filesystem::path AnimSequencePath = PathUtils::FromUtf8(Path);
-			AnimSequencePath.replace_filename(std::format("{}_{}", AnimSequencePath.stem().generic_string(), ModelAnimation.Name));
+			std::filesystem::path AnimSequenceFilePath = FPath;
+			AnimSequenceFilePath.replace_filename(std::format("{}_{}", SafeMeshName, PathUtils::MakeSafeFileName(ModelAnimation.Name)));
+			AnimSequenceFilePath.concat(".animsequence");
 
-			const FString AnimSequenceKey = MakeAssetKey(AnimSequencePath.generic_string());
-			RegisterAsset(AnimSequenceKey, AnimSequence);
+			AnimSequence->SetAssetFilePath(PathUtils::ToUtf8(AnimSequenceFilePath));
+			FJsonArchive::LoadAnimSequence(AnimSequence, AnimSequence->GetAssetFilePath());
+
+			std::filesystem::path AnimSequencePath = FPath;
+			AnimSequencePath.replace_filename(std::format("{}_{}", SafeMeshName, ModelAnimation.Name));
+
+			RegisterAsset(MakeAssetKey(PathUtils::ToUtf8(AnimSequencePath)), AnimSequence);
 		}
 
 		RegisterAsset(MeshKey, Mesh);
+		Mesh->SetAssetFilePath(Path);
 	}
 	else
 	{
 		UStaticMesh* Mesh = CreateStaticMesh(&ModelData.MeshData);
 		RegisterAsset(MeshKey, Mesh);
+		Mesh->SetAssetFilePath(Path);
 	}
 }
 
@@ -625,6 +638,7 @@ ULevelSequence* UAssetManager::LoadLevelSequence(const FString& Path)
 	}
 
 	RegisterAsset(Key, LevelSequence);
+	LevelSequence->SetAssetFilePath(Path);
 
 	return LevelSequence;
 }
@@ -646,6 +660,7 @@ UAnimGraph* UAssetManager::LoadAnimGraph(const FString& Path)
 	}
 
 	RegisterAsset(Key, AnimGraph);
+	AnimGraph->SetAssetFilePath(Path);
 
 	return AnimGraph;
 }
@@ -667,6 +682,7 @@ UBlendSpace1D* UAssetManager::LoadBlendSpace1D(const FString& Path)
 	}
 
 	RegisterAsset(Key, BlendSpace);
+	BlendSpace->SetAssetFilePath(Path);
 
 	return BlendSpace;
 }

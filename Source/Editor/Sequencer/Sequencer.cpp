@@ -163,6 +163,7 @@ void FLevelSequencePanel::LoadSequenceFile()
 	bDraggingFadeKey = false;
 	CameraCutError.clear();
 	OpenedSequencePath = SequencePath;
+	SampleSequence->SetAssetFilePath(OpenedSequencePath);
 	bSequenceDirty = false;
 	MovieScene = SampleSequence->GetMovieScene();
 	SequencePlayer = NewObject<ULevelSceneSequencePlayer>(Editor);
