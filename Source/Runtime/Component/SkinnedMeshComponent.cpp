@@ -369,7 +369,7 @@ void USkinnedMeshComponent::UpdateSkinnedVertices()
 		{
 			const int32 BoneIdx = Inf.BoneIndices[i];
 			const float W = Inf.Weights[i];
-			if (W <= 0.0f)
+			if (W <= 0.0f || BoneIdx < 0 || BoneIdx >= BoneCount)
 			{
 				continue;
 			}

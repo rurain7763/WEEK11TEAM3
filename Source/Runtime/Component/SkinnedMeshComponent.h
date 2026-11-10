@@ -54,6 +54,8 @@ public:
 	void SetCPUSkinningEnabled(bool bEnable);
 	bool IsCPUSkinningEnabled() const { return bCPUSkinning; }
 
+	FVertexBuffer* GetCPUSkinVertexBuffer() { return CPUSkinVertexBuffer.get(); }
+
 protected:
 	USkeletalMesh* SkeletalMesh = nullptr;
 	USkeleton* Skeleton = nullptr;
