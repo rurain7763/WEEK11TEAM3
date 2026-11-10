@@ -1,6 +1,10 @@
 #include "EnginePCH.h"
 #include "AnimGraphEditor.h"
 #include "Animation/AnimSequence.h"
+#include "Animation/Graph/AnimGraph.h"
+#include "Asset/AssetManager.h"
+#include "Serialization/JsonArchive.h"
+#include "UObject/UObjectGlobals.h"
 #include "UObject/UObjectIterator.h"
 #include "Core/PathUtils.h"
 
@@ -104,6 +108,13 @@ bool FAnimGraphEditor::Load()
 		std::ifstream File(PathUtils::FromUtf8(Path));
 		if (!File) throw std::runtime_error("Could not open the graph file.");
 		File >> Document;
+		// Keep editor layout from disk, but display the same asset used by PIE.
+		EditingGraph = UAssetManager::Get().LoadAnimGraph(Path);
+		if (!EditingGraph || !FJsonArchive::SaveAnimGraphToBytes(EditingGraph, SavedGraphBytes))
+			throw std::runtime_error("Could not load the AnimGraph asset.");
+		const auto AssetDocument = nlohmann::json::parse(SavedGraphBytes.begin(), SavedGraphBytes.end());
+		Document["AnimGraph"] = AssetDocument.at("AnimGraph");
+		AppliedGraphText = Document["AnimGraph"].dump();
 		if (Document.at("Version").get<int32>() != 1) throw std::runtime_error("Unsupported AnimGraph version.");
 		auto& Graph = Document.at("AnimGraph");
 		Graph.at("RootNodeID").get<int32>();
@@ -374,6 +385,57 @@ bool FAnimGraphEditor::ValidateForSave()
 	return true;
 }
 
+bool FAnimGraphEditor::ApplyGraphDocument()
+{
+	if (!EditingGraph) return false;
+	try
+	{
+		const FString GraphText = Document.at("AnimGraph").dump();
+		if (GraphText == AppliedGraphText) return true;
+		// Deserialize into a staging asset so a failed conversion cannot partially
+		// overwrite the shared asset referenced by scene components.
+		const FString Text = Document.dump();
+		TArray<uint8> Bytes;
+		Bytes.SetNum(static_cast<int32>(Text.size()));
+		std::memcpy(Bytes.GetData(), Text.data(), Text.size());
+		UAnimGraph* Staged = NewObject<UAnimGraph>();
+		bool bConverted = false;
+		try { bConverted = FJsonArchive::LoadAnimGraphFromBytes(Staged, Bytes); }
+		catch (...) { delete Staged; throw; }
+		if (!bConverted)
+		{
+			delete Staged;
+			throw std::runtime_error("Could not apply graph edits to the asset.");
+		}
+		EditingGraph->SetRootNodeID(Staged->GetRootNodeID());
+		EditingGraph->GetNodes() = std::move(Staged->GetNodes());
+		EditingGraph->GetAnimSequencePlayers() = std::move(Staged->GetAnimSequencePlayers());
+		EditingGraph->GetAnimTwoWayBlends() = std::move(Staged->GetAnimTwoWayBlends());
+		EditingGraph->GetBlendSpacePlayers() = std::move(Staged->GetBlendSpacePlayers());
+		EditingGraph->GetAnimStateMachines() = std::move(Staged->GetAnimStateMachines());
+		EditingGraph->GetAnimParameters() = std::move(Staged->GetAnimParameters());
+		delete Staged;
+		AppliedGraphText = GraphText;
+		return true;
+	}
+	catch (const std::exception& Error)
+	{
+		bStatusError = true; Status = Error.what(); return false;
+	}
+}
+
+bool FAnimGraphEditor::RestoreSavedGraph()
+{
+	if (!EditingGraph || !FJsonArchive::LoadAnimGraphFromBytes(EditingGraph, SavedGraphBytes))
+	{
+		bStatusError = true; Status = "Could not discard graph edits."; return false;
+	}
+	const auto Saved = nlohmann::json::parse(SavedGraphBytes.begin(), SavedGraphBytes.end());
+	Document["AnimGraph"] = Saved.at("AnimGraph");
+	AppliedGraphText = Document["AnimGraph"].dump();
+	return true;
+}
+
 bool FAnimGraphEditor::Save()
 {
 	bStatusError = true;
@@ -381,10 +443,17 @@ bool FAnimGraphEditor::Save()
 	std::filesystem::path TemporaryPath;
 	try
 	{
-		auto& Layout = Document["Editor"]["Nodes"];
+		if (!ApplyGraphDocument()) return false;
+		TArray<uint8> AssetBytes;
+		if (!FJsonArchive::SaveAnimGraphToBytes(EditingGraph, AssetBytes))
+			throw std::runtime_error("Could not serialize the AnimGraph asset.");
+		// Save runtime fields from the actual asset, then attach editor-only layout.
+		auto Output = nlohmann::json::parse(AssetBytes.begin(), AssetBytes.end());
+		if (Document.contains("Editor")) Output["Editor"] = Document["Editor"];
+		auto& Layout = Output["Editor"]["Nodes"];
 		Layout = nlohmann::json::array();
 		for (const auto& Node : Nodes) Layout.push_back({ {"NodeID", Node->ID}, {"X", Node->Position.x}, {"Y", Node->Position.y} });
-		auto& StateLayout = Document["Editor"]["States"];
+		auto& StateLayout = Output["Editor"]["States"];
 		StateLayout = nlohmann::json::array();
 		for (const auto& Node : Nodes) if (Node->Type == 3)
 		{
@@ -397,12 +466,15 @@ bool FAnimGraphEditor::Save()
 		for (int32 Index = 1; std::filesystem::exists(TemporaryPath); ++Index)
 			TemporaryPath = Destination.wstring() + L".tmp" + std::to_wstring(Index);
 		std::ofstream File(TemporaryPath, std::ios::binary);
-		const FString Text = Document.dump(4);
+		const FString Text = Output.dump(4);
 		File.write(Text.data(), static_cast<std::streamsize>(Text.size())); File.flush();
 		if (!File) throw std::runtime_error("Could not save the graph file.");
 		File.close();
 		if (!File || !MoveFileExW(TemporaryPath.c_str(), Destination.c_str(), MOVEFILE_REPLACE_EXISTING | MOVEFILE_WRITE_THROUGH))
 			throw std::runtime_error("Could not replace the graph file; original file was kept.");
+		SavedGraphBytes = std::move(AssetBytes);
+		Document = std::move(Output);
+		AppliedGraphText = Document["AnimGraph"].dump();
 		bDirty = false; bStatusError = false; Status = "Saved.";
 		return true;
 	}
@@ -432,7 +504,7 @@ void FAnimGraphEditor::DrawCloseConfirmation()
 			if (Save()) { bCloseApproved = true; ImGui::CloseCurrentPopup(); }
 		}
 		ImGui::SameLine();
-		if (ImGui::Button("Discard")) { bCloseApproved = true; ImGui::CloseCurrentPopup(); }
+		if (ImGui::Button("Discard") && RestoreSavedGraph()) { bCloseApproved = true; ImGui::CloseCurrentPopup(); }
 		ImGui::SameLine();
 		if (ImGui::Button("Cancel")) ImGui::CloseCurrentPopup();
 		if (bStatusError && !Status.empty()) ImGui::TextWrapped("%s", Status.c_str());
@@ -984,4 +1056,5 @@ void FAnimGraphEditor::OnRender()
 		if (ImGui::Begin(PropertiesName.c_str())) DrawDetails();
 		ImGui::End();
 	}
+	if (bLoaded && !bCloseApproved) ApplyGraphDocument();
 }
