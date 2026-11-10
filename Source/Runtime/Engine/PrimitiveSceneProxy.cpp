@@ -8,6 +8,7 @@
 #include "Render/Renderer.h"
 #include "Engine/Scene.h"
 #include "Render/Buffer.h"
+#include "Core/Stats/SkinningStats.h"
 
 FPrimitiveSceneProxy::FPrimitiveSceneProxy(UPrimitiveComponent* InComponent)
     : Component(InComponent)
@@ -197,8 +198,10 @@ void FSkeletalMeshSceneProxy::BindSRVs() const
 
 bool FSkeletalMeshSceneProxy::UpdateBoneMatrixBuffer()
 {
+    SCOPE_CYCLE_COUNTER(STAT_SkinningGPUBoneUpload);
+
     const auto* ActualComponent = Cast<USkeletalMeshComponent>(GetComponent());
-    const TArray<FMatrix>& BoneMatrices = ActualComponent->GetBoneMatrices();
+    const TArray<FMatrix>& BoneMatrices = ActualComponent->GetSkinningMatrices();
     const uint32 Count = BoneMatrices.Num();
     if (Count == 0)
     {
@@ -245,6 +248,7 @@ bool FSkeletalMeshSceneProxy::UpdateBoneMatrixBuffer()
     const D3D11_BOX UploadRange{ 0, 0, 0, static_cast<UINT>(Count * sizeof(FMatrix)), 1, 1 };
     Context->UpdateSubresource(BoneMatrixBuffer.Get(), 0, &UploadRange, BoneMatrices.GetData(), 0, 0);
 
+    FSkinningStats::AddGPUMesh(static_cast<int32>(Count), static_cast<int64>(Count) * sizeof(FMatrix));
     return true;
 }
 
@@ -255,7 +259,11 @@ void FSkeletalMeshSceneProxy::UpdateRenderState()
     auto* ActualComponent = Cast<USkeletalMeshComponent>(GetComponent());
     Mesh = ActualComponent->GetSkeletalMesh();
 
-    if (!UpdateBoneMatrixBuffer())
+    const bool bCPUSkin = ActualComponent->IsCPUSkinningEnabled()
+        && ActualComponent->GetCPUSkinVertexBuffer();
+
+    // CPU 스킨이면 본 행렬 업로드를 건너뛴다
+    if (!bCPUSkin && !UpdateBoneMatrixBuffer())
     {
         RenderState.reset();
         return;
@@ -299,7 +307,7 @@ void FSkeletalMeshSceneProxy::UpdateRenderState()
     }
 
     RenderState->LODCount = 1;
-    RenderState->bUseSkinning = true;
+    RenderState->bUseSkinning = !bCPUSkin;
 
     const FModelMeshData& ModelMeshData = Mesh->GetMeshData();
 
@@ -314,9 +322,20 @@ void FSkeletalMeshSceneProxy::UpdateRenderState()
     }
 
     FCachedMeshLOD& LOD = RenderState->LODs[0];
-    LOD.VertexBuffers[0] = Mesh->GetVertexBuffer();
-    LOD.VertexBuffers[1] = Mesh->GetSkinWeightBuffer();
-    LOD.VertexBufferCount = 2;
+
+    if (bCPUSkin)
+    {
+        LOD.VertexBuffers[0] = ActualComponent->GetCPUSkinVertexBuffer();
+        // CPU 스키닝에서는 스키닝이 이미 수행되어서 스킨 가중치를 넘길 필요 X
+        LOD.VertexBuffers[1] = nullptr;
+        LOD.VertexBufferCount = 1;
+    }
+    else
+    {
+        LOD.VertexBuffers[0] = Mesh->GetVertexBuffer();
+        LOD.VertexBuffers[1] = Mesh->GetSkinWeightBuffer();
+        LOD.VertexBufferCount = 2;
+    }
     LOD.IndexBuffer = Mesh->GetIndexBuffer();
     LOD.FirstSection = 0;
     LOD.NumSections = ModelMeshData.Sections.Num();

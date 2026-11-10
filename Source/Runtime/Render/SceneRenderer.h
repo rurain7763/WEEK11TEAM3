@@ -3,6 +3,7 @@
 #include "ShadowFilterSettings.h"
 #include "ViewMode.h"
 #include "Camera/CameraTypes.h"
+#include "Render/GPUTimer.h"
 
 class FDepthViewRenderer;
 struct FShadowInfo;
@@ -99,4 +100,7 @@ private:
 	TArray<FShadowInfo> ShadowAtlasInfos;
 	bool bShadowAtlasRenderedThisFrame = false;
 	bool bShadowAtlasDrawSkeletalMeshes = true;
+
+	// 씬 렌더링 GPU 시간. CPU/GPU 스키닝 비교용 (stat skinning)
+	FGPUTimer SceneGPUTimer;
 };
