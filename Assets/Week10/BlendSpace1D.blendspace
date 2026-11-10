@@ -1,0 +1,25 @@
+{
+    "Blend1D": {
+        "Properties": {},
+        "Samples": [
+            {
+                "Animation": "Models/FbxTest/UAL1_RM_Armature|Idle_Paper",
+                "SampleValue": {
+                    "X": 0.0,
+                    "Y": 0.0,
+                    "Z": 0.0
+                }
+            },
+            {
+                "Animation": "Models/FbxTest/UAL1_RM_Armature|Climb_Enter",
+                "SampleValue": {
+                    "X": 100.0,
+                    "Y": 0.0,
+                    "Z": 0.0
+                }
+            }
+        ],
+        "Skeleton": "Models/FbxTest/UAL1_RM_Skeleton"
+    },
+    "Version": 1
+}

@@ -1,0 +1,260 @@
+{
+    "AnimGraph": {
+        "AnimSequencePlayers": [
+            {
+                "Looping": false,
+                "SequencePath": "Models/FbxTest/UAL1_Armature|Punch_Jab",
+                "Speed": 1.0
+            },
+            {
+                "Looping": false,
+                "SequencePath": "Models/FbxTest/UAL1_Armature|Hit_Chest",
+                "Speed": 1.0
+            },
+            {
+                "Looping": false,
+                "SequencePath": "Models/FbxTest/UAL1_Armature|Jump_Start",
+                "Speed": 1.0
+            }
+        ],
+        "AnimTwoWayBlends": [],
+        "BlendSpacePlayers": [
+            {
+                "BlendSpacePath": "Week10/Locomotion.blendspace",
+                "Looping": true,
+                "Speed": 1.0,
+                "X": 0.0,
+                "Y": 0.0
+            }
+        ],
+        "Nodes": [
+            {
+                "ActualType": 0,
+                "NodeID": 1,
+                "Type": 2
+            },
+            {
+                "ActualType": 0,
+                "NodeID": 2,
+                "Type": 0
+            },
+            {
+                "ActualType": 1,
+                "NodeID": 3,
+                "Type": 0
+            },
+            {
+                "ActualType": 2,
+                "NodeID": 4,
+                "Type": 0
+            },
+            {
+                "ActualType": 0,
+                "NodeID": 5,
+                "Type": 3
+            }
+        ],
+        "Parameters": [
+            {
+                "Name": "Action",
+                "Type": 0,
+                "Value": 0
+            }
+        ],
+        "Properties": {},
+        "RootNodeID": 5,
+        "StateMachines": [
+            {
+                "AnyTransitions": [
+                    {
+                        "Condition": {
+                            "ComparisonOperator": 0,
+                            "ParameterName": "Action",
+                            "Value": 2
+                        },
+                        "CrossfadeDuration": 0.1,
+                        "NextStateID": 2,
+                        "PreviousStateID": -1
+                    }
+                ],
+                "InitStateID": 0,
+                "States": [
+                    {
+                        "Name": "Locomotion",
+                        "NodeID": 1,
+                        "StateID": 0
+                    },
+                    {
+                        "Name": "Attack",
+                        "NodeID": 2,
+                        "StateID": 1
+                    },
+                    {
+                        "Name": "Hit",
+                        "NodeID": 3,
+                        "StateID": 2
+                    },
+                    {
+                        "Name": "Jump",
+                        "NodeID": 4,
+                        "StateID": 3
+                    }
+                ],
+                "Transitions": [
+                    {
+                        "Condition": {
+                            "ComparisonOperator": 0,
+                            "ParameterName": "Action",
+                            "Value": 1
+                        },
+                        "CrossfadeDuration": 0.2,
+                        "NextStateID": 1,
+                        "PreviousStateID": 0
+                    },
+                    {
+                        "Condition": {
+                            "ComparisonOperator": 0,
+                            "ParameterName": "Action",
+                            "Value": 3
+                        },
+                        "CrossfadeDuration": 0.2,
+                        "NextStateID": 3,
+                        "PreviousStateID": 0
+                    },
+                    {
+                        "Condition": {
+                            "ComparisonOperator": 0,
+                            "ParameterName": "Action",
+                            "Value": 0
+                        },
+                        "CrossfadeDuration": 0.2,
+                        "NextStateID": 0,
+                        "PreviousStateID": 1
+                    },
+                    {
+                        "Condition": {
+                            "ComparisonOperator": 0,
+                            "ParameterName": "Action",
+                            "Value": 3
+                        },
+                        "CrossfadeDuration": 0.2,
+                        "NextStateID": 3,
+                        "PreviousStateID": 1
+                    },
+                    {
+                        "Condition": {
+                            "ComparisonOperator": 0,
+                            "ParameterName": "Action",
+                            "Value": 0
+                        },
+                        "CrossfadeDuration": 0.2,
+                        "NextStateID": 0,
+                        "PreviousStateID": 2
+                    },
+                    {
+                        "Condition": {
+                            "ComparisonOperator": 0,
+                            "ParameterName": "Action",
+                            "Value": 1
+                        },
+                        "CrossfadeDuration": 0.2,
+                        "NextStateID": 1,
+                        "PreviousStateID": 2
+                    },
+                    {
+                        "Condition": {
+                            "ComparisonOperator": 0,
+                            "ParameterName": "Action",
+                            "Value": 3
+                        },
+                        "CrossfadeDuration": 0.2,
+                        "NextStateID": 3,
+                        "PreviousStateID": 2
+                    },
+                    {
+                        "Condition": {
+                            "ComparisonOperator": 0,
+                            "ParameterName": "Action",
+                            "Value": 0
+                        },
+                        "CrossfadeDuration": 0.2,
+                        "NextStateID": 0,
+                        "PreviousStateID": 3
+                    },
+                    {
+                        "Condition": {
+                            "ComparisonOperator": 0,
+                            "ParameterName": "Action",
+                            "Value": 1
+                        },
+                        "CrossfadeDuration": 0.2,
+                        "NextStateID": 1,
+                        "PreviousStateID": 3
+                    }
+                ]
+            }
+        ]
+    },
+    "Editor": {
+        "Nodes": [
+            {
+                "NodeID": 1,
+                "X": 60.0,
+                "Y": 60.0
+            },
+            {
+                "NodeID": 2,
+                "X": 60.0,
+                "Y": 230.0
+            },
+            {
+                "NodeID": 3,
+                "X": 60.0,
+                "Y": 400.0
+            },
+            {
+                "NodeID": 4,
+                "X": 60.0,
+                "Y": 570.0
+            },
+            {
+                "NodeID": 5,
+                "X": 560.0,
+                "Y": 260.0
+            }
+        ],
+        "States": [
+            {
+                "MachineNodeID": 5,
+                "StateID": 0,
+                "X": 837.8291625976563,
+                "Y": 126.64935302734375
+            },
+            {
+                "MachineNodeID": 5,
+                "StateID": 1,
+                "X": 1421.238037109375,
+                "Y": 670.3356323242188
+            },
+            {
+                "MachineNodeID": 5,
+                "StateID": 2,
+                "X": 277.0,
+                "Y": 668.0
+            },
+            {
+                "MachineNodeID": 5,
+                "StateID": 3,
+                "X": 866.0020751953125,
+                "Y": 1165.8076171875
+            },
+            {
+                "MachineNodeID": 5,
+                "StateID": -1,
+                "X": -139.77064514160156,
+                "Y": 379.5214538574219
+            }
+        ]
+    },
+    "Version": 1
+}
