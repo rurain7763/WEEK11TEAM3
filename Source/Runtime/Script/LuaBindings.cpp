@@ -18,7 +18,9 @@
 #include "Component/PrimitiveComponent.h"
 #include "Component/ScriptComponent.h"
 #include "Component/SphereComponent.h"
+#include "Component/SkeletalMeshComponent.h"
 #include "Camera/CameraComponent.h"
+#include "Animation/AnimInstance.h"
 
 #include "Math/Vector.h"
 #include "Math/Vector2.h"
@@ -304,6 +306,38 @@ void FLuaBindings::RegisterLuaBindings(sol::state& Lua, FLuaCoroutineScheduler* 
 		"SetConstrainAspectRatio", &UCameraComponent::SetConstrainAspectRatio
 	);
 
+	Lua.new_usertype<UAnimInstance>(
+		"AnimInstance",
+		sol::no_constructor,
+		sol::base_classes, sol::bases<UObject>(),
+		"SetFloat", [](UAnimInstance& Anim, sol::string_view Name, float InValue) {
+			Anim.SetFloat(FName(Name.data(), Name.size()), InValue);
+		},
+		"SetBool", [](UAnimInstance& Anim, sol::string_view Name, bool InValue) {
+			Anim.SetBool(FName(Name.data(), Name.size()), InValue);
+		},
+		"SetInt", [](UAnimInstance& Anim, sol::string_view Name, int32 InValue) {
+			Anim.SetInt(FName(Name.data(), Name.size()), InValue);
+		},
+		"GetFloat", [](UAnimInstance& Anim, sol::string_view Name) {
+			return Anim.GetFloat(FName(Name.data(), Name.size()));
+		},
+		"GetBool", [](UAnimInstance& Anim, sol::string_view Name) {
+			return Anim.GetBool(FName(Name.data(), Name.size()));
+		},
+		"GetInt", [](UAnimInstance& Anim, sol::string_view Name) {
+			return Anim.GetInt(FName(Name.data(), Name.size()));
+		}
+	);
+
+	Lua.new_usertype<USkeletalMeshComponent>(
+		"SkeletalMeshComponent",
+		sol::no_constructor,
+		sol::base_classes, sol::bases<UPrimitiveComponent, USceneComponent, UActorComponent, UObject>(),
+		"StaticClass", &USkeletalMeshComponent::StaticClass,
+		"GetAnimInstance", &USkeletalMeshComponent::GetAnimInstance
+	);
+
 	Lua.new_usertype<FWaitForSeconds>(
 		"WaitForSeconds",
 		sol::constructors<FWaitForSeconds(double)>(),
@@ -534,6 +568,10 @@ static sol::object ConvertComponentToActual(UActorComponent* Component)
 	if (UCameraComponent* Camera = Cast<UCameraComponent>(Component))
 	{
 		return sol::make_object(FLuaScriptSystem::Get().GetLuaState(), Camera);
+	}
+
+	if (USkeletalMeshComponent* SkeletalMesh = Cast<USkeletalMeshComponent>(Component)) {
+		return sol::make_object(FLuaScriptSystem::Get().GetLuaState(), SkeletalMesh);
 	}
 
 	return sol::object();
