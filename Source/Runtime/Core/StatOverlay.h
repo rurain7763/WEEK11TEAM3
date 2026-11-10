@@ -12,6 +12,7 @@ enum class EStatFlags : uint32
 	Profile = 1 << 2,
 	Shadow = 1 << 3,
 	Decal = 1 << 4,
+	Skinning = 1 << 5,
 };
 
 struct FShadowStats {
@@ -49,6 +50,14 @@ public:
 	static EStatFlags GetFlags() { return Flags; }
 	static bool IsEnabled(EStatFlags Flag) { return HasFlag(Flags, Flag); }
 	static bool IsAnyEnabled() { return Flags != EStatFlags::None; }
+	// 설정 패널 체크박스처럼 콘솔 명령 없이 켜고 끌 때 쓴다
+	static void SetEnabled(EStatFlags Flag, bool bEnable)
+	{
+		if (bEnable)
+			Flags |= Flag;
+		else
+			Flags &= ~Flag;
+	}
 
 	// 샘플 구간 평균 FPS와 프레임 시간(ms). 매 프레임 값은 흔들려서 평균만 노출한다.
 	static float GetFPS() { return DisplayFPS; }

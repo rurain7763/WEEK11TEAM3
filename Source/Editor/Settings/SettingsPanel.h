@@ -35,6 +35,10 @@ struct FEditorSettings
 	bool bDrawShadows = true;
 	// 끄면 감마 공간 렌더링이 되어 Linear 작업 흐름과 비교할 수 있다 (ColorWorkflow.h)
 	bool bLinearWorkflow = true;
+	// 모든 스킨드 메시를 CPU 스키닝으로 그린다. 끄면 컴포넌트 설정을 따른다 (기본 GPU)
+	bool bCPUSkinning = false;
+	// CPU/GPU 스키닝 비교 오버레이 (stat skinning). 저장하지 않는다
+	bool bShowSkinningStats = false;
 	// HDR 씬 컬러를 표시 범위로 압축하는 단계라 Linear 작업 흐름의 Lit 뷰에서만 적용된다
 	bool bToneMapping = true;
 	// ACES fitted는 중간 회색(0.18)을 어둡게 내리므로, +0.6EV에서 톤매핑 전과 비슷한 밝기가 된다
