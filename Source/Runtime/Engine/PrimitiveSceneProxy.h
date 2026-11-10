@@ -6,6 +6,7 @@
 #include <wrl/client.h>
 
 class FScene;
+class FConstantBuffer;
 class UPrimitiveComponent;
 class UStaticMeshComponent;
 class USkeletalMeshComponent;
@@ -128,4 +129,8 @@ private:
     Microsoft::WRL::ComPtr<ID3D11Buffer> BoneMatrixBuffer;
     Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> BoneMatrixSRV;
     uint32 BoneMatrixCapacity = 0;
+
+    TUniquePtr<FConstantBuffer> BoneWeightCB;
+    bool bUploadedBoneWeightEnabled = false;
+    int32 UploadedHeatmapBoneIndex = -1;
 };
