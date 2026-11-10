@@ -9,7 +9,8 @@ enum class EAnimParameterType
 {
 	Int32,
 	Bool,
-	Float
+	Float,
+	Trigger
 };
 
 union FAnimParameterValue
@@ -17,6 +18,7 @@ union FAnimParameterValue
 	int32 Int32;
 	float Float;
 	bool Bool;
+	bool Trigger;
 };
 
 struct FAnimParameter
@@ -37,7 +39,9 @@ public:
 			return;
 		}
 
-		FAnimParameter NewParameter;
+		int32 ParamIndex = Parameters.Num();
+
+		FAnimParameter& NewParameter = Parameters.AddDefaulted_GetRef();
 		NewParameter.Name = Name;
 		if constexpr (std::is_same_v<T, int32>)
 		{
@@ -55,11 +59,53 @@ public:
 			NewParameter.Value.Bool = InitValue;
 		}
 
-		int32 ParamIndex = Parameters.Emplace(NewParameter);
+		ParameterNameToIndex[Name] = ParamIndex;
+	}
+
+	void AddTrigger(const FName& Name)
+	{
+		if (HasParameter(Name))
+		{
+			return;
+		}
+
+		int32 ParamIndex = Parameters.Num();
+
+		FAnimParameter& NewParameter = Parameters.AddDefaulted_GetRef();
+		NewParameter.Name = Name;
+		NewParameter.Type = EAnimParameterType::Trigger;
+		NewParameter.Value.Trigger = false;
+
 		ParameterNameToIndex[Name] = ParamIndex;
 	}
 
 	void RemoveParameter(FName Name);
+
+	void SetTrigger(const FName& Name)
+	{
+		int32 ParamIndex = ParameterNameToIndex[Name];
+
+		FAnimParameter& Param = Parameters[ParamIndex];
+		if (Param.Type != EAnimParameterType::Trigger)
+		{
+			return;
+		}
+
+		Param.Value.Trigger = true;
+	}
+
+	void ResetTrigger(const FName& Name)
+	{
+		int32 ParamIndex = ParameterNameToIndex[Name];
+
+		FAnimParameter& Param = Parameters[ParamIndex];
+		if (Param.Type != EAnimParameterType::Trigger)
+		{
+			return;
+		}
+
+		Param.Value.Trigger = false;
+	}
 
 	bool HasParameter(const FName& Name) const
 	{

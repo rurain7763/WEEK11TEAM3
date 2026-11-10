@@ -43,6 +43,8 @@ struct FAnimStateTransition
 	FAnimTransitionCondition Condition;
 	int32 NextState = -1;
 	float CrossfadeDuration = 0.f;
+	bool bHasExitTime = false;
+	float ExitTime = 1.f;
 };
 
 struct FAnimActiveTransition
