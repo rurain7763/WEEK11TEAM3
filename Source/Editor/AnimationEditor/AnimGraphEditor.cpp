@@ -123,7 +123,7 @@ bool FAnimGraphEditor::Load()
 			if (Node->Type < 0 || Node->Type > 3 || Node->DataIndex < 0
 				|| Node->DataIndex >= static_cast<int32>(Graph[DataArrayName(Node->Type)].size()))
 				throw std::runtime_error("Invalid node type or data index.");
-			const auto& Value = Data(*Node);
+			auto& Value = Data(*Node);
 			if (Node->Type == 0)
 			{
 				Value.at("SequencePath").get<FString>(); Value.at("Looping").get<bool>(); Value.at("Speed").get<float>();
@@ -140,6 +140,7 @@ bool FAnimGraphEditor::Load()
 			else
 			{
 				Value.at("InitStateID").get<int32>();
+				if (!Value.contains("Name") || !Value["Name"].is_string()) Value["Name"] = "Default";
 				for (const char* Field : { "States", "Transitions", "AnyTransitions" })
 					if (!Value.at(Field).is_array()) throw std::runtime_error("StateMachine fields must be arrays.");
 				TSet<int32> IDs;
@@ -277,7 +278,8 @@ void FAnimGraphEditor::AddNode(int32 Type)
 	if (Type == 0) Values.push_back({ {"SequencePath", ""}, {"Looping", true}, {"Speed", 1.f} });
 	else if (Type == 1) Values.push_back({ {"NodeIDA", -1}, {"NodeIDB", -1}, {"Alpha", 0.5f} });
 	else if (Type == 2) Values.push_back({ {"BlendSpacePath", ""}, {"Looping", true}, {"Speed", 1.f}, {"X", 0.f}, {"Y", 0.f} });
-	else Values.push_back({ {"InitStateID", -1}, {"States", nlohmann::json::array()},
+	else Values.push_back({ {"InitStateID", -1}, {"Name", "StateMachine" + std::to_string(Node->ID)},
+		{"States", nlohmann::json::array()},
 		{"AnyTransitions", nlohmann::json::array()}, {"Transitions", nlohmann::json::array()} });
 	Graph["Nodes"].push_back({ {"NodeID", Node->ID}, {"Type", Type}, {"ActualType", Node->DataIndex} });
 	for (auto& Other : Nodes) Other->bSelected = false;
@@ -736,6 +738,8 @@ void FAnimGraphEditor::DrawStateMachineDetails(FNode& Machine)
 {
 	if (ImGui::Button("Open StateMachine")) { ViewedMachineID = Machine.ID; SelectedStateID = -1; }
 	auto& Value = Data(Machine);
+	if (!Value.contains("Name") || !Value["Name"].is_string()) Value["Name"] = "Default";
+	if (EditGraphText("Name", Value["Name"])) bDirty = true;
 	DrawStateCombo("Entry State", Machine, Value["InitStateID"]);
 	ImGui::TextWrapped("Right-click the StateMachine canvas to add a state.");
 	int32 RemoveID = -1;
