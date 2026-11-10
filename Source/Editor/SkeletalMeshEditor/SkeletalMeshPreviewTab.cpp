@@ -84,6 +84,12 @@ void FSkeletalMeshPreviewTab::DrawPreviewToolbar()
 		ImGui::SameLine();
 		ImGui::TextDisabled("%s", bPoseSaveFailed ? "Pose save failed" : "Unsaved changes");
 	}
+
+	if (ImGui::Checkbox("Bone Weight", &bShowBoneWeights))
+	{
+		UpdateBoneWeightVisualization();
+	}
+		
 }
 
 // 포즈 저장 파일 경로 선택
@@ -226,9 +232,16 @@ void FSkeletalMeshPreviewTab::UpdateBoneGizmo(const bool bInputEnabled)
 	bPoseSaveFailed = false;
 }
 
+void FSkeletalMeshPreviewTab::UpdateBoneWeightVisualization()
+{
+	MeshActor->GetSkeletalMeshComponent()->SetBoneWeightVisualization(bShowBoneWeights, SelectedBone);
+}
+
 void FSkeletalMeshPreviewTab::OnBoneSelected(int32 BoneIndex)
 {
 	SelectedBone = BoneIndex;
+	SelectedBone = BoneIndex;
+	UpdateBoneWeightVisualization();
 	if (SelectedBone < 0)
 	{
 		BoneGizmo.SetTarget(nullptr);

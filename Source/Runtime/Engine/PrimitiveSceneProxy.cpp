@@ -7,6 +7,7 @@
 #include "Render/Mesh.h"
 #include "Render/Renderer.h"
 #include "Engine/Scene.h"
+#include "Render/Buffer.h"
 
 FPrimitiveSceneProxy::FPrimitiveSceneProxy(UPrimitiveComponent* InComponent)
     : Component(InComponent)
@@ -186,6 +187,12 @@ void FSkeletalMeshSceneProxy::BindSRVs() const
 {
     ID3D11ShaderResourceView* SRV = BoneMatrixSRV.Get();
     RenderCommand::GetContext()->VSSetShaderResources(13, 1, &SRV);
+
+    ID3D11Buffer* Buffer = BoneWeightCB ? BoneWeightCB->GetBuffer() : nullptr;
+
+    auto* Context = RenderCommand::GetContext();
+    Context->VSSetConstantBuffers(8, 1, &Buffer);
+    Context->PSSetConstantBuffers(8, 1, &Buffer);
 }
 
 bool FSkeletalMeshSceneProxy::UpdateBoneMatrixBuffer()
@@ -257,6 +264,38 @@ void FSkeletalMeshSceneProxy::UpdateRenderState()
     if (!Mesh)
     {
         return;
+    }
+
+    struct FBoneWeightConstants
+    {
+        uint32 Enabled;
+        int32 BoneIndex;
+        uint32 Padding[2];
+    };
+    static_assert(sizeof(FBoneWeightConstants) == 16);
+
+    const bool bEnabled = ActualComponent->IsBoneWeightVisualizationEnabled();
+    const int32 BoneIndex = ActualComponent->GetHeatmapBoneIndex();
+
+    if (!BoneWeightCB || bEnabled != bUploadedBoneWeightEnabled || BoneIndex != UploadedHeatmapBoneIndex)
+    {
+        if (!BoneWeightCB)
+        {
+            BoneWeightCB = RenderCommand::CreateConstantBuffer(sizeof(FBoneWeightConstants));
+        }
+
+        if (BoneWeightCB && BoneWeightCB->GetBuffer())
+        {
+            const FBoneWeightConstants Constants{ bEnabled ? 1u : 0u, BoneIndex,{} };
+            RenderCommand::UpdateBufferData(BoneWeightCB.get(), &Constants);
+
+            bUploadedBoneWeightEnabled = bEnabled;
+            UploadedHeatmapBoneIndex = BoneIndex;
+        }
+        else
+        {
+            BoneWeightCB.reset();
+        }
     }
 
     RenderState->LODCount = 1;

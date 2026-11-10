@@ -193,3 +193,15 @@ FPrimitiveSceneProxy* USkeletalMeshComponent::CreateSceneProxy()
 {
 	return new FSkeletalMeshSceneProxy(this);
 }
+
+void USkeletalMeshComponent::SetBoneWeightVisualization(bool bEnabled, int32 BoneIndex)
+{
+	if (bBoneWeightVisualizationEnabled == bEnabled && HeatmapBoneIndex == BoneIndex)
+	{
+		return;
+	}
+
+	bBoneWeightVisualizationEnabled = bEnabled;
+	HeatmapBoneIndex = BoneIndex;
+	MarkRenderStateDirty();
+}
