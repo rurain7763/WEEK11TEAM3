@@ -12,8 +12,8 @@ struct FAnimNode_SequencePlayer : public FAnimNode_AssetPlayerBase
 
 	void Initialize() override
 	{
-		CurrentTime = 0.f;
-		PreviousTime = 0.f;
+		CurrentTime = Speed < 0.f ? GetCurrentAssetDuration() : 0.f;
+		PreviousTime = CurrentTime;
 	}
 
 	void Update(FAnimationUpdateContext& UpdateContext) override;

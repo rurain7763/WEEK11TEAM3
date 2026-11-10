@@ -46,6 +46,7 @@ private:
 	bool bLooping = true;
 	bool bPlaying = false;
 	bool bRefreshAssetsRequested = false;
+	bool bReversePlay = false;
 	char NotifyName[128] = "Notify";
 	int32 SelectedNotify = -1;
 	FString SaveStatus;

@@ -81,11 +81,32 @@ void FAnimationSequenceViewer::Tick(float DeltaTime)
 	if (!bPlaying || !Sequence || !PreviewMesh) return;
 	const float Duration = Sequence->GetDuration();
 	if (Duration <= 0.f) { bPlaying = false; return; }
-	PreviewTime += std::max(0.f, DeltaTime);
-	if (PreviewTime >= Duration)
+	const float Step = std::max(0.f, DeltaTime);
+	PreviewTime += bReversePlay ? -Step : Step;
+	if (bReversePlay && PreviewTime <= 0.f)
 	{
-		if (bLooping) PreviewTime = std::fmod(PreviewTime, Duration);
-		else { PreviewTime = Duration; bPlaying = false; }
+		if (bLooping)
+		{
+			const float Overshoot = -PreviewTime;
+			PreviewTime = Duration - std::fmod(Overshoot, Duration);
+		}
+		else
+		{
+			PreviewTime = 0.f;
+			bPlaying = false;
+		}
+	}
+	else if (!bReversePlay && PreviewTime >= Duration)
+	{
+		if (bLooping)
+		{
+			PreviewTime = std::fmod(PreviewTime, Duration);
+		}
+		else
+		{
+			PreviewTime = Duration;
+			bPlaying = false;
+		}
 	}
 }
 
@@ -183,13 +204,20 @@ void FAnimationSequenceViewer::DrawPlaybackControls()
 	ImGui::BeginDisabled(!Sequence || !PreviewMesh || Duration <= 0.f);
 	if (ImGui::Button(bPlaying ? "Pause" : "Play"))
 	{
-		if (!bPlaying && PreviewTime >= Duration) PreviewTime = 0.f;
+		if (!bPlaying)
+		{
+			if (bReversePlay && PreviewTime <= 0.f)
+				PreviewTime = Duration;
+			else if (!bReversePlay && PreviewTime >= Duration)
+				PreviewTime = 0.f;
+		}
 		bPlaying = !bPlaying;
 	}
 	ImGui::SameLine();
 	if (ImGui::Button("Stop")) { bPlaying = false; PreviewTime = 0.f; }
 	ImGui::SameLine();
 	ImGui::Checkbox("Loop", &bLooping);
+	ImGui::Checkbox("Reverse", &bReversePlay);
 	ImGui::EndDisabled();
 }
 

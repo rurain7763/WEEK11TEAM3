@@ -21,6 +21,10 @@ public:
 		Player->bLooping = InbLoop;
 	}
 
+	void SetPlayRate(float InPlayRate)
+	{
+		Player->Speed = InPlayRate;
+	}
 private:
 	UAnimationAsset* CurrentAsset = nullptr;
 	FAnimNode_SequencePlayer* Player = nullptr;

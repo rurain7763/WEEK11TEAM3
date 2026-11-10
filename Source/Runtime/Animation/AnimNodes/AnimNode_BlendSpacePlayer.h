@@ -11,7 +11,7 @@ public:
 	void Initialize() override
 	{
 		UpdateSampleCache();
-		NormalizedTime = 0.f;
+		NormalizedTime = Speed < 0.f ? 1.f : 0.f;
 	}
 
 	void Update(FAnimationUpdateContext& UpdateContext) override;
