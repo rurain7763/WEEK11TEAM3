@@ -56,6 +56,37 @@ bool FRenderer::Init()
 	FLightingConstants LightingConstant{};
 	RenderCommand::UpdateBufferData(LightingCB.get(), &LightingConstant);
 
+	FShaderProgramDesc ShadowStaticSPDesc;
+	ShadowStaticSPDesc.Path = "Resources/Shader/ShadowMap.hlsl";
+	ShadowStaticSPDesc.Defines = {
+		{ "USE_SKINNING", "0" }
+	};
+	ShadowStaticSPDesc.InputLayout = {
+		{ "POSITION",     0, DXGI_FORMAT_R32G32B32_FLOAT,    0, static_cast<UINT>(offsetof(FVertexPNCT, Position)), D3D11_INPUT_PER_VERTEX_DATA, 0 },
+		{ "NORMAL",       0, DXGI_FORMAT_R32G32B32_FLOAT,    0, static_cast<UINT>(offsetof(FVertexPNCT, Normal)), D3D11_INPUT_PER_VERTEX_DATA, 0 },
+		{ "TANGENT",      0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, static_cast<UINT>(offsetof(FVertexPNCT, Tangent)), D3D11_INPUT_PER_VERTEX_DATA, 0 },
+		{ "COLOR",        0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, static_cast<UINT>(offsetof(FVertexPNCT, Color)), D3D11_INPUT_PER_VERTEX_DATA, 0 },
+		{ "TEXCOORD",     0, DXGI_FORMAT_R32G32_FLOAT,       0, static_cast<UINT>(offsetof(FVertexPNCT, UV)), D3D11_INPUT_PER_VERTEX_DATA, 0 },
+	};
+	ShadowStaticPipeline.Shader = FRenderResourceManager::RegisterProgram("Shadow_Static", ShadowStaticSPDesc);
+
+	FShaderProgramDesc ShadowSkinningSPDesc;
+	ShadowSkinningSPDesc.Path = "Resources/Shader/ShadowMap.hlsl";
+	ShadowSkinningSPDesc.Defines = {
+		{ "USE_SKINNING", "1" }
+	};
+	ShadowSkinningSPDesc.InputLayout = {
+		{ "POSITION",     0, DXGI_FORMAT_R32G32B32_FLOAT,    0, static_cast<UINT>(offsetof(FVertexPNCT, Position)), D3D11_INPUT_PER_VERTEX_DATA, 0 },
+		{ "NORMAL",       0, DXGI_FORMAT_R32G32B32_FLOAT,    0, static_cast<UINT>(offsetof(FVertexPNCT, Normal)), D3D11_INPUT_PER_VERTEX_DATA, 0 },
+		{ "TANGENT",      0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, static_cast<UINT>(offsetof(FVertexPNCT, Tangent)), D3D11_INPUT_PER_VERTEX_DATA, 0 },
+		{ "COLOR",        0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, static_cast<UINT>(offsetof(FVertexPNCT, Color)), D3D11_INPUT_PER_VERTEX_DATA, 0 },
+		{ "TEXCOORD",     0, DXGI_FORMAT_R32G32_FLOAT,       0, static_cast<UINT>(offsetof(FVertexPNCT, UV)), D3D11_INPUT_PER_VERTEX_DATA, 0 },
+		{ "BLENDINDICES", 0, DXGI_FORMAT_R32G32B32A32_SINT,  1, static_cast<UINT>(offsetof(FModelVertexInfluences, BoneIndices)), D3D11_INPUT_PER_VERTEX_DATA, 0 },
+		{ "BLENDWEIGHT",  0, DXGI_FORMAT_R32G32B32A32_FLOAT, 1, static_cast<UINT>(offsetof(FModelVertexInfluences, Weights)), D3D11_INPUT_PER_VERTEX_DATA, 0 },
+		{ "BONECOUNT",	  0, DXGI_FORMAT_R32_SINT,			 1, static_cast<UINT>(offsetof(FModelVertexInfluences, InfluenceCount)), D3D11_INPUT_PER_VERTEX_DATA, 0 }
+	};
+	ShadowSkinningPipeline.Shader = FRenderResourceManager::RegisterProgram("Shadow_Skinned", ShadowSkinningSPDesc);
+
 	FShaderProgramDesc SurfaceStaticSPDesc;
 	SurfaceStaticSPDesc.Path = "Resources/Shader/SurfaceShader.hlsl";
 	SurfaceStaticSPDesc.Defines = {
@@ -72,7 +103,6 @@ bool FRenderer::Init()
 
 	FShaderProgramDesc SurfaceSkinningSPDesc;
 	SurfaceSkinningSPDesc.Path = "Resources/Shader/SurfaceShader.hlsl";
-
 	SurfaceSkinningSPDesc.Defines = { 
 		{ "USE_SKINNING", "1" } 
 	};
@@ -833,7 +863,6 @@ void FRenderer::RenderShadowPass(
 	// Shadow Atlas 를 계산한다.
 	ShadowMapManager.BuildAtlas(ShadowInfos);
 
-
 	// Directional 상수 버퍼 준비 (카메라 기준 4개 외접구 및 Light VP 행렬 계산 후 b5 업로드)
 	if (DirectionalShadow != nullptr)
 	{
@@ -845,8 +874,9 @@ void FRenderer::RenderShadowPass(
 
 	ID3D11DeviceContext* Context = RenderCommand::GetContext();
 
+#if 0
 	//공통 파이프라인 상태 (층마다 바뀌지 않음)
-	FShaderProgram* DepthShader = FRenderResourceManager::GetShaderProgram("Resources/Shader/ShaderMap.hlsl");
+	FShaderProgram* DepthShader = FRenderResourceManager::GetShaderProgram("Resources/Shader/ShadowMap.hlsl");
 
 	//VS만 바인딩
 	Context->VSSetShader(DepthShader->VertexShader->GetShader(), nullptr, 0);
@@ -855,9 +885,11 @@ void FRenderer::RenderShadowPass(
 
 	RenderCommand::SetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 	RenderCommand::SetRasterizerState(ERasterizerState::ShadowDepth);
+
 	// Depth on, LESS, Write
 	RenderCommand::SetDepthStencilState(EDepthStencilState::Default);
 	RenderCommand::SetBlendState(EBlendState::Opaque);
+#endif
 
 	RenderCommand::BindConstantBuffer(0, ShadowViewCB.get(), EShaderBindFlagBits::Vertex);
 	RenderCommand::BindConstantBuffer(2, PerObjectCB.get(), EShaderBindFlagBits::Vertex);
@@ -884,6 +916,17 @@ void FRenderer::RenderShadowPass(
 			}
 
 			UpdatePerObjectConstants(Proxy->GetLocalToWorld(), Proxy->GetNormalMatrix(), Proxy->GetObjectMask());
+
+			if (Proxy->IsUsingSkinning())
+			{
+				RenderCommand::BindPipelineState(ShadowSkinningPipeline);
+				RenderCommand::BindShaderResource(0, Proxy->GetBoneMatricesSRV(), EShaderBindFlagBits::Vertex);
+			}
+			else
+			{
+				RenderCommand::BindPipelineState(ShadowStaticPipeline);
+			}
+
 			RenderCommand::BindVertexBuffers(LOD.VertexBuffers, LOD.VertexBufferCount);
 			RenderCommand::BindIndexBuffer(LOD.IndexBuffer);
 
@@ -891,7 +934,9 @@ void FRenderer::RenderShadowPass(
 			{
 				const FCachedMeshSection& Section = Proxy->GetSection(LOD.FirstSection + i);
 				if (Section.Material && Section.Material->BlendState != EBlendState::Opaque)
+				{
 					continue;
+				}
 				RenderCommand::DrawIndexed(Section.IndexCount, Section.StartIndex);
 				ShadowStats.NumShadowDrawCalls++;
 			}
