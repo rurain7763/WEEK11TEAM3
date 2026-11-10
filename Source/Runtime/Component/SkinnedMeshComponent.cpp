@@ -5,6 +5,8 @@
 #include "Render/LineBatcher.h"
 #include "Animation/AnimationTypes.h"
 
+#include "Render/RenderCommand.h"
+
 #include <algorithm>
 
 namespace
@@ -210,21 +212,19 @@ void USkinnedMeshComponent::UpdateBoneMatrices()
 		NodeGlobalTransforms[i] = LocalPose[i] * ParentMatrix;
 	}
 
-	BoneMatrices.SetNum(Bones.Num());
+	SkinningMatrices.SetNum(Bones.Num());
 	for (int32 i = 0; i < Bones.Num(); i++)
 	{
 		const FModelBone& Bone = Bones[i];
 
 		//그 본이 바인드 포즈에서 지금까지 얼마나 움직였는가
-		BoneMatrices[i] = Bone.InverseBindTransform * NodeGlobalTransforms[Bone.NodeIndex];
+		SkinningMatrices[i] = Bone.InverseBindTransform * NodeGlobalTransforms[Bone.NodeIndex];
 	}
-
-	SkinningMatrices.SetNum(Bones.Num());
-	for (int32 i = 0; i < Bones.Num(); ++i)
+	
+	if (bCPUSkinning)
 	{
-		SkinningMatrices[i] = Bones[i].InverseBindTransform * BoneMatrices[i];
+		UpdateSkinnedVertices();
 	}
-	UpdateSkinnedVertices();
 	MarkRenderStateDirty();
 }
 
@@ -243,9 +243,9 @@ UMaterial* USkinnedMeshComponent::GetDefaultMaterial(int32 SlotIndex) const
 	return SkeletalMesh ? SkeletalMesh->GetMaterials()[SlotIndex] : nullptr;
 }
 
-const TArray<FMatrix>& USkinnedMeshComponent::GetBoneMatrices() const
+const TArray<FMatrix>& USkinnedMeshComponent::GetSkinningMatrices() const
 {
-	return BoneMatrices;
+	return SkinningMatrices;
 }
 
 const TArray<FMatrix>& USkinnedMeshComponent::GetLocalPose() const
@@ -315,6 +315,23 @@ void USkinnedMeshComponent::DrawDebugSkeleton(FLineBatcher* LineBatcher, const i
 	}
 }
 
+void USkinnedMeshComponent::PostEditChangeProperty(const FProperty& Property)
+{
+	Super::PostEditChangeProperty(Property);
+	UpdateBoneMatrices();
+}
+
+void USkinnedMeshComponent::SetCPUSkinningEnabled(bool bEnable)
+{
+	if (bCPUSkinning == bEnable)
+	{
+		return;
+	}
+
+	bCPUSkinning = bEnable;
+	UpdateBoneMatrices();
+}
+
 void USkinnedMeshComponent::UpdateSkinnedVertices()
 {
 	if (!SkeletalMesh)
@@ -323,7 +340,7 @@ void USkinnedMeshComponent::UpdateSkinnedVertices()
 	}
 
 	const FModelMeshData& Source = SkeletalMesh->GetMeshData();
-	const TArray<FModelVertexInfluences>& Skin = SkeletalMesh->GetWeightsArray();
+	const TArray<FModelVertexInfluences>& Influences = SkeletalMesh->GetWeightsArray();
 	const int32 VertexCount = Source.Vertices.Num();
 	const int32 BoneCount = SkinningMatrices.Num();
 
@@ -332,38 +349,60 @@ void USkinnedMeshComponent::UpdateSkinnedVertices()
 	for (int32 v = 0; v < VertexCount; ++v)
 	{
 		const FVertexPNCT& Bind = Source.Vertices[v];
-		int32 Bones[MaxBoneInfluenceCount]{};
-		float Weights[MaxBoneInfluenceCount]{};
-		for (int32 i = 0; i < MaxBoneInfluenceCount; ++i)
+		FVertexPNCT& Out = CPUSkinningVertices[v];
+		Out = Bind;
+
+		if (v >= Influences.Num())
 		{
-			Bones[i] = Skin[v].BoneIndices[i];
-			Weights[i] = Skin[v].Weights[i];
+			continue;
 		}
-		const FVector BindTangent(Bind.Tangent.X, Bind.Tangent.Y, Bind.Tangent.Z);
+
+		const FModelVertexInfluences& Inf = Influences[v];
+		const FVector BindTangent(Bind.Tangent.X, Bind.Tangent.Y, Bind.Tangent.Z);		
 		
 		FVector Position = FVector::ZeroVector;
 		FVector Normal = FVector::ZeroVector;
 		FVector Tangent = FVector::ZeroVector;
+		float TotalWeight = 0.0f;
 
 		for (int32 i = 0; i < MaxBoneInfluenceCount; ++i)
 		{
-			const float W = Weights[i];
+			const int32 BoneIdx = Inf.BoneIndices[i];
+			const float W = Inf.Weights[i];
 			if (W <= 0.0f)
 			{
 				continue;
 			}
 
-			const FMatrix& M = SkinningMatrices[Bones[i]];
+			const FMatrix& M = SkinningMatrices[BoneIdx];
 			Position += M.TransformPosition(Bind.Position) * W;
 			Normal += M.TransformVector(Bind.Normal) * W;
 			Tangent += M.TransformVector(BindTangent) * W;
+			TotalWeight += W;
 		}
 
-		CPUSkinningVertices[v] = Bind;
-		CPUSkinningVertices[v].Position = Position;
-		CPUSkinningVertices[v].Normal = Normal;
-		
+		if (TotalWeight <= 0.0f)
+		{
+			continue;
+		}
+
+		Out.Position = Position;
+		Out.Normal = Normal.GetSafeNormal();
 		const FVector T = Tangent.GetSafeNormal();
-		CPUSkinningVertices[v].Tangent = FVector4(T.X, T.Y, T.Z, Bind.Tangent.W);
+		Out.Tangent = FVector4(T.X, T.Y, T.Z, Bind.Tangent.W);
 	}
+
+	// 버퍼 업데이트
+	const uint32 ByteSize = sizeof(FVertexPNCT) * static_cast<uint32>(VertexCount);
+	if (ByteSize == 0)
+	{
+		return;
+	}
+
+	if (!CPUSkinVertexBuffer || CPUSkinVertexBuffer->GetBufferSize() < ByteSize)
+	{
+		CPUSkinVertexBuffer = RenderCommand::CreateDynamicVertexBuffer(ByteSize, sizeof(FVertexPNCT));
+	}
+
+	RenderCommand::UpdateBufferData(CPUSkinVertexBuffer.get(), CPUSkinningVertices.GetData(), ByteSize);
 }

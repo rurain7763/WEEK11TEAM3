@@ -191,7 +191,7 @@ void FSkeletalMeshSceneProxy::BindSRVs() const
 bool FSkeletalMeshSceneProxy::UpdateBoneMatrixBuffer()
 {
     const auto* ActualComponent = Cast<USkeletalMeshComponent>(GetComponent());
-    const TArray<FMatrix>& BoneMatrices = ActualComponent->GetBoneMatrices();
+    const TArray<FMatrix>& BoneMatrices = ActualComponent->GetSkinningMatrices();
     const uint32 Count = BoneMatrices.Num();
     if (Count == 0)
     {
