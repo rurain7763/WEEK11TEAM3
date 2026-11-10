@@ -48,6 +48,32 @@ public:
 		ParameterTable.RemoveParameter(Name);
 	}
 
+	inline void SetFloat(const FName& Name, float InValue) {
+		ParameterTable.SetFloat(Name, InValue);
+	}
+	inline void SetBool(const FName& Name, bool InValue) {
+		ParameterTable.SetBool(Name, InValue);
+	}
+	inline void SetInt(const FName& Name, int32 InValue) {
+		ParameterTable.SetInt(Name, InValue);
+	}
+
+	inline float GetFloat(const FName& Name) const {
+		float Value = 0.f;
+		ParameterTable.TryGetFloat(Name, Value);
+		return Value;
+	}
+	inline bool GetBool(const FName& Name) const {
+		bool Value = false;
+		ParameterTable.TryGetBool(Name, Value);
+		return Value;
+	}
+	inline int32 GetInt(const FName& Name) const {
+		int32 Value = 0;
+		ParameterTable.TryGetInt(Name, Value);
+		return Value;
+	}
+
 protected:
 	TMulticastDelegate<const FAnimNotifyEvent&> OnFireNotify;
 

@@ -30,6 +30,8 @@ public:
 	FTransform ConsumeRootMotion();
 	FTransform ConvertLocalRootMotionToWorld(const FTransform& InLocal);
 
+	UAnimInstance* GetAnimInstance() const { return AnimInstance; }
+
 	void BeginPlay() override;
 	void EndPlay() override;
 	void TickComponent(float DeltaTime)	override;

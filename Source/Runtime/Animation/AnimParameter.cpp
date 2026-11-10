@@ -3,7 +3,7 @@
 
 void FAnimParameterTable::RemoveParameter(FName Name)
 {
-	if (HasParameter(Name))
+	if (!HasParameter(Name))
 	{
 		return;
 	}

@@ -72,6 +72,84 @@ public:
 		return Parameters[ParamIndex];
 	}
 
+	void SetFloat(const FName& Name, float InValue) {
+		int32* ParamIndex = ParameterNameToIndex.Find(Name);
+		if (!ParamIndex) {
+			AddParameter<float>(Name, InValue);
+			return;
+		}
+
+		FAnimParameter& Param = Parameters[*ParamIndex];
+		if (Param.Type != EAnimParameterType::Float) return;
+
+		Param.Value.Float = InValue;
+	}
+
+	void SetBool(const FName& Name, bool InValue) {
+		int32* ParamIndex = ParameterNameToIndex.Find(Name);
+		if (!ParamIndex) {
+			AddParameter<bool>(Name, InValue);
+			return;
+		}
+
+		FAnimParameter& Param = Parameters[*ParamIndex];
+		if (Param.Type != EAnimParameterType::Bool) return;
+
+		Param.Value.Bool = InValue;
+	}
+
+	void SetInt(const FName& Name, int32 InValue) {
+		int32* ParamIndex = ParameterNameToIndex.Find(Name);
+		if (!ParamIndex) {
+			AddParameter<int32>(Name, InValue);
+			return;
+		}
+
+		FAnimParameter& Param = Parameters[*ParamIndex];
+		if (Param.Type != EAnimParameterType::Int32) return;
+
+		Param.Value.Int32 = InValue;
+	}
+
+	bool TryGetFloat(const FName& Name, float& OutValue) const {
+		const int32* ParamIndex = ParameterNameToIndex.Find(Name);
+		if (!ParamIndex) {
+			return false;
+		}
+
+		const FAnimParameter& Param = Parameters[*ParamIndex];
+		if (Param.Type != EAnimParameterType::Float) return false;
+
+		OutValue = Param.Value.Float;
+		return true;
+	}
+
+	bool TryGetBool(const FName& Name, bool& OutValue) const {
+		const int32* ParamIndex = ParameterNameToIndex.Find(Name);
+		if (!ParamIndex) {
+			return false;
+		}
+
+		const FAnimParameter& Param = Parameters[*ParamIndex];
+		if (Param.Type != EAnimParameterType::Bool) return false;
+
+		OutValue = Param.Value.Bool;
+		return true;
+	}
+
+	bool TryGetInt(const FName& Name, int32& OutValue) const {
+		const int32* ParamIndex = ParameterNameToIndex.Find(Name);
+		if (!ParamIndex) {
+			return false;
+		}
+
+		const FAnimParameter& Param = Parameters[*ParamIndex];
+		if (Param.Type != EAnimParameterType::Int32) return false;
+
+		OutValue = Param.Value.Int32;
+		return true;
+	}
+
 private:
 	TMap<FName, int32, FNameHash> ParameterNameToIndex;
 	TArray<FAnimParameter> Parameters;
