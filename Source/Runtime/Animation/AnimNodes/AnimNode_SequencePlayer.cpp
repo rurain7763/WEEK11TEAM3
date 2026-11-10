@@ -62,3 +62,13 @@ float FAnimNode_SequencePlayer::GetCurrentAssetDuration()
 
 	return Sequence->GetDuration();
 }
+
+float FAnimNode_SequencePlayer::GetNormalizedTime() const
+{
+	if (!Sequence)
+	{
+		return 0.f;
+	}
+
+	return CurrentTime / Sequence->GetDuration();
+}

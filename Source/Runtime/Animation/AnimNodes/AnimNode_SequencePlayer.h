@@ -21,4 +21,6 @@ struct FAnimNode_SequencePlayer : public FAnimNode_AssetPlayerBase
 	void Evaluate(FPoseContext& OutPoseContext) override;
 
 	float GetCurrentAssetDuration() override;
+	
+	float GetNormalizedTime() const override;
 };

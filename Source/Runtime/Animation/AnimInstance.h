@@ -12,7 +12,6 @@ struct FAnimNode_Base;
 class UAnimInstance : public UObject
 {
 	DECLARE_CLASS(UAnimInstance, UObject)
-	friend struct FAnimGraphActionInputTest; // Temporary test-only access; remove with the input harness.
 
 public:
 	virtual ~UAnimInstance() = default;
@@ -43,9 +42,29 @@ public:
 		ParameterTable.AddParameter<T>(Name, InitValue);
 	}
 
+	inline void AddTrigger(const FName& Name)
+	{
+		ParameterTable.AddTrigger(Name);
+	}
+
+	inline void SetTrigger(const FName& Name)
+	{
+		ParameterTable.SetTrigger(Name);
+	}
+
+	inline void ResetTrigger(const FName& Name)
+	{
+		ParameterTable.ResetTrigger(Name);
+	}
+
 	inline void RemoveParameter(const FName& Name)
 	{
 		ParameterTable.RemoveParameter(Name);
+	}
+
+	inline bool HasParameter(const FName& Name)
+	{
+		return ParameterTable.HasParameter(Name);
 	}
 
 protected:

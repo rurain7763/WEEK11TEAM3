@@ -62,6 +62,8 @@ struct FAnimTransitionData
 	int32 NextStateID = -1;
 	float CrossfadeDuration = 0.f;
 	FAnimTransitionConditionData Condition;
+	bool bHasExitTime = false;
+	float ExitTime = 1.f;
 };
 
 struct FAnimStateMachineData

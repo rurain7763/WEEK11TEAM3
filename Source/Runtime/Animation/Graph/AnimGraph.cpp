@@ -35,7 +35,11 @@ void UAnimGraph::SerializeEnum(FStructuredArchiveRecord& Parent, const char* Nam
 		Archive.SetError();
 		return;
 	}
-	if (Archive.IsLoading()) Value = static_cast<T>(Number);
+
+	if (Archive.IsLoading())
+	{
+		Value = static_cast<T>(Number);
+	}
 }
 
 template <typename T>
@@ -116,27 +120,28 @@ T* UAnimGraph::BuildAnimGraph(TMap<int32, FAnimNode_Base*>& NodeInstances, int32
 				return -1;
 			};
 
+			auto FillTransitionFromData = [&FindStateIndexFromStateID](const FAnimTransitionData& Data, FAnimStateTransition& OutTransition) {
+				OutTransition.CrossfadeDuration = Data.CrossfadeDuration;
+				OutTransition.NextState = FindStateIndexFromStateID(Data.NextStateID);
+				OutTransition.Condition.ParameterName = FName(Data.Condition.ParameterName);
+				OutTransition.Condition.ComparisonOperator = Data.Condition.ComparisonOperator;
+				OutTransition.Condition.Value = Data.Condition.Value;
+				OutTransition.bHasExitTime = Data.bHasExitTime;
+				OutTransition.ExitTime = Data.ExitTime;
+			};
+
 			for (const FAnimTransitionData& TransitionData : ActualData.AnyTransitions)
 			{
 				FAnimStateTransition& Transition = StateMachine->AnyTransitions.AddDefaulted_GetRef();
-				Transition.CrossfadeDuration = TransitionData.CrossfadeDuration;
-				Transition.NextState = FindStateIndexFromStateID(TransitionData.NextStateID);
-				Transition.Condition.ParameterName = FName(TransitionData.Condition.ParameterName);
-				Transition.Condition.ComparisonOperator = TransitionData.Condition.ComparisonOperator;
-				Transition.Condition.Value = TransitionData.Condition.Value;
+				FillTransitionFromData(TransitionData, Transition);
 			}
 
 			StateMachine->Transitions.SetNum(StateMachine->States.Num());
 			for (const FAnimTransitionData& TransitionData : ActualData.Transitions)
 			{
 				int32 StateIndex = FindStateIndexFromStateID(TransitionData.PreviousStateID);
-
 				FAnimStateTransition& Transition = StateMachine->Transitions[StateIndex].AddDefaulted_GetRef();
-				Transition.CrossfadeDuration = TransitionData.CrossfadeDuration;
-				Transition.NextState = FindStateIndexFromStateID(TransitionData.NextStateID);
-				Transition.Condition.ParameterName = FName(TransitionData.Condition.ParameterName);
-				Transition.Condition.ComparisonOperator = TransitionData.Condition.ComparisonOperator;
-				Transition.Condition.Value = TransitionData.Condition.Value;
+				FillTransitionFromData(TransitionData, Transition);
 			}
 
 			StateMachine->SetEntryState(FindStateIndexFromStateID(ActualData.InitStateID));
@@ -187,6 +192,7 @@ UAnimInstance* UAnimGraph::CreateAnimInstance()
 			case EAnimParameterType::Int32: Instance->AddParameter(ParamData.Name, ParamData.Value.Int32); break;
 			case EAnimParameterType::Float: Instance->AddParameter(ParamData.Name, ParamData.Value.Float); break;
 			case EAnimParameterType::Bool: Instance->AddParameter(ParamData.Name, ParamData.Value.Bool); break;
+			case EAnimParameterType::Trigger: Instance->AddTrigger(ParamData.Name); break;
 		}
 	}
 
@@ -200,6 +206,7 @@ void UAnimGraph::SerializeValue(FStructuredArchiveRecord& Parent, EAnimParameter
 		case EAnimParameterType::Int32: Parent << SA_VALUE("Value", Value.Int32); break;
 		case EAnimParameterType::Float: Parent << SA_VALUE("Value", Value.Float); break;
 		case EAnimParameterType::Bool: Parent << SA_VALUE("Value", Value.Bool); break;
+		case EAnimParameterType::Trigger: Parent << SA_VALUE("Value", Value.Trigger); break;
 		default: Parent.GetUnderlyingArchive().SetError(); break;
 	}
 }
@@ -237,13 +244,15 @@ void UAnimGraph::SerializeData(FStructuredArchiveRecord& Record, FAnimTransition
 		return;
 	}
 	SerializeValue(Record, Parameter->Type, Condition.Value);
-}
+}   
 
 void UAnimGraph::SerializeData(FStructuredArchiveRecord& Record, FAnimTransitionData& Transition)
 {
 	Record << SA_VALUE("PreviousStateID", Transition.PreviousStateID);
 	Record << SA_VALUE("NextStateID", Transition.NextStateID);
 	Record << SA_VALUE("CrossfadeDuration", Transition.CrossfadeDuration);
+	Record << SA_VALUE("HasExitTime", Transition.bHasExitTime);
+	Record << SA_VALUE("ExitTime", Transition.ExitTime);
 	auto ConditionRecord = Record.EnterRecord("Condition");
 	SerializeData(ConditionRecord, Transition.Condition);
 }
@@ -266,7 +275,7 @@ void UAnimGraph::SerializeData(FStructuredArchiveRecord& Record, FAnimNodeData& 
 void UAnimGraph::SerializeData(FStructuredArchiveRecord& Record, FAnimParameterData& Parameter)
 {
 	Record << SA_VALUE("Name", Parameter.Name);
-	SerializeEnum(Record, "Type", Parameter.Type, EAnimParameterType::Float);
+	SerializeEnum(Record, "Type", Parameter.Type, EAnimParameterType::Trigger);
 	SerializeValue(Record, Parameter.Type, Parameter.Value);
 }
 

@@ -36,6 +36,8 @@ public:
 	// NOTE: 가장 높은 가중치를 가진 샘플의 Duration 반환
 	float GetCurrentAssetDuration() override;
 
+	virtual float GetNormalizedTime() const override;
+
 private:
 	inline FVector GetPosition() const
 	{

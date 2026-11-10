@@ -55,6 +55,9 @@
             }
         ],
         "Parameters": [
+            { "Name": "Attack", "Type": 3, "Value": false },
+            { "Name": "Hit", "Type": 3, "Value": false },
+            { "Name": "Jump", "Type": 3, "Value": false },
             {
                 "Name": "Action",
                 "Type": 0,
@@ -69,10 +72,12 @@
                     {
                         "Condition": {
                             "ComparisonOperator": 0,
-                            "ParameterName": "Action",
-                            "Value": 2
+                            "ParameterName": "Hit",
+                            "Value": false
                         },
                         "CrossfadeDuration": 0.1,
+                        "HasExitTime": false,
+                        "ExitTime": 1.0,
                         "NextStateID": 2,
                         "PreviousStateID": -1
                     }
@@ -104,90 +109,108 @@
                     {
                         "Condition": {
                             "ComparisonOperator": 0,
-                            "ParameterName": "Action",
-                            "Value": 1
+                            "ParameterName": "Attack",
+                            "Value": false
                         },
                         "CrossfadeDuration": 0.2,
+                        "HasExitTime": false,
+                        "ExitTime": 1.0,
                         "NextStateID": 1,
                         "PreviousStateID": 0
                     },
                     {
                         "Condition": {
                             "ComparisonOperator": 0,
-                            "ParameterName": "Action",
-                            "Value": 3
+                            "ParameterName": "Jump",
+                            "Value": false
                         },
                         "CrossfadeDuration": 0.2,
+                        "HasExitTime": false,
+                        "ExitTime": 1.0,
                         "NextStateID": 3,
                         "PreviousStateID": 0
                     },
                     {
                         "Condition": {
-                            "ComparisonOperator": 0,
+                            "ComparisonOperator": 4,
                             "ParameterName": "Action",
                             "Value": 0
                         },
                         "CrossfadeDuration": 0.2,
+                        "HasExitTime": true,
+                        "ExitTime": 1.0,
                         "NextStateID": 0,
                         "PreviousStateID": 1
                     },
                     {
                         "Condition": {
                             "ComparisonOperator": 0,
-                            "ParameterName": "Action",
-                            "Value": 3
+                            "ParameterName": "Jump",
+                            "Value": false
                         },
                         "CrossfadeDuration": 0.2,
+                        "HasExitTime": false,
+                        "ExitTime": 1.0,
                         "NextStateID": 3,
                         "PreviousStateID": 1
                     },
                     {
                         "Condition": {
-                            "ComparisonOperator": 0,
+                            "ComparisonOperator": 4,
                             "ParameterName": "Action",
                             "Value": 0
                         },
                         "CrossfadeDuration": 0.2,
+                        "HasExitTime": true,
+                        "ExitTime": 1.0,
                         "NextStateID": 0,
                         "PreviousStateID": 2
                     },
                     {
                         "Condition": {
                             "ComparisonOperator": 0,
-                            "ParameterName": "Action",
-                            "Value": 1
+                            "ParameterName": "Attack",
+                            "Value": false
                         },
                         "CrossfadeDuration": 0.2,
+                        "HasExitTime": false,
+                        "ExitTime": 1.0,
                         "NextStateID": 1,
                         "PreviousStateID": 2
                     },
                     {
                         "Condition": {
                             "ComparisonOperator": 0,
-                            "ParameterName": "Action",
-                            "Value": 3
+                            "ParameterName": "Jump",
+                            "Value": false
                         },
                         "CrossfadeDuration": 0.2,
+                        "HasExitTime": false,
+                        "ExitTime": 1.0,
                         "NextStateID": 3,
                         "PreviousStateID": 2
                     },
                     {
                         "Condition": {
-                            "ComparisonOperator": 0,
+                            "ComparisonOperator": 4,
                             "ParameterName": "Action",
                             "Value": 0
                         },
                         "CrossfadeDuration": 0.2,
+                        "HasExitTime": true,
+                        "ExitTime": 1.0,
                         "NextStateID": 0,
                         "PreviousStateID": 3
                     },
                     {
                         "Condition": {
                             "ComparisonOperator": 0,
-                            "ParameterName": "Action",
-                            "Value": 1
+                            "ParameterName": "Attack",
+                            "Value": false
                         },
                         "CrossfadeDuration": 0.2,
+                        "HasExitTime": false,
+                        "ExitTime": 1.0,
                         "NextStateID": 1,
                         "PreviousStateID": 3
                     }
