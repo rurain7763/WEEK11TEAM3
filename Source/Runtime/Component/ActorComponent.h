@@ -5,6 +5,7 @@
 #include "Engine/EngineBaseTypes.h"
 
 class AActor;
+class UWorld;
 
 class UActorComponent : public UObject
 {
@@ -44,6 +45,8 @@ public:
 
 	using Super::Serialize;
 	virtual void Serialize(FStructuredArchive::FRecord Record);
+
+	virtual class UWorld* GetWorld() const override;
 
 private:
 	AActor* Owner = nullptr;
