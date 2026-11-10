@@ -96,6 +96,38 @@ void FAnimNode_StateMachine::Update(FAnimationUpdateContext& UpdateContext)
 	}
 }
 
+int32 FAnimNode_StateMachine::FindStateIndexByName(const FName& InName) const
+{
+	for (int32 i = 0; i < StateNames.Num(); i++) {
+		if (StateNames[i] == InName) return i;
+	}
+
+	return -1;
+}
+
+bool FAnimNode_StateMachine::RequestState(const FName& InName, float CrossfadeDuration)
+{
+	int32 idx = FindStateIndexByName(InName);
+	if (idx == -1) return false;
+
+	if (bActiveTransition == true) return false;
+
+	if (CrossfadeDuration > 0) {
+		bActiveTransition = true;
+		ActiveTransition.CrossfadeDuration = CrossfadeDuration;
+		ActiveTransition.ElapsedTime = 0.0f;
+		ActiveTransition.NextState = idx;
+		ActiveTransition.PreviousState = CurrentStateIndex;
+	}
+	else {
+		CurrentStateIndex = idx;
+	}
+
+	States[idx]->Initialize();	// 다음에 재실행시 멈춘 지점에서 이어서 실행x
+
+	return true;
+}
+
 FAnimStateTransition* FAnimNode_StateMachine::EvaluateTransitions(const TArray<FAnimStateTransition>& Transitions, const FAnimParameterTable& ParameterTable) const
 {
 	for (int32 i = 0; i < Transitions.Num(); i++)

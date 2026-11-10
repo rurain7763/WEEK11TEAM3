@@ -67,6 +67,7 @@ struct FAnimTransitionData
 struct FAnimStateMachineData
 {
 	int32 InitStateID;
+	FString Name;
 	TArray<FAnimStateData> States;
 	TArray<FAnimTransitionData> AnyTransitions;
 	TArray<FAnimTransitionData> Transitions;

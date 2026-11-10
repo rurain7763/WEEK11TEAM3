@@ -7,6 +7,7 @@
 struct FAnimNode_StateMachine : public FAnimNode_Base
 {
 	TArray<FAnimNode_Base*> States;
+	TArray <FName> StateNames;
 	TArray<FAnimStateTransition> AnyTransitions;
 	TArray<TArray<FAnimStateTransition>> Transitions;
 
@@ -22,6 +23,10 @@ struct FAnimNode_StateMachine : public FAnimNode_Base
 	void Initialize() override;
 
 	void Update(FAnimationUpdateContext& UpdateContext) override;
+
+	int32 FindStateIndexByName(const FName& InName) const;
+
+	bool RequestState(const FName& InName, float CrossfadeDuration);
 
 	FAnimStateTransition* EvaluateTransitions(const TArray<FAnimStateTransition>& Transitions, const FAnimParameterTable& ParameterTable) const;
 

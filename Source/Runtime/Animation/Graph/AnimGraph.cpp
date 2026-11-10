@@ -105,6 +105,7 @@ T* UAnimGraph::BuildAnimGraph(TMap<int32, FAnimNode_Base*>& NodeInstances, int32
 			{
 				FAnimNode_Base* Node = BuildAnimGraph<FAnimNode_Base>(NodeInstances, StateData.NodeID);
 				StateMachine->States.Add(Node);
+				StateMachine->StateNames.Add(StateData.Name);
 			}
 
 			auto FindStateIndexFromStateID = [ActualData](int32 StateID) -> int32 {
@@ -251,6 +252,7 @@ void UAnimGraph::SerializeData(FStructuredArchiveRecord& Record, FAnimTransition
 void UAnimGraph::SerializeData(FStructuredArchiveRecord& Record, FAnimStateMachineData& Machine)
 {
 	Record << SA_VALUE("InitStateID", Machine.InitStateID);
+	Record << SA_VALUE("Name", Machine.Name);
 	SerializeArray(Record, "States", Machine.States);
 	SerializeArray(Record, "AnyTransitions", Machine.AnyTransitions);
 	SerializeArray(Record, "Transitions", Machine.Transitions);
