@@ -2,6 +2,7 @@
 #include "Animation/AnimNodes/AnimNode_BlendSpacePlayer.h"
 #include "Animation/AnimSequence.h"
 #include "Animation/AnimationRuntime.h"
+#include <cmath>
 
 void FAnimNode_BlendSpacePlayer::UpdateSampleCache()
 {
@@ -75,6 +76,17 @@ void FAnimNode_BlendSpacePlayer::Update(FAnimationUpdateContext& UpdateContext)
 			NormalizedTime = 1.f;
 		}
 	}
+	else if (NormalizedTime < 0.f)
+	{
+		if (bLooping)
+		{
+			NormalizedTime = 1.f + std::fmod(NormalizedTime, 1.f);
+		}
+		else
+		{
+			NormalizedTime = 0.f;
+		}
+	}
 }
 
 void FAnimNode_BlendSpacePlayer::Evaluate(FPoseContext& OutPoseContext)
@@ -123,4 +135,9 @@ float FAnimNode_BlendSpacePlayer::GetCurrentAssetDuration()
 	}
 
 	return MaxSample->Animation->GetDuration();
+}
+
+float FAnimNode_BlendSpacePlayer::GetNormalizedTime() const
+{
+	return NormalizedTime;
 }

@@ -6,6 +6,7 @@
 #include "Engine/PrimitiveSceneProxy.h"
 #include "Render/RenderPacket.h"
 #include "Sequence/Tests/AnimGraphActionInputTest.h"
+#include "Animation/AnimSequence.h"
 
 USkeletalMeshComponent::USkeletalMeshComponent()
 {
@@ -38,11 +39,24 @@ void USkeletalMeshComponent::SetAnimation(UAnimationAsset* NewAnimAsset)
 	}
 }
 
-void USkeletalMeshComponent::PlayAnimation(UAnimationAsset* NewAnimAsset, bool bLooping)
+void USkeletalMeshComponent::PlayAnimation(UAnimationAsset* NewAnimAsset, bool bLooping, float PlayRate)
 {
+	if (!Cast<UAnimSequence>(NewAnimAsset))
+	{
+		return;
+	}
 	SetAnimationMode(EAnimationMode::AnimationSingleNode);
+
+	UAnimSingleNodeInstance* SingleNode = Cast<UAnimSingleNodeInstance>(AnimInstance);
+
+	if (!SingleNode)
+	{
+		return;
+	}
 	SetAnimation(NewAnimAsset);
 	Play(bLooping);
+	SingleNode->SetPlayRate(PlayRate);
+	SingleNode->NativeInitializeAnimation();
 }
 
 bool USkeletalMeshComponent::HasRootMotion() const

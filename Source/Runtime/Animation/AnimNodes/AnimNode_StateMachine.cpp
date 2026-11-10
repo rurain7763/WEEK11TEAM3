@@ -16,10 +16,11 @@ void FAnimNode_StateMachine::Update(FAnimationUpdateContext& UpdateContext)
 {
 	if (!bActiveTransition)
 	{
-		FAnimStateTransition* Transition = Transition = EvaluateTransitions(AnyTransitions, *UpdateContext.ParameterTable);
+		bool bTriggerTransition;
+		FAnimStateTransition* Transition = Transition = EvaluateTransitions(AnyTransitions, *UpdateContext.ParameterTable, bTriggerTransition);
 		if (!Transition && CurrentStateIndex != -1)
 		{
-			Transition = EvaluateTransitions(Transitions[CurrentStateIndex], *UpdateContext.ParameterTable);
+			Transition = EvaluateTransitions(Transitions[CurrentStateIndex], *UpdateContext.ParameterTable, bTriggerTransition);
 		}
 
 		if (Transition)
@@ -38,6 +39,11 @@ void FAnimNode_StateMachine::Update(FAnimationUpdateContext& UpdateContext)
 			}
 
 			States[Transition->NextState]->Initialize();
+
+			if (bTriggerTransition)
+			{
+				UpdateContext.ParameterTable->ResetTrigger(Transition->Condition.ParameterName);
+			}
 		}
 	}
 
@@ -128,8 +134,10 @@ bool FAnimNode_StateMachine::RequestState(const FName& InName, float CrossfadeDu
 	return true;
 }
 
-FAnimStateTransition* FAnimNode_StateMachine::EvaluateTransitions(const TArray<FAnimStateTransition>& Transitions, const FAnimParameterTable& ParameterTable) const
+FAnimStateTransition* FAnimNode_StateMachine::EvaluateTransitions(const TArray<FAnimStateTransition>& Transitions, const FAnimParameterTable& ParameterTable, bool& OutIsTriggerTransition) const
 {
+	float NormalizedTime = GetNormalizedTime();
+
 	for (int32 i = 0; i < Transitions.Num(); i++)
 	{
 		const FAnimStateTransition& Transition = Transitions[i];
@@ -138,13 +146,19 @@ FAnimStateTransition* FAnimNode_StateMachine::EvaluateTransitions(const TArray<F
 			continue;
 		}
 
-		if (!ParameterTable.HasParameter(Transition.Condition.ParameterName))
+		OutIsTriggerTransition = false;
+		if (ParameterTable.HasParameter(Transition.Condition.ParameterName))
 		{
-			continue;
+			const FAnimParameter& Param = ParameterTable.FindParameter(Transition.Condition.ParameterName);
+			if (!Transition.Condition.Evaluate(Param))
+			{
+				continue;
+			}
+
+			OutIsTriggerTransition = Param.Type == EAnimParameterType::Trigger;
 		}
 
-		const FAnimParameter& Param = ParameterTable.FindParameter(Transition.Condition.ParameterName);
-		if (!Transition.Condition.Evaluate(Param))
+		if (Transition.bHasExitTime && NormalizedTime < Transition.ExitTime)
 		{
 			continue;
 		}
@@ -159,7 +173,6 @@ void FAnimNode_StateMachine::Evaluate(FPoseContext& OutPoseContext)
 {
 	if (bActiveTransition)
 	{
-		// TODO: Do tansition
 		FAnimNode_Base* PrevState = States[ActiveTransition.PreviousState];
 		FAnimNode_Base* NextState = States[ActiveTransition.NextState];
 
@@ -181,4 +194,14 @@ void FAnimNode_StateMachine::Evaluate(FPoseContext& OutPoseContext)
 
 		States[CurrentStateIndex]->Evaluate(OutPoseContext);
 	}
+}
+
+float FAnimNode_StateMachine::GetNormalizedTime() const
+{
+	if (CurrentStateIndex == -1)
+	{
+		return 0.f;
+	}
+
+	return States[CurrentStateIndex]->GetNormalizedTime();
 }

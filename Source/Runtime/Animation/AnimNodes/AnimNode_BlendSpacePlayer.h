@@ -11,7 +11,7 @@ public:
 	void Initialize() override
 	{
 		UpdateSampleCache();
-		NormalizedTime = 0.f;
+		NormalizedTime = Speed < 0.f ? 1.f : 0.f;
 	}
 
 	void Update(FAnimationUpdateContext& UpdateContext) override;
@@ -35,6 +35,8 @@ public:
 
 	// NOTE: 가장 높은 가중치를 가진 샘플의 Duration 반환
 	float GetCurrentAssetDuration() override;
+
+	virtual float GetNormalizedTime() const override;
 
 private:
 	inline FVector GetPosition() const

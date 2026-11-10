@@ -5,6 +5,7 @@
 #include "Animation/Skeleton.h"
 #include "Render/SkeletalMesh.h"
 #include "UObject/UObjectIterator.h"
+#include "Serialization/JsonArchive.h"
 #include <imgui_neo_sequencer.h>
 
 #include <algorithm>
@@ -63,6 +64,9 @@ void FAnimationSequenceViewer::SetSequence(UAnimSequence* InSequence)
 {
 	if (InSequence && InSequence->GetSkeleton() != Skeleton) return;
 	Sequence = InSequence;
+	SelectedNotify = -1;
+	SaveStatus.clear();
+	if (Sequence) Sequence->SortNotifies();
 	PreviewTime = 0.f;
 	bPlaying = false;
 }
@@ -77,11 +81,32 @@ void FAnimationSequenceViewer::Tick(float DeltaTime)
 	if (!bPlaying || !Sequence || !PreviewMesh) return;
 	const float Duration = Sequence->GetDuration();
 	if (Duration <= 0.f) { bPlaying = false; return; }
-	PreviewTime += std::max(0.f, DeltaTime);
-	if (PreviewTime >= Duration)
+	const float Step = std::max(0.f, DeltaTime);
+	PreviewTime += bReversePlay ? -Step : Step;
+	if (bReversePlay && PreviewTime <= 0.f)
 	{
-		if (bLooping) PreviewTime = std::fmod(PreviewTime, Duration);
-		else { PreviewTime = Duration; bPlaying = false; }
+		if (bLooping)
+		{
+			const float Overshoot = -PreviewTime;
+			PreviewTime = Duration - std::fmod(Overshoot, Duration);
+		}
+		else
+		{
+			PreviewTime = 0.f;
+			bPlaying = false;
+		}
+	}
+	else if (!bReversePlay && PreviewTime >= Duration)
+	{
+		if (bLooping)
+		{
+			PreviewTime = std::fmod(PreviewTime, Duration);
+		}
+		else
+		{
+			PreviewTime = Duration;
+			bPlaying = false;
+		}
 	}
 }
 
@@ -179,13 +204,20 @@ void FAnimationSequenceViewer::DrawPlaybackControls()
 	ImGui::BeginDisabled(!Sequence || !PreviewMesh || Duration <= 0.f);
 	if (ImGui::Button(bPlaying ? "Pause" : "Play"))
 	{
-		if (!bPlaying && PreviewTime >= Duration) PreviewTime = 0.f;
+		if (!bPlaying)
+		{
+			if (bReversePlay && PreviewTime <= 0.f)
+				PreviewTime = Duration;
+			else if (!bReversePlay && PreviewTime >= Duration)
+				PreviewTime = 0.f;
+		}
 		bPlaying = !bPlaying;
 	}
 	ImGui::SameLine();
 	if (ImGui::Button("Stop")) { bPlaying = false; PreviewTime = 0.f; }
 	ImGui::SameLine();
 	ImGui::Checkbox("Loop", &bLooping);
+	ImGui::Checkbox("Reverse", &bReversePlay);
 	ImGui::EndDisabled();
 }
 
@@ -228,9 +260,26 @@ void FAnimationSequenceViewer::DrawTimeline()
 			if (ImGui::IsNeoKeyframeHovered()) ImGui::SetTooltip("Clip end: %.3f s", Duration);
 			ImGui::EndNeoTimeLine();
 		}
-		// Notify access/edit/save will be connected separately; do not invent event data.
+		// Display markers only; editing event times requires a separate sequence API.
 		if (ImGui::BeginNeoTimelineEx("Notifies", nullptr, ImGuiNeoTimelineFlags_None))
+		{
+			const auto& Notifies = Sequence->GetNotifies();
+			for (int32 Index = 0; Index < Notifies.Num(); ++Index)
+			{
+				const auto& Notify = Notifies[Index];
+				if (!std::isfinite(Notify.TriggerTime) || Notify.TriggerTime < 0.f || Notify.TriggerTime > Duration) continue;
+				ImGui::PushID(Index);
+				int32_t Frame = static_cast<int32_t>(std::lround(Notify.TriggerTime * SampleRate));
+				ImGui::NeoKeyframe(&Frame);
+				if (ImGui::IsNeoKeyframeHovered())
+				{
+					ImGui::SetTooltip("%s: %.3f s", Notify.Name.ToString().c_str(), Notify.TriggerTime);
+					if (ImGui::IsMouseClicked(ImGuiMouseButton_Left)) SelectedNotify = Index;
+				}
+				ImGui::PopID();
+			}
 			ImGui::EndNeoTimeLine();
+		}
 		ImGui::EndNeoSequencer();
 	}
 	ImGui::PopID();
@@ -244,11 +293,65 @@ void FAnimationSequenceViewer::DrawTimeline()
 	}
 	ImGui::Text("Time: %.3f / %.3f s", PreviewTime, Duration);
 
-	ImGui::BeginDisabled();
-	ImGui::Button("Add Notify");
-	ImGui::SameLine();
-	ImGui::Button("Delete");
-	ImGui::SameLine();
-	ImGui::Button("Save");
+	ImGui::InputText("Notify Name", NotifyName, sizeof(NotifyName));
+	ImGui::Text("Notify Time: %.3f s (current cursor)", PreviewTime);
+	const FName NewNotifyName(NotifyName);
+	ImGui::BeginDisabled(NewNotifyName.IsNone() || !std::isfinite(PreviewTime) || PreviewTime < 0.f || PreviewTime > Duration);
+	if (ImGui::Button("Add Notify"))
+	{
+		Sequence->AddNotify(FAnimNotifyEvent{ NewNotifyName, PreviewTime });
+		Sequence->SortNotifies();
+		SelectedNotify = -1;
+		ModifiedSequences.insert(Sequence);
+		SaveStatus.clear();
+	}
 	ImGui::EndDisabled();
+
+	const auto& Notifies = Sequence->GetNotifies();
+	if (!Notifies.IsValidIndex(SelectedNotify)) SelectedNotify = -1;
+	if (ImGui::BeginChild("NotifyList", ImVec2(0.f, 110.f), ImGuiChildFlags_Borders))
+	{
+		if (Notifies.IsEmpty()) ImGui::TextDisabled("No notifies");
+		for (int32 Index = 0; Index < Notifies.Num(); ++Index)
+		{
+			ImGui::PushID(Index);
+			const auto& Notify = Notifies[Index];
+			const FString Label = Notify.Name.ToString() + " @ " + std::to_string(Notify.TriggerTime) + " s";
+			if (ImGui::Selectable(Label.c_str(), SelectedNotify == Index)) SelectedNotify = Index;
+			ImGui::PopID();
+		}
+	}
+	ImGui::EndChild();
+	ImGui::BeginDisabled(SelectedNotify < 0);
+	if (ImGui::Button("Delete Selected Notify"))
+	{
+		Sequence->RemoveNotify(SelectedNotify);
+		SelectedNotify = -1;
+		ModifiedSequences.insert(Sequence);
+		SaveStatus.clear();
+	}
+	ImGui::EndDisabled();
+	bool bRootMotion = Sequence->HasRootMotion();
+	if (ImGui::Checkbox("Enable Root Motion", &bRootMotion))
+	{
+		Sequence->EnableRootMotion(bRootMotion);
+		ModifiedSequences.insert(Sequence);
+		SaveStatus.clear();
+	}
+	const FString& FilePath = Sequence->GetAssetFilePath();
+	ImGui::TextWrapped("File: %s", FilePath.empty() ? "No save path assigned" : FilePath.c_str());
+	ImGui::BeginDisabled(FilePath.empty());
+	if (ImGui::Button("Save"))
+	{
+		if (FJsonArchive::SaveAnimSequence(Sequence, FilePath))
+		{
+			ModifiedSequences.erase(Sequence);
+			SaveStatus = "Saved.";
+		}
+		else SaveStatus = "Save failed.";
+	}
+	ImGui::EndDisabled();
+	ImGui::SameLine();
+	ImGui::TextDisabled("%s", ModifiedSequences.contains(Sequence) ? "Unsaved changes" : "No pending changes");
+	if (!SaveStatus.empty()) ImGui::TextWrapped("%s", SaveStatus.c_str());
 }

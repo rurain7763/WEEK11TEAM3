@@ -10,6 +10,7 @@
 #include "TypeSerializer.h"
 #include "Asset/AssetManager.h"
 #include "Sequence/MovieSceneSequence.h"
+#include "Animation/AnimSequence.h"
 #include "Animation/Graph/AnimGraph.h"
 #include "Animation/BlendSpace1D.h"
 
@@ -24,6 +25,7 @@ namespace
 {
 	constexpr int32 SceneVersion = 4;   // 포맷이 바뀌었으므로 올린다
 	constexpr int32 SequenceVersion = 2;
+	constexpr int32 AnimSequenceVersion = 1;
 	constexpr int32 AnimGraphVersion = 1;
 	constexpr int32 Blend1DVersion = 1;
 }
@@ -165,6 +167,28 @@ bool FJsonArchive::LoadSequence(UMovieSceneSequence* Sequence, const FString& Pa
 bool FJsonArchive::LoadSequenceFromBytes(UMovieSceneSequence* Sequence, const TArray<uint8>& Bytes)
 {
 	return LoadObjectFromBytes(Sequence, "Sequence", SequenceVersion, Bytes);
+}
+
+bool FJsonArchive::SaveAnimSequence(UAnimSequence* Sequence, const FString& Path)
+{
+	TArray<uint8> Bytes;
+	return SaveAnimSequenceToBytes(Sequence, Bytes) && WriteFile(Path, Bytes);
+}
+
+bool FJsonArchive::SaveAnimSequenceToBytes(UAnimSequence* Sequence, TArray<uint8>& OutBytes)
+{
+	return SaveObjectToBytes(Sequence, "AnimSequence", AnimSequenceVersion, OutBytes);
+}
+
+bool FJsonArchive::LoadAnimSequence(UAnimSequence* Sequence, const FString& Path)
+{
+	TArray<uint8> Bytes;
+	return ReadFile(Path, Bytes) && LoadAnimSequenceFromBytes(Sequence, Bytes);
+}
+
+bool FJsonArchive::LoadAnimSequenceFromBytes(UAnimSequence* Sequence, const TArray<uint8>& Bytes)
+{
+	return LoadObjectFromBytes(Sequence, "AnimSequence", AnimSequenceVersion, Bytes);
 }
 
 bool FJsonArchive::SaveAnimGraph(UAnimGraph* Graph, const FString& Path)

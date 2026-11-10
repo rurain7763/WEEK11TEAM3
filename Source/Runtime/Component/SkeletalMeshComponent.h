@@ -24,7 +24,7 @@ public:
 
 	void SetAnimationMode(EAnimationMode AnimationMode);
 	void SetAnimation(UAnimationAsset* NewAnimAsset);
-	void PlayAnimation(UAnimationAsset* NewAnimAsset, bool bLooping);
+	void PlayAnimation(UAnimationAsset* NewAnimAsset, bool bLooping, float PlayRate = 1.0f);
 
 	bool HasRootMotion() const;
 	FTransform ConsumeRootMotion();

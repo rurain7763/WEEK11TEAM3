@@ -28,7 +28,9 @@ struct FAnimNode_StateMachine : public FAnimNode_Base
 
 	bool RequestState(const FName& InName, float CrossfadeDuration);
 
-	FAnimStateTransition* EvaluateTransitions(const TArray<FAnimStateTransition>& Transitions, const FAnimParameterTable& ParameterTable) const;
+	FAnimStateTransition* EvaluateTransitions(const TArray<FAnimStateTransition>& Transitions, const FAnimParameterTable& ParameterTable, bool& OutIsTriggerTransition) const;
 
 	void Evaluate(FPoseContext& OutPoseContext) override;
+
+	virtual float GetNormalizedTime() const override;
 };

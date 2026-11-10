@@ -1,6 +1,7 @@
 #include "EnginePCH.h"
 #include "Animation/AnimNodes/AnimNode_SequencePlayer.h"
 #include "Animation/AnimSequence.h"
+#include <cmath>
 
 void FAnimNode_SequencePlayer::Update(FAnimationUpdateContext& UpdateContext)
 {
@@ -36,6 +37,17 @@ void FAnimNode_SequencePlayer::Update(FAnimationUpdateContext& UpdateContext)
 			CurrentTime = Duration;
 		}
 	}
+	else if (CurrentTime < 0.f)
+	{
+		if (bLooping && Duration > 0.f)
+		{
+			CurrentTime = Duration + std::fmod(CurrentTime, Duration);
+		}
+		else
+		{
+			CurrentTime = 0.f;
+		}
+	}
 }
 
 void FAnimNode_SequencePlayer::Evaluate(FPoseContext& OutPoseContext)
@@ -61,4 +73,14 @@ float FAnimNode_SequencePlayer::GetCurrentAssetDuration()
 	}
 
 	return Sequence->GetDuration();
+}
+
+float FAnimNode_SequencePlayer::GetNormalizedTime() const
+{
+	if (!Sequence)
+	{
+		return 0.f;
+	}
+
+	return CurrentTime / Sequence->GetDuration();
 }

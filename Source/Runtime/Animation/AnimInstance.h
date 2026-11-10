@@ -14,7 +14,6 @@ struct FAnimNode_StateMachine;
 class UAnimInstance : public UObject
 {
 	DECLARE_CLASS(UAnimInstance, UObject)
-	friend struct FAnimGraphActionInputTest; // Temporary test-only access; remove with the input harness.
 
 public:
 	virtual ~UAnimInstance() = default;
@@ -51,35 +50,29 @@ public:
 		ParameterTable.AddParameter<T>(Name, InitValue);
 	}
 
+	inline void AddTrigger(const FName& Name)
+	{
+		ParameterTable.AddTrigger(Name);
+	}
+
+	inline void SetTrigger(const FName& Name)
+	{
+		ParameterTable.SetTrigger(Name);
+	}
+
+	inline void ResetTrigger(const FName& Name)
+	{
+		ParameterTable.ResetTrigger(Name);
+	}
+
 	inline void RemoveParameter(const FName& Name)
 	{
 		ParameterTable.RemoveParameter(Name);
 	}
 
-	inline void SetFloat(const FName& Name, float InValue) {
-		ParameterTable.SetFloat(Name, InValue);
-	}
-	inline void SetBool(const FName& Name, bool InValue) {
-		ParameterTable.SetBool(Name, InValue);
-	}
-	inline void SetInt(const FName& Name, int32 InValue) {
-		ParameterTable.SetInt(Name, InValue);
-	}
-
-	inline float GetFloat(const FName& Name) const {
-		float Value = 0.f;
-		ParameterTable.TryGetFloat(Name, Value);
-		return Value;
-	}
-	inline bool GetBool(const FName& Name) const {
-		bool Value = false;
-		ParameterTable.TryGetBool(Name, Value);
-		return Value;
-	}
-	inline int32 GetInt(const FName& Name) const {
-		int32 Value = 0;
-		ParameterTable.TryGetInt(Name, Value);
-		return Value;
+	inline bool HasParameter(const FName& Name)
+	{
+		return ParameterTable.HasParameter(Name);
 	}
 
 protected:

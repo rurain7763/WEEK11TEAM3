@@ -3,6 +3,30 @@
 #include "Animation/AnimDataModel.h"
 #include <algorithm>
 
+void UAnimSequenceBase::Serialize(FStructuredArchive::FRecord Record)
+{
+	Super::Serialize(Record);
+
+	FArchive& Ar = Record.GetUnderlyingArchive();
+
+	int32 NotifyNum = Notifies.Num();
+	auto NotifyArray = Record.EnterArray("Notifies", NotifyNum);
+	if (Ar.IsLoading())
+	{
+		Notifies.SetNum(NotifyNum);
+	}
+
+	for (int32 i = 0; i < NotifyNum; i++)
+	{
+		FAnimNotifyEvent& Notify = Notifies[i];
+
+		auto ElementRecord = NotifyArray.EnterElement().EnterRecord();
+
+		ElementRecord << SA_VALUE("Name", Notify.Name);
+		ElementRecord << SA_VALUE("TriggerTime", Notify.TriggerTime);
+	}
+}
+
 float UAnimSequenceBase::GetDuration() const
 {
 	if (DataModel)
