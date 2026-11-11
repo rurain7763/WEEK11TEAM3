@@ -39,6 +39,28 @@ function Tick(deltaTime)
         local ok = animInstance:PlayState("Test", "Attack", 0.2)
         Log("PlayState -> " .. tostring(ok))
     end
+
+    UpdateMovement(deltaTime, animInstance)
+end
+
+function UpdateMovement(deltaTime, animInstance)
+    local bMoving = Input.IsKeyDown(KeyCode.W) or Input.IsKeyDown(KeyCode.A) or Input.IsKeyDown(KeyCode.S) or Input.IsKeyDown(KeyCode.D)
+
+    if not bMoving then
+        animInstance:SetFloat("Speed", 0.0)
+        return
+    end
+
+    local speed = 100.0
+    if Input.IsKeyDown(KeyCode.Shift) then
+        speed = 200.0
+    end
+
+    if Input.IsKeyDown(KeyCode.S) then
+       speed = -speed
+    end
+
+    animInstance:SetFloat("Speed", speed)
 end
 
 

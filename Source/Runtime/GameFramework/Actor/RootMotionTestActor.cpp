@@ -4,15 +4,14 @@
 ARootMotionTestActor::ARootMotionTestActor()
 {
 	PrimaryActorTick.bCanEverTick = true;
-	SkeletalMeshComponent = CreateDefaultSubobject<USkeletalMeshComponent>("USkeletalMeshComponent");
+	SkeletalMeshComponent = CreateDefaultSubobject<USkeletalMeshComponent>("SkeletalMeshComponent");
 	SkeletalMeshComponent->SetupAttachment(GetRootComponent());
 
-	CharacterMovementComponent = CreateDefaultSubobject<UCharacterMovementComponent>("UCharacterMovementComponent");
-	CharacterMovementComponent->Gravity = 20.0f;
-	CharacterMovementComponent->SetCollisionComponent(BoxComponent);
+	CharacterMovementComponent = CreateDefaultSubobject<UCharacterMovementComponent>("CharacterMovementComponent");
+	CharacterMovementComponent->Gravity = 0.0f;
 
-	SetMeshComponent(SkeletalMeshComponent);
+	CharacterMovementComponent->SetMeshComponent(SkeletalMeshComponent);
 
-	ScriptComponent = CreateDefaultSubobject<UScriptComponent>("UScriptComponent");
+	ScriptComponent = CreateDefaultSubobject<UScriptComponent>("ScriptComponent");
 	ScriptComponent->SetScriptPath("Assets/Scripts/Actors/AnimTest.lua");
 }

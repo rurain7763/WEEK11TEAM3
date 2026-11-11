@@ -148,10 +148,10 @@ void USkeletalMeshComponent::TickComponent(float DeltaTime)
 	}
 
 	// Temporary parameter input only; playback remains entirely graph-driven.
-	if (AnimGraph)
-	{
-		FAnimGraphActionInputTest::Update(AnimInstance, GetWorld(), GetOwner() ? GetOwner()->GetName() : GetName());
-	}
+	//if (AnimGraph)
+	//{
+	//	FAnimGraphActionInputTest::Update(AnimInstance, GetWorld(), GetOwner() ? GetOwner()->GetName() : GetName());
+	//}
 
 	AnimInstance->NativeUpdateAnimation(DeltaTime);
 
