@@ -1,0 +1,32 @@
+{
+    "AnimGraph": {
+        "AnimSequencePlayers": [],
+        "AnimTwoWayBlends": [],
+        "BlendSpacePlayers": [
+            {
+                "BlendSpacePath": "Week10/Locomotion.blendspace",
+                "Looping": true,
+                "Speed": 1.0,
+                "X": 0.0,
+                "XParameterName": "Speed",
+                "Y": 0.0
+            }
+        ],
+        "Nodes": [
+            { "ActualType": 0, "NodeID": 1, "Type": 2 }
+        ],
+        "Parameters": [
+            { "Name": "Speed", "Type": 2, "Value": 0.0 }
+        ],
+        "Properties": {},
+        "RootNodeID": 1,
+        "StateMachines": []
+    },
+    "Editor": {
+        "Nodes": [
+            { "NodeID": 1, "X": 90.0, "Y": 90.0 }
+        ],
+        "States": []
+    },
+    "Version": 1
+}
