@@ -261,6 +261,12 @@ void UAnimGraph::SerializeData(FStructuredArchiveRecord& Record, FAnimTransition
 {
 	Record << SA_VALUE("ParameterName", Condition.ParameterName);
 	SerializeEnum(Record, "ComparisonOperator", Condition.ComparisonOperator, EAnimComparisonOperator::LessEqual);
+
+	if (Condition.ParameterName.empty())
+	{
+		return;
+	}
+
 	const FAnimParameterData* Parameter = FindParameterData(Condition.ParameterName);
 	if (!Parameter)
 	{

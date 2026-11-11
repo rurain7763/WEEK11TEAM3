@@ -658,7 +658,7 @@
                                         "Z": 1.0
                                     }
                                 },
-                                "bBlockComponet": false,
+                                "bBlockComponet": true,
                                 "bCastShadow": true,
                                 "bGenerateOverlapEvents": true,
                                 "bReceiveShadow": true,
@@ -4074,16 +4074,16 @@
                         {
                             "Class": "USceneComponent",
                             "Name": "DefaultSceneRoot",
-                            "Parent": "",
+                            "Parent": "CapsuleComponent",
                             "Properties": {
                                 "Transform": {
                                     "Location": {
-                                        "X": 2.13675594329834,
-                                        "Y": -3.2080302238464355,
-                                        "Z": 0.5
+                                        "X": 0.0,
+                                        "Y": 0.0,
+                                        "Z": -1.0
                                     },
                                     "Rotation": {
-                                        "Pitch": 0.0,
+                                        "Pitch": -0.0,
                                         "Roll": 0.0,
                                         "Yaw": 0.0
                                     },
@@ -4203,6 +4203,49 @@
                             }
                         },
                         {
+                            "Class": "UCapsuleComponent",
+                            "Name": "CapsuleComponent",
+                            "Parent": "",
+                            "Properties": {
+                                "CapsuleHalfHeight": 1.0,
+                                "CapsuleRadius": 0.5,
+                                "ShapeColor": {
+                                    "A": 255,
+                                    "B": 0,
+                                    "G": 0,
+                                    "R": 0
+                                },
+                                "ShowBeginOverlapLog": false,
+                                "ShowEndOverlapLog": false,
+                                "ShowHitLog": false,
+                                "Transform": {
+                                    "Location": {
+                                        "X": 2.13675594329834,
+                                        "Y": -3.2080302238464355,
+                                        "Z": 1.5
+                                    },
+                                    "Rotation": {
+                                        "Pitch": -0.0,
+                                        "Roll": 0.0,
+                                        "Yaw": 0.0
+                                    },
+                                    "Scale": {
+                                        "X": 1.0,
+                                        "Y": 1.0,
+                                        "Z": 1.0
+                                    }
+                                },
+                                "bBlockComponet": true,
+                                "bCastShadow": false,
+                                "bDrawOnlyIfSelected": false,
+                                "bGenerateOverlapEvents": true,
+                                "bIsGameHidden": true,
+                                "bReceiveShadow": false,
+                                "bReceivesDecals": true,
+                                "bVisible": true
+                            }
+                        },
+                        {
                             "Class": "UCharacterMovementComponent",
                             "Name": "CharacterMovementComponent",
                             "Parent": "",
@@ -4299,7 +4342,7 @@
                         "bAutoPossessPlayer": true,
                         "bTickInEditor": false
                     },
-                    "RootComponent": "DefaultSceneRoot"
+                    "RootComponent": "CapsuleComponent"
                 }
             ],
             "Properties": {}
