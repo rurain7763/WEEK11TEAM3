@@ -1,0 +1,17 @@
+{
+    "AnimSequence": {
+        "EnableRootMotion": false,
+        "Notifies": [
+            {
+                "Duration": 0.2,
+                "Name": "HitTint",
+                "NotifyStateName": "UAnimNotifyState_HitTint",
+                "Properties": {},
+                "TriggerTime": 0.0
+            }
+        ],
+        "Properties": {},
+        "Skeleton": "Models/FbxTest/UAL1_Skeleton"
+    },
+    "Version": 1
+}

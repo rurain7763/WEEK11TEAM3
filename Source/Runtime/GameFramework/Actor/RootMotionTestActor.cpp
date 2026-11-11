@@ -45,5 +45,6 @@ void ARootMotionTestActor::BeginPlay()
 void ARootMotionTestActor::HandleNotify(const FAnimNotifyEvent& Event)
 {
 	// TODO: Do something
-	HTR_LOG(Info, "Fire {}", Event.Name.ToString());
+	// HTR_LOG(Info, "Fire {}", Event.Name.ToString());
+	HTR_LOG(Info, "Fire {} @ {:.3f}s", Event.Name.ToString(), Event.TriggerTime);
 }

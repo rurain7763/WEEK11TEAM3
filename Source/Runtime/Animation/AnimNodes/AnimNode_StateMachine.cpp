@@ -1,6 +1,7 @@
 #include "EnginePCH.h"
 #include "Animation/AnimNodes/AnimNode_StateMachine.h"
 #include "Animation/AnimationRuntime.h"
+#include "Animation/AnimNodes/AnimNode_AssetPlayerBase.h"
 
 void FAnimNode_StateMachine::Initialize()
 {
@@ -138,6 +139,16 @@ FAnimStateTransition* FAnimNode_StateMachine::EvaluateTransitions(const TArray<F
 {
 	float NormalizedTime = GetNormalizedTime();
 
+	if (CurrentStateIndex != -1)
+	{
+		const auto* Player = States[CurrentStateIndex];
+
+		if (Player && NormalizedTime >= 0.f && Player->GetSpeed() < 0.f)
+		{
+			NormalizedTime = 1.f - NormalizedTime;
+		}
+	}
+
 	for (int32 i = 0; i < Transitions.Num(); i++)
 	{
 		const FAnimStateTransition& Transition = Transitions[i];
@@ -158,7 +169,7 @@ FAnimStateTransition* FAnimNode_StateMachine::EvaluateTransitions(const TArray<F
 			OutIsTriggerTransition = Param.Type == EAnimParameterType::Trigger;
 		}
 
-		if (Transition.bHasExitTime && NormalizedTime < Transition.ExitTime)
+		if (Transition.bHasExitTime && (NormalizedTime < 0.f || NormalizedTime < Transition.ExitTime))
 		{
 			continue;
 		}
@@ -203,5 +214,6 @@ float FAnimNode_StateMachine::GetNormalizedTime() const
 		return 0.f;
 	}
 
-	return States[CurrentStateIndex]->GetNormalizedTime();
+	const auto* Node = States[CurrentStateIndex];
+	return Node ? Node->GetNormalizedTime() : -1.f;
 }
