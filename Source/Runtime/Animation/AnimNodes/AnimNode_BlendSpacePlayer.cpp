@@ -44,6 +44,21 @@ void FAnimNode_BlendSpacePlayer::Update(FAnimationUpdateContext& UpdateContext)
 
 	NormalizedTime += NormalizedDeltaTime;
 
+	// NOTE: Notify 계산 (지금은 가장 Weight가 높은 이벤트만 호출한다.)
+	if (MaxSample)
+	{
+		float Duration = MaxSample->Animation->GetDuration();
+		float StartTime = Duration * StartNormalizedTime;
+		float DeltaTime = Duration * NormalizedDeltaTime;
+
+		FAnimNotifyContext NotifyCtx;
+		NotifyCtx.SourcePlayerID = ID;
+
+		MaxSample->Animation->GetAnimNotifies(Duration, bLooping, StartTime, DeltaTime, NotifyCtx);
+		UpdateContext.EventQueue->Append(NotifyCtx.CollectedNotifies);
+	}
+
+	// NOTE: Root motion 계산
 	float WeightSum = 0.f;
 	for (int32 i = 0; i < CachedSampleCount; i++)
 	{
