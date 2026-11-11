@@ -70,6 +70,8 @@ void FAnimationSequenceViewer::SetSequence(UAnimSequence* InSequence)
 	if (InSequence && InSequence->GetSkeleton() != Skeleton) return;
 	Sequence = InSequence;
 	SelectedNotify = -1;
+	bNotifyOrderDirty = false;
+	DraggedPointNotify = -1;
 	SaveStatus.clear();
 	if (Sequence) Sequence->SortNotifies();
 	PreviewTime = 0.f;
@@ -226,6 +228,89 @@ void FAnimationSequenceViewer::DrawPlaybackControls()
 	ImGui::EndDisabled();
 }
 
+void FAnimationSequenceViewer::SortSelectedNotify()
+{
+	const FAnimNotifyEvent* Notify = Sequence->GetNotify(SelectedNotify);
+	if (!Notify)
+	{
+		Sequence->SortNotifies();
+		bNotifyOrderDirty = false;
+		return;
+	}
+	const FAnimNotifyEvent Edited = *Notify;
+	Sequence->SortNotifies();
+	const auto& Notifies = Sequence->GetNotifies();
+	for (int32 Index = 0; Index < Notifies.Num(); ++Index)
+	{
+		const FAnimNotifyEvent& Item = Notifies[Index];
+		if (Item.Name == Edited.Name && Item.TriggerTime == Edited.TriggerTime
+			&& Item.Duration == Edited.Duration && Item.NotifyState == Edited.NotifyState)
+		{
+			SelectedNotify = Index;
+			break;
+		}
+	}
+	bNotifyOrderDirty = false;
+}
+
+void FAnimationSequenceViewer::AddNotifyAtCursor(UClass* StateClass)
+{
+	const float ClipDuration = Sequence->GetDuration();
+	const float FrameTime = 1.f / Sequence->GetDataModel()->GetSampleRate();
+	FAnimNotifyEvent Notify;
+	Notify.TriggerTime = std::clamp(PreviewTime, 0.f, ClipDuration);
+	if (StateClass)
+	{
+		Notify.TriggerTime = std::min(Notify.TriggerTime, std::max(0.f, ClipDuration - FrameTime));
+		Notify.NotifyState = NewObject<UAnimNotifyState>(Sequence, StateClass);
+		if (!Notify.NotifyState)
+		{
+			SaveStatus = "Could not create selected NotifyState.";
+			return;
+		}
+		Notify.Name = FName(StateClass->Name);
+		Notify.Duration = std::min(std::max(0.2f, FrameTime), ClipDuration - Notify.TriggerTime);
+	}
+	else
+	{
+		Notify.Name = FName(NotifyName);
+		if (Notify.Name.IsNone()) return;
+	}
+	Sequence->AddNotify(Notify);
+	SelectedNotify = Sequence->GetNotifies().Num() - 1;
+	SortSelectedNotify();
+	ModifiedSequences.insert(Sequence);
+	SaveStatus.clear();
+}
+
+void FAnimationSequenceViewer::DrawAddNotifyMenu()
+{
+	if (ImGui::BeginMenu("New Notify"))
+	{
+		ImGui::InputText("Name", NotifyName, sizeof(NotifyName));
+		ImGui::BeginDisabled(FName(NotifyName).IsNone());
+		if (ImGui::MenuItem("Add at playhead")) AddNotifyAtCursor(nullptr);
+		ImGui::EndDisabled();
+		ImGui::EndMenu();
+	}
+	if (ImGui::BeginMenu("New Notify State"))
+	{
+		NotifyClassFilter.Draw("Search", 180.f);
+		TArray<UClass*> Classes;
+		GetDerivedClasses(UAnimNotifyState::StaticClass(), Classes);
+		std::sort(Classes.begin(), Classes.end(), [](const UClass* A, const UClass* B) { return A->Name < B->Name; });
+		bool bAny = false;
+		for (UClass* Class : Classes)
+		{
+			if (!Class->Constructor || !NotifyClassFilter.PassFilter(Class->Name.c_str())) continue;
+			bAny = true;
+			if (ImGui::MenuItem(Class->Name.c_str())) AddNotifyAtCursor(Class);
+		}
+		if (!bAny) ImGui::TextDisabled("No matching NotifyState classes.");
+		ImGui::EndMenu();
+	}
+}
+
 void FAnimationSequenceViewer::DrawNotifyDetails()
 {
 	FAnimNotifyEvent* Notify = Sequence->GetNotify(SelectedNotify);
@@ -236,25 +321,31 @@ void FAnimationSequenceViewer::DrawNotifyDetails()
 	ImGui::Text("Selected Notify: %s", Notify->Name.ToString().c_str());
 	const float ClipDuration = Sequence->GetDuration();
 	bool bChanged = false;
+	char NameBuffer[256];
+	strncpy_s(NameBuffer, Notify->Name.ToString().c_str(), _TRUNCATE);
+	if (ImGui::InputText("Name", NameBuffer, sizeof(NameBuffer)) && !FName(NameBuffer).IsNone())
+	{
+		Notify->Name = FName(NameBuffer);
+		bChanged = true;
+	}
 	float StartTime = Notify->TriggerTime;
-	bool bSortNotifies = false;
-	if (ImGui::InputFloat("Start Time (s)", &StartTime, 0.f, 0.f, "%.3f", ImGuiInputTextFlags_EnterReturnsTrue)
+	const float Step = 1.f / Sequence->GetDataModel()->GetSampleRate();
+	if (ImGui::DragFloat("Start (s)", &StartTime, Step, 0.f, ClipDuration, "%.3f", ImGuiSliderFlags_AlwaysClamp)
 		&& std::isfinite(StartTime))
 	{
 		Notify->TriggerTime = std::clamp(StartTime, 0.f, ClipDuration);
 		Notify->Duration = std::clamp(Notify->Duration, 0.f, ClipDuration - Notify->TriggerTime);
 		bChanged = true;
-		bSortNotifies = true;
+		bNotifyOrderDirty = true;
 	}
 	float NotifyDuration = Notify->Duration;
-	if (ImGui::InputFloat("Duration (s)", &NotifyDuration, 0.f, 0.f, "%.3f", ImGuiInputTextFlags_EnterReturnsTrue)
+	if (ImGui::DragFloat("Duration (s)", &NotifyDuration, Step, 0.f, ClipDuration - Notify->TriggerTime, "%.3f", ImGuiSliderFlags_AlwaysClamp)
 		&& std::isfinite(NotifyDuration))
 	{
 		Notify->Duration = std::clamp(NotifyDuration, 0.f, ClipDuration - Notify->TriggerTime);
 		bChanged = true;
 	}
 	ImGui::Text("End Time: %.3f s", Notify->TriggerTime + Notify->Duration);
-	ImGui::TextDisabled("Press Enter to apply time values. Duration 0 fires once.");
 
 	UClass* CurrentClass = Notify->NotifyState ? Notify->NotifyState->GetClass() : nullptr;
 	if (ImGui::BeginCombo("Notify State", CurrentClass ? CurrentClass->Name.c_str() : "None"))
@@ -309,22 +400,6 @@ void FAnimationSequenceViewer::DrawNotifyDetails()
 		ModifiedSequences.insert(Sequence);
 		SaveStatus.clear();
 	}
-	if (bSortNotifies)
-	{
-		const FAnimNotifyEvent Edited = *Notify;
-		Sequence->SortNotifies();
-		const auto& Notifies = Sequence->GetNotifies();
-		for (int32 Index = 0; Index < Notifies.Num(); ++Index)
-		{
-			const FAnimNotifyEvent& Item = Notifies[Index];
-			if (Item.Name == Edited.Name && Item.TriggerTime == Edited.TriggerTime
-				&& Item.Duration == Edited.Duration && Item.NotifyState == Edited.NotifyState)
-			{
-				SelectedNotify = Index;
-				break;
-			}
-		}
-	}
 	ImGui::PopID();
 }
 
@@ -350,11 +425,24 @@ void FAnimationSequenceViewer::DrawTimeline()
 	int32_t CurrentFrame = std::clamp(static_cast<int32_t>(std::lround(PreviewTime * SampleRate)), StartFrame, EndFrame);
 	const int32_t FrameBeforeInput = CurrentFrame;
 	ImGui::TextDisabled("Frame %d / %d   |   %d fps", CurrentFrame, EndFrame, SampleRate);
+	const UEditorEngine* EditorEngine = Cast<UEditorEngine>(GEngine);
+	const bool bEditingLocked = EditorEngine && EditorEngine->IsPlaying();
+	ImGui::BeginDisabled(bEditingLocked);
+	if (ImGui::Button("+ Add Notify")) ImGui::OpenPopup("AddNotifyMenu");
+	if (ImGui::BeginPopup("AddNotifyMenu"))
+	{
+		DrawAddNotifyMenu();
+		ImGui::EndPopup();
+	}
+	ImGui::EndDisabled();
+	ImGui::SameLine();
+	ImGui::Text("at %.3f s", PreviewTime);
+	int32 DeleteNotify = -1;
 
 	// Keep each clip's timeline view separate; changing clips starts at frame zero.
 	ImGui::PushID(Sequence);
 	if (ImGui::BeginNeoSequencer("AnimationTimeline", &CurrentFrame, &StartFrame, &EndFrame,
-		ImVec2(0.f, 170.f), ImGuiNeoSequencerFlags_HideZoom))
+		ImVec2(0.f, std::clamp(100.f + Sequence->GetNotifies().Num() * 28.f, 170.f, 360.f)), ImGuiNeoSequencerFlags_HideZoom))
 	{
 		// Boundary markers show the clip extent, not editable animation keys.
 		if (ImGui::BeginNeoTimelineEx("Animation", nullptr, ImGuiNeoTimelineFlags_None))
@@ -367,25 +455,74 @@ void FAnimationSequenceViewer::DrawTimeline()
 			if (ImGui::IsNeoKeyframeHovered()) ImGui::SetTooltip("Clip end: %.3f s", Duration);
 			ImGui::EndNeoTimeLine();
 		}
-		// Display markers only; editing event times requires a separate sequence API.
-		if (ImGui::BeginNeoTimelineEx("Notifies", nullptr, ImGuiNeoTimelineFlags_None))
+		const auto& Notifies = Sequence->GetNotifies();
+		if (Notifies.IsEmpty() && ImGui::BeginNeoTimelineEx("Notifies", nullptr, ImGuiNeoTimelineFlags_None))
 		{
-			const auto& Notifies = Sequence->GetNotifies();
-			for (int32 Index = 0; Index < Notifies.Num(); ++Index)
-			{
-				const auto& Notify = Notifies[Index];
-				if (!std::isfinite(Notify.TriggerTime) || Notify.TriggerTime < 0.f || Notify.TriggerTime > Duration) continue;
-				ImGui::PushID(Index);
-				int32_t Frame = static_cast<int32_t>(std::lround(Notify.TriggerTime * SampleRate));
-				ImGui::NeoKeyframe(&Frame);
-				if (ImGui::IsNeoKeyframeHovered())
-				{
-					ImGui::SetTooltip("%s: %.3f s", Notify.Name.ToString().c_str(), Notify.TriggerTime);
-					if (ImGui::IsMouseClicked(ImGuiMouseButton_Left)) SelectedNotify = Index;
-				}
-				ImGui::PopID();
-			}
 			ImGui::EndNeoTimeLine();
+		}
+		for (int32 Index = 0; Index < Notifies.Num(); ++Index)
+		{
+			FAnimNotifyEvent* Notify = Sequence->GetNotify(Index);
+			if (!std::isfinite(Notify->TriggerTime) || Notify->TriggerTime < 0.f || Notify->TriggerTime > Duration) continue;
+			ImGui::PushID(Index);
+			const FString Name = Notify->Name.ToString();
+			if (ImGui::BeginNeoTimelineEx(Name.c_str(), nullptr, ImGuiNeoTimelineFlags_None))
+			{
+				const bool bState = Notify->Duration > 0.f;
+				int32_t From = std::clamp(static_cast<int32_t>(std::lround(Notify->TriggerTime * SampleRate)), 0, EndFrame);
+				int32_t To = bState ? std::clamp(static_cast<int32_t>(std::lround((Notify->TriggerTime + Notify->Duration) * SampleRate)), From + 1, EndFrame + 1) : From + 1;
+				const int32_t OldFrom = From;
+				const int32_t OldTo = To;
+				ImGui::BeginDisabled(bEditingLocked);
+				bool bHovered = false;
+				if (bState)
+				{
+					if (ImGui::NeoSection("Notify", &From, &To, Name.c_str(), SelectedNotify == Index, 0, EndFrame)) SelectedNotify = Index;
+					bHovered = ImGui::IsItemHovered();
+				}
+				else
+				{
+					ImGui::NeoKeyframe(&From);
+					bHovered = ImGui::IsNeoKeyframeHovered();
+					if (!bEditingLocked && bHovered && ImGui::IsMouseClicked(ImGuiMouseButton_Left))
+					{
+						SelectedNotify = Index;
+						DraggedPointNotify = Index;
+						DraggedPointStartFrame = OldFrom;
+						DraggedPointMouseX = ImGui::GetIO().MousePos.x;
+					}
+					From = OldFrom;
+					if (!bEditingLocked && DraggedPointNotify == Index && ImGui::IsMouseDragging(ImGuiMouseButton_Left))
+					{
+						const float FrameDelta = (ImGui::GetIO().MousePos.x - DraggedPointMouseX) / std::max(ImGui::NeoGetFrameWidth(), 0.001f);
+						From = std::clamp(DraggedPointStartFrame + static_cast<int32_t>(std::lround(FrameDelta)), 0, EndFrame);
+					}
+					To = From + 1;
+				}
+				if (bHovered)
+				{
+					ImGui::SetTooltip("%s\nStart: %.3f s\nDuration: %.3f s", Name.c_str(), Notify->TriggerTime, Notify->Duration);
+				}
+				if (!bEditingLocked && bHovered && ImGui::IsMouseReleased(ImGuiMouseButton_Right)) ImGui::OpenPopup("NotifyActions");
+				if (ImGui::BeginPopup("NotifyActions"))
+				{
+					SelectedNotify = Index;
+					if (ImGui::MenuItem("Delete", "Del")) DeleteNotify = Index;
+					ImGui::EndPopup();
+				}
+				if (!bEditingLocked && (From != OldFrom || To != OldTo))
+				{
+					SelectedNotify = Index;
+					Notify->TriggerTime = std::clamp(static_cast<float>(From) / SampleRate, 0.f, Duration);
+					if (bState) Notify->Duration = std::clamp(static_cast<float>(To) / SampleRate - Notify->TriggerTime, 0.f, Duration - Notify->TriggerTime);
+					ModifiedSequences.insert(Sequence);
+					SaveStatus.clear();
+					bNotifyOrderDirty = true;
+				}
+				ImGui::EndDisabled();
+				ImGui::EndNeoTimeLine();
+			}
+			ImGui::PopID();
 		}
 		ImGui::EndNeoSequencer();
 	}
@@ -400,52 +537,25 @@ void FAnimationSequenceViewer::DrawTimeline()
 	}
 	ImGui::Text("Time: %.3f / %.3f s", PreviewTime, Duration);
 
-	const UEditorEngine* EditorEngine = Cast<UEditorEngine>(GEngine);
-	const bool bEditingLocked = EditorEngine && EditorEngine->IsPlaying();
 	if (bEditingLocked) ImGui::TextDisabled("Stop Play to edit notifies.");
+	else ImGui::TextDisabled("Drag to move. Drag interval edges to resize. Right-click to delete.");
 	ImGui::BeginDisabled(bEditingLocked);
-	ImGui::InputText("Notify Name", NotifyName, sizeof(NotifyName));
-	ImGui::Text("Notify Time: %.3f s (current cursor)", PreviewTime);
-	const FName NewNotifyName(NotifyName);
-	ImGui::BeginDisabled(NewNotifyName.IsNone() || !std::isfinite(PreviewTime) || PreviewTime < 0.f || PreviewTime > Duration);
-	if (ImGui::Button("Add Notify"))
-	{
-		Sequence->AddNotify(FAnimNotifyEvent{ NewNotifyName, PreviewTime });
-		Sequence->SortNotifies();
-		SelectedNotify = -1;
-		ModifiedSequences.insert(Sequence);
-		SaveStatus.clear();
-	}
-	ImGui::EndDisabled();
-
-	const auto& Notifies = Sequence->GetNotifies();
-	if (!Notifies.IsValidIndex(SelectedNotify)) SelectedNotify = -1;
-	if (ImGui::BeginChild("NotifyList", ImVec2(0.f, 110.f), ImGuiChildFlags_Borders))
-	{
-		if (Notifies.IsEmpty()) ImGui::TextDisabled("No notifies");
-		for (int32 Index = 0; Index < Notifies.Num(); ++Index)
-		{
-			ImGui::PushID(Index);
-			const auto& Notify = Notifies[Index];
-			FString Label = Notify.Name.ToString() + " @ " + std::to_string(Notify.TriggerTime) + " s";
-			if (Notify.Duration > 0.f) Label += " (" + std::to_string(Notify.Duration) + " s)";
-			if (ImGui::Selectable(Label.c_str(), SelectedNotify == Index)) SelectedNotify = Index;
-			ImGui::PopID();
-		}
-	}
-	ImGui::EndChild();
+	if (!Sequence->GetNotifies().IsValidIndex(SelectedNotify)) SelectedNotify = -1;
 	DrawNotifyDetails();
 	ImGui::BeginDisabled(SelectedNotify < 0);
-	if (ImGui::Button("Delete Selected Notify"))
+	if (ImGui::Button("Delete Selected Notify") || (!ImGui::IsAnyItemActive() && ImGui::IsWindowFocused(ImGuiFocusedFlags_RootAndChildWindows) && ImGui::IsKeyPressed(ImGuiKey_Delete))) DeleteNotify = SelectedNotify;
+	ImGui::EndDisabled();
+	if (!bEditingLocked && Sequence->GetNotifies().IsValidIndex(DeleteNotify))
 	{
-		UAnimNotifyState* State = Sequence->GetNotify(SelectedNotify)->NotifyState;
-		Sequence->RemoveNotify(SelectedNotify);
+		UAnimNotifyState* State = Sequence->GetNotify(DeleteNotify)->NotifyState;
+		Sequence->RemoveNotify(DeleteNotify);
 		if (State && State->GetOuter() == Sequence) delete State;
 		SelectedNotify = -1;
 		ModifiedSequences.insert(Sequence);
 		SaveStatus.clear();
 	}
-	ImGui::EndDisabled();
+	if (!ImGui::IsMouseDown(ImGuiMouseButton_Left)) DraggedPointNotify = -1;
+	if (bNotifyOrderDirty && !ImGui::IsMouseDown(ImGuiMouseButton_Left) && !ImGui::IsAnyItemActive()) SortSelectedNotify();
 	ImGui::EndDisabled();
 	bool bRootMotion = Sequence->HasRootMotion();
 	if (ImGui::Checkbox("Enable Root Motion", &bRootMotion))

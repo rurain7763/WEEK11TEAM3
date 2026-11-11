@@ -1,7 +1,20 @@
 {
     "AnimSequence": {
         "EnableRootMotion": true,
-        "Notifies": [],
+        "Notifies": [
+            {
+                "Duration": 0.0,
+                "Name": "Footstep",
+                "NotifyStateName": "",
+                "TriggerTime": 0.13333333333333333
+            },
+            {
+                "Duration": 0.0,
+                "Name": "Footstep",
+                "NotifyStateName": "",
+                "TriggerTime": 0.5666666666666667
+            }
+        ],
         "Properties": {},
         "Skeleton": "Models/FbxTest/UAL1_RM_Skeleton"
     },
