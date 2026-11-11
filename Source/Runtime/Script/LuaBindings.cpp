@@ -458,6 +458,7 @@ void FLuaBindings::RegisterLuaBindings(sol::state& Lua, FLuaCoroutineScheduler* 
 		FSoundSystem::Get().StopMusic();
 	});
 	GamePlayStatics.set_function("GetActorOfClass", &FLuaBindings::GetActorOfClass);
+	GamePlayStatics.set_function("GetActorByName", &FLuaBindings::GetActorByName);
 	GamePlayStatics.set_function("GetViewportSize", []
 	{
 		return GEngine && GEngine->GameViewport ? GEngine->GameViewport->GetViewportSize() : FVector2(0.0f, 0.0f);
