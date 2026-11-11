@@ -68,7 +68,7 @@ void UAnimInstance::DispatchQueuedAnimEvents()
 
 		if (FActiveAnimNotifyEventEntry* Existing = ActiveEvents.Find(NotifyKey))
 		{
-			NotifyState->NotifyTick(MeshComp, EventRef.Sequence, UpdateContext.DeltaTime, *Notify);
+			NotifyState->NotifyTick(MeshComp, UpdateContext.DeltaTime, EventRef);
 			if (EventRef.bReachedEnd)
 			{
 				NotifyState->NotifyEnd(MeshComp, EventRef.Sequence, *Notify);
@@ -82,7 +82,7 @@ void UAnimInstance::DispatchQueuedAnimEvents()
 		else
 		{
 			NotifyState->NotifyBegin(MeshComp, EventRef.Sequence, *Notify);
-			NotifyState->NotifyTick(MeshComp, EventRef.Sequence, UpdateContext.DeltaTime, *Notify);
+			NotifyState->NotifyTick(MeshComp, UpdateContext.DeltaTime, EventRef);
 			if (EventRef.bReachedEnd)
 			{
 				NotifyState->NotifyEnd(MeshComp, EventRef.Sequence, *Notify);

@@ -159,8 +159,10 @@ void UAnimSequenceBase::GetAnimNotifiesFromPositions(float PreviousPosition, flo
 			}
 
 			auto& Ref = NotifyContext.CollectedNotifies.AddDefaulted_GetRef();
+			Ref.Sequence = this;
 			Ref.SourcePlayerID = NotifyContext.SourcePlayerID;
 			Ref.Notify = &Notify;
+			Ref.CurrentPosition = CurrentPosition;
 			Ref.bReachedEnd = (Notify.Duration == 0.f) || CurrentPosition <= StartTime;
 
 		}
@@ -187,6 +189,7 @@ void UAnimSequenceBase::GetAnimNotifiesFromPositions(float PreviousPosition, flo
 			Ref.Sequence = this;
 			Ref.SourcePlayerID = NotifyContext.SourcePlayerID;
 			Ref.Notify = &Notify;
+			Ref.CurrentPosition = CurrentPosition;
 			Ref.bReachedEnd = EndTriggerTime <= CurrentPosition;
 		}
 	}
