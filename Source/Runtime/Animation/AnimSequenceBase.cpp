@@ -24,6 +24,29 @@ void UAnimSequenceBase::Serialize(FStructuredArchive::FRecord Record)
 
 		ElementRecord << SA_VALUE("Name", Notify.Name);
 		ElementRecord << SA_VALUE("TriggerTime", Notify.TriggerTime);
+		ElementRecord << SA_VALUE("Duration", Notify.Duration);
+		
+		FString ClssName;
+		if (Notify.NotifyState)
+		{
+			UClass* Clss = Notify.NotifyState->GetClass();
+			ClssName = Clss->Name;
+		}
+		ElementRecord << SA_VALUE("NotifyStateName", ClssName);
+	
+		if (Ar.IsLoading())
+		{
+			UClass* Clss = FindClass(ClssName);
+			if (Clss && Clss->IsChildOf(UAnimNotifyState::StaticClass()))
+			{
+				Notify.NotifyState = NewObject<UAnimNotifyState>(this, Clss);
+			}
+		}
+
+		if (Notify.NotifyState)
+		{
+			Notify.NotifyState->Serialize(ElementRecord);
+		}
 	}
 }
 
@@ -88,6 +111,7 @@ void UAnimSequenceBase::GetAnimNotifiesFromPositions(float PreviousPosition, flo
 		if (StartTriggerTime <= CurrentPosition && (bIncludeStart ? EndTriggerTime >= PreviousPosition : EndTriggerTime > PreviousPosition))
 		{
 			FAnimNotifyEventReference& Ref = NotifyContext.CollectedNotifies.AddDefaulted_GetRef();
+			Ref.Sequence = this;
 			Ref.SourcePlayerID = NotifyContext.SourcePlayerID;
 			Ref.Notify = &Notify;
 			Ref.bReachedEnd = EndTriggerTime <= CurrentPosition;

@@ -71,6 +71,11 @@ public:
 		return Notifies;
 	}
 
+	FAnimNotifyEvent* GetNotify(int32 Index)
+	{
+		return Notifies.IsValidIndex(Index) ? &Notifies[Index] : nullptr;
+	}
+
 private:
 	UAnimDataModel* DataModel = nullptr;
 	TArray<FAnimNotifyEvent> Notifies;

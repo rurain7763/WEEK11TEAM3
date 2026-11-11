@@ -6,6 +6,11 @@
 #include "Render/SkeletalMesh.h"
 #include "UObject/UObjectIterator.h"
 #include "Serialization/JsonArchive.h"
+#include "Editor/Details/DetailsPanel.h"
+#include "Editor/HitoriEd/EditorEngine.h"
+#include "Engine/Engine.h"
+#include "UObject/Class.h"
+#include "UObject/UObjectHash.h"
 #include <imgui_neo_sequencer.h>
 
 #include <algorithm>
@@ -221,6 +226,108 @@ void FAnimationSequenceViewer::DrawPlaybackControls()
 	ImGui::EndDisabled();
 }
 
+void FAnimationSequenceViewer::DrawNotifyDetails()
+{
+	FAnimNotifyEvent* Notify = Sequence->GetNotify(SelectedNotify);
+	if (!Notify) return;
+
+	ImGui::PushID("SelectedNotifyDetails");
+	ImGui::Separator();
+	ImGui::Text("Selected Notify: %s", Notify->Name.ToString().c_str());
+	const float ClipDuration = Sequence->GetDuration();
+	bool bChanged = false;
+	float StartTime = Notify->TriggerTime;
+	bool bSortNotifies = false;
+	if (ImGui::InputFloat("Start Time (s)", &StartTime, 0.f, 0.f, "%.3f", ImGuiInputTextFlags_EnterReturnsTrue)
+		&& std::isfinite(StartTime))
+	{
+		Notify->TriggerTime = std::clamp(StartTime, 0.f, ClipDuration);
+		Notify->Duration = std::clamp(Notify->Duration, 0.f, ClipDuration - Notify->TriggerTime);
+		bChanged = true;
+		bSortNotifies = true;
+	}
+	float NotifyDuration = Notify->Duration;
+	if (ImGui::InputFloat("Duration (s)", &NotifyDuration, 0.f, 0.f, "%.3f", ImGuiInputTextFlags_EnterReturnsTrue)
+		&& std::isfinite(NotifyDuration))
+	{
+		Notify->Duration = std::clamp(NotifyDuration, 0.f, ClipDuration - Notify->TriggerTime);
+		bChanged = true;
+	}
+	ImGui::Text("End Time: %.3f s", Notify->TriggerTime + Notify->Duration);
+	ImGui::TextDisabled("Press Enter to apply time values. Duration 0 fires once.");
+
+	UClass* CurrentClass = Notify->NotifyState ? Notify->NotifyState->GetClass() : nullptr;
+	if (ImGui::BeginCombo("Notify State", CurrentClass ? CurrentClass->Name.c_str() : "None"))
+	{
+		UClass* PickedClass = CurrentClass;
+		bool bPicked = false;
+		if (ImGui::Selectable("None", !CurrentClass))
+		{
+			PickedClass = nullptr;
+			bPicked = true;
+		}
+		TArray<UClass*> Classes;
+		GetDerivedClasses(UAnimNotifyState::StaticClass(), Classes);
+		std::sort(Classes.begin(), Classes.end(), [](const UClass* A, const UClass* B) { return A->Name < B->Name; });
+		int32 AvailableCount = 0;
+		ImGui::BeginDisabled(Notify->TriggerTime >= ClipDuration);
+		for (UClass* Class : Classes)
+		{
+			if (!Class->Constructor) continue;
+			++AvailableCount;
+			if (ImGui::Selectable(Class->Name.c_str(), Class == CurrentClass))
+			{
+				PickedClass = Class;
+				bPicked = true;
+			}
+		}
+		ImGui::EndDisabled();
+		if (AvailableCount == 0) ImGui::TextDisabled("No registered NotifyState subclasses.");
+		if (bPicked && PickedClass != CurrentClass)
+		{
+			UAnimNotifyState* NewState = PickedClass ? NewObject<UAnimNotifyState>(Sequence, PickedClass) : nullptr;
+			if (!PickedClass || NewState)
+			{
+				UAnimNotifyState* OldState = Notify->NotifyState;
+				Notify->NotifyState = NewState;
+				if (OldState && OldState->GetOuter() == Sequence) delete OldState;
+				if (!NewState) Notify->Duration = 0.f;
+				else if (Notify->Duration <= 0.f)
+					Notify->Duration = std::min(1.f / Sequence->GetDataModel()->GetSampleRate(), ClipDuration - Notify->TriggerTime);
+				bChanged = true;
+			}
+			else SaveStatus = "Could not create selected NotifyState.";
+		}
+		ImGui::EndCombo();
+	}
+	if (Notify->Duration > 0.f && !Notify->NotifyState)
+		ImGui::TextDisabled("Select a Notify State to handle this interval.");
+	if (Notify->NotifyState)
+		bChanged |= FDetailsPanel::DrawObjectProperties(Notify->NotifyState);
+	if (bChanged)
+	{
+		ModifiedSequences.insert(Sequence);
+		SaveStatus.clear();
+	}
+	if (bSortNotifies)
+	{
+		const FAnimNotifyEvent Edited = *Notify;
+		Sequence->SortNotifies();
+		const auto& Notifies = Sequence->GetNotifies();
+		for (int32 Index = 0; Index < Notifies.Num(); ++Index)
+		{
+			const FAnimNotifyEvent& Item = Notifies[Index];
+			if (Item.Name == Edited.Name && Item.TriggerTime == Edited.TriggerTime
+				&& Item.Duration == Edited.Duration && Item.NotifyState == Edited.NotifyState)
+			{
+				SelectedNotify = Index;
+				break;
+			}
+		}
+	}
+	ImGui::PopID();
+}
+
 void FAnimationSequenceViewer::DrawTimeline()
 {
 	ImGui::TextUnformatted("Timeline");
@@ -293,6 +400,10 @@ void FAnimationSequenceViewer::DrawTimeline()
 	}
 	ImGui::Text("Time: %.3f / %.3f s", PreviewTime, Duration);
 
+	const UEditorEngine* EditorEngine = Cast<UEditorEngine>(GEngine);
+	const bool bEditingLocked = EditorEngine && EditorEngine->IsPlaying();
+	if (bEditingLocked) ImGui::TextDisabled("Stop Play to edit notifies.");
+	ImGui::BeginDisabled(bEditingLocked);
 	ImGui::InputText("Notify Name", NotifyName, sizeof(NotifyName));
 	ImGui::Text("Notify Time: %.3f s (current cursor)", PreviewTime);
 	const FName NewNotifyName(NotifyName);
@@ -316,20 +427,25 @@ void FAnimationSequenceViewer::DrawTimeline()
 		{
 			ImGui::PushID(Index);
 			const auto& Notify = Notifies[Index];
-			const FString Label = Notify.Name.ToString() + " @ " + std::to_string(Notify.TriggerTime) + " s";
+			FString Label = Notify.Name.ToString() + " @ " + std::to_string(Notify.TriggerTime) + " s";
+			if (Notify.Duration > 0.f) Label += " (" + std::to_string(Notify.Duration) + " s)";
 			if (ImGui::Selectable(Label.c_str(), SelectedNotify == Index)) SelectedNotify = Index;
 			ImGui::PopID();
 		}
 	}
 	ImGui::EndChild();
+	DrawNotifyDetails();
 	ImGui::BeginDisabled(SelectedNotify < 0);
 	if (ImGui::Button("Delete Selected Notify"))
 	{
+		UAnimNotifyState* State = Sequence->GetNotify(SelectedNotify)->NotifyState;
 		Sequence->RemoveNotify(SelectedNotify);
+		if (State && State->GetOuter() == Sequence) delete State;
 		SelectedNotify = -1;
 		ModifiedSequences.insert(Sequence);
 		SaveStatus.clear();
 	}
+	ImGui::EndDisabled();
 	ImGui::EndDisabled();
 	bool bRootMotion = Sequence->HasRootMotion();
 	if (ImGui::Checkbox("Enable Root Motion", &bRootMotion))

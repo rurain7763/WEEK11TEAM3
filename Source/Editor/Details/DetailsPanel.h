@@ -19,6 +19,7 @@ public:
 	~FDetailsPanel();
 
 	bool Init() override;
+	static bool DrawObjectProperties(UObject* Object, ImFont* Font = nullptr);
 	void Tick(float DeltaTime) override;
 	void OnRender() override;
 

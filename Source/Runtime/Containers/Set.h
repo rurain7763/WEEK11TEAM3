@@ -45,6 +45,11 @@ public:
 		return static_cast<int32>(mSet.erase(data));
 	}
 
+	inline SetType::iterator Remove(SetType::iterator Pos)
+	{
+		return mSet.erase(Pos);
+	}
+
 	inline int32 Num() const
 	{
 		return static_cast<int32>(mSet.size());

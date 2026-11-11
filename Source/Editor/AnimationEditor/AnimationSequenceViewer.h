@@ -32,6 +32,7 @@ private:
 	void SelectSkeleton(USkeleton* InSkeleton);
 	void DrawPlaybackControls();
 	void DrawTimeline();
+	void DrawNotifyDetails();
 
 private:
 	FString PanelName;

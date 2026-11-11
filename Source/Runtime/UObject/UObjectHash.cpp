@@ -31,6 +31,17 @@ UClass* FindClass(const FString& Name)
 	return Found ? *Found : nullptr;
 }
 
+void GetDerivedClasses(const UClass* BaseClass, TArray<UClass*>& Results)
+{
+	Results.Reset();
+	if (!BaseClass) return;
+	for (const auto& Pair : GetClassMap())
+	{
+		UClass* Class = Pair.second;
+		if (Class != BaseClass && Class->IsChildOf(BaseClass)) Results.Add(Class);
+	}
+}
+
 UObject* FindObjectWithOuter(const UObject* outer, const UClass* Class, FName Name)
 {
 	for (UObject* Obj : GUObjectArray)

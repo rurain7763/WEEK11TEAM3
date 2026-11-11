@@ -1046,7 +1046,7 @@ namespace
 	}
 
 	// UClass에 등록된 프로퍼티를 타입에 맞는 위젯으로 그린다
-	void DrawProperty(UObject* Object, const FProperty& Property, ImFont* CustomFont, float LabelWidth)
+	bool DrawProperty(UObject* Object, const FProperty& Property, ImFont* CustomFont, float LabelWidth)
 	{
 		void* ValuePtr = reinterpret_cast<char*>(Object) + Property.Offset;
 		const FString Label = "##" + Property.Name;
@@ -1245,15 +1245,17 @@ namespace
 		{
 			Object->PostEditChangeProperty(Property);
 		}
+		return bChanged;
 	}
 
 	// 클래스 계층을 따라 올라가며 각 단계의 프로퍼티를 표시
-	void DrawProperties(UObject* Object, ImFont* CustomFont)
+	bool DrawProperties(UObject* Object, ImFont* CustomFont)
 	{
 		if (!Object)
 		{
-			return;
+			return false;
 		}
+		bool bChanged = false;
 
 		TArray<UClass*> ClassChain;
 		for (UClass* Class = Object->GetClass(); Class; Class = Class->Super)
@@ -1309,12 +1311,13 @@ namespace
 
 					const bool bReadOnly = Property.HasAnyFlags(CPF_EditConst);
 					if (bReadOnly) ImGui::BeginDisabled();
-					DrawProperty(Object, Property, CustomFont, LabelWidth);
+					bChanged |= DrawProperty(Object, Property, CustomFont, LabelWidth);
 					if (bReadOnly) ImGui::EndDisabled();
 				}
 			}
 			ImGui::PopID();
 		}
+		return bChanged;
 	}
 
 	void DrawActorHeader(AActor* Actor, UActorComponent*& OutSelectedComponent)
@@ -1617,6 +1620,11 @@ namespace
 		if (ImGui::Checkbox("Flip Normal Green", &bFlipNormalGreen))
 			GetEditableDecalMaterial(Decal)->bFlipNormalGreen = bFlipNormalGreen;
 	}
+}
+
+bool FDetailsPanel::DrawObjectProperties(UObject* Object, ImFont* Font)
+{
+	return DrawProperties(Object, Font);
 }
 
 bool FDetailsPanel::Init()

@@ -14,6 +14,7 @@ void UAnimInstance::NativeInitializeAnimation()
 
 	UpdateContext.ParameterTable = &ParameterTable;
 	UpdateContext.EventQueue = &EventQueue;
+	CurrentActiveEventVersion = 0;
 }
 
 void UAnimInstance::NativeUpdateAnimation(float DeltaTime)
@@ -61,35 +62,58 @@ void UAnimInstance::DispatchQueuedAnimEvents()
 			continue;
 		}
 		
-		FAnimNotifyEventKey EventKey;
-		EventKey.SourcePlayerID = EventRef.SourcePlayerID;
-		EventKey.NotifyPtr = (uintptr_t) Notify;
+		FAnimNotifyEventKey NotifyKey;
+		NotifyKey.SourcePlayerID = EventRef.SourcePlayerID;
+		NotifyKey.NotifyPtr = (uintptr_t) Notify;
 
-		if (ActiveEvents.Contains(EventKey))
+		if (FActiveAnimNotifyEventEntry* Existing = ActiveEvents.Find(NotifyKey))
 		{
-			NotifyState->NotifyTick();
+			NotifyState->NotifyTick(MeshComp, EventRef.Sequence, UpdateContext.DeltaTime, *Notify);
 			if (EventRef.bReachedEnd)
 			{
-				NotifyState->NotifyEnd();
-				ActiveEvents.Remove(EventKey);
+				NotifyState->NotifyEnd(MeshComp, EventRef.Sequence, *Notify);
+				ActiveEvents.Remove(NotifyKey);
+			}
+			else
+			{
+				Existing->Version = CurrentActiveEventVersion;
 			}
 		}
 		else
 		{
-			NotifyState->NotifyBegin();
-			NotifyState->NotifyTick();
+			NotifyState->NotifyBegin(MeshComp, EventRef.Sequence, *Notify);
+			NotifyState->NotifyTick(MeshComp, EventRef.Sequence, UpdateContext.DeltaTime, *Notify);
 			if (EventRef.bReachedEnd)
 			{
-				NotifyState->NotifyEnd();
+				NotifyState->NotifyEnd(MeshComp, EventRef.Sequence, *Notify);
 			}
 			else
 			{
-				ActiveEvents.Add(EventKey);
+				FActiveAnimNotifyEventEntry NewEntry;
+				NewEntry.Sequence = EventRef.Sequence;
+				NewEntry.Copied = *Notify;
+				NewEntry.Version = CurrentActiveEventVersion;
+
+				ActiveEvents.Add(NotifyKey, NewEntry);
 			}
 		}
 	}
 
+	for (auto Itr = ActiveEvents.begin(); Itr != ActiveEvents.end();)
+	{
+		FActiveAnimNotifyEventEntry& Entry = Itr->second;
+		if (Entry.Version == CurrentActiveEventVersion)
+		{
+			Itr++;
+			continue;
+		}
+
+		Entry.Copied.NotifyState->NotifyEnd(MeshComp, Entry.Sequence, Entry.Copied);
+		Itr = ActiveEvents.Remove(Itr);
+	}
+
 	EventQueue.Reset();
+	CurrentActiveEventVersion++;
 }
 
 bool UAnimInstance::PlayState(const FName& InMachineName, const FName& InStateName, float CrossfadeDuration)
