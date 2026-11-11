@@ -3,6 +3,7 @@
 
 #include "GameFramework/Actor/PlayerActor.h"
 #include "GameFramework/Actor/EnemyActor.h"
+#include "GameFramework/Pawn.h"
 
 void FLuaScriptInstance::Load(sol::state& LuaState, AActor* InOwner, const FString& InScriptPath)
 {
@@ -33,6 +34,10 @@ void FLuaScriptInstance::Load(sol::state& LuaState, AActor* InOwner, const FStri
     else if (AEnemyActor* Enemy = Cast<AEnemyActor>(Owner))
     {
         Environment["owner"] = Enemy;
+    }
+    else if (APawn* Pawn = Cast<APawn>(Owner))
+    {
+        Environment["owner"] = Pawn;
     }
     else
     {
@@ -77,6 +82,10 @@ void FLuaScriptInstance::Reload(sol::state& LuaState)
     else if (AEnemyActor* Enemy = Cast<AEnemyActor>(Owner))
     {
         NewEnvironment["owner"] = Enemy;
+    }
+    else if (APawn* Pawn = Cast<APawn>(Owner))
+    {
+        NewEnvironment["owner"] = Pawn;
     }
     else
     {

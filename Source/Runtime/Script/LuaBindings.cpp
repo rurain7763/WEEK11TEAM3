@@ -186,7 +186,8 @@ void FLuaBindings::RegisterLuaBindings(sol::state& Lua, FLuaCoroutineScheduler* 
 
 	Lua.new_usertype<FRotator>(
 		"Rotator",
-		sol::constructors<FRotator(), FRotator(float, float, float)>()
+		sol::constructors<FRotator(), FRotator(float, float, float)>(),
+		"Yaw", &FRotator::Yaw
 	);
 
 	Lua.new_usertype<FTransform>(
@@ -255,9 +256,11 @@ void FLuaBindings::RegisterLuaBindings(sol::state& Lua, FLuaCoroutineScheduler* 
 		sol::base_classes, sol::bases<AActor, UObject>(),
 		"GetActorLocation", &AActor::GetActorLocation,
 		"SetActorLocation", &AActor::SetActorLocation,
+		"SetActorRotation", &AActor::SetActorRotation,
 		"FindComponentByName", &FLuaBindings::FindComponentByName,
 		"FindComponentByClass", &FLuaBindings::FindComponentByClass,
 		"IsInputEnabled", &APawn::IsPlayerInputEnabled,
+		"GetControlRotation", &APawn::GetControlRotation,
 		"AddYawInput", &APawn::AddControllerYawInput,
 		"AddPitchInput", &APawn::AddControllerPitchInput
 	);

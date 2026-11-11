@@ -1,0 +1,35 @@
+{
+    "AnimGraph": {
+        "AnimSequencePlayers": [
+            {
+                "Looping": true,
+                "SequencePath": "Models/FbxTest/UAL1_RM_Armature|Walk_Loop",
+                "Speed": 1.0
+            }
+        ],
+        "AnimTwoWayBlends": [],
+        "BlendSpacePlayers": [],
+        "Nodes": [
+            {
+                "ActualType": 0,
+                "NodeID": 1,
+                "Type": 0
+            }
+        ],
+        "Parameters": [],
+        "Properties": {},
+        "RootNodeID": 1,
+        "StateMachines": []
+    },
+    "Editor": {
+        "Nodes": [
+            {
+                "NodeID": 1,
+                "X": 906.0,
+                "Y": 575.0
+            }
+        ],
+        "States": []
+    },
+    "Version": 1
+}

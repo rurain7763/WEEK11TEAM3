@@ -102,6 +102,9 @@ public:
 		return Value;
 	}
 
+public:
+	TMulticastDelegate<const FAnimNotifyEvent&> OnFireNotify;
+
 protected:
 	FAnimNode_Base* RootNode = nullptr;
 
@@ -135,6 +138,4 @@ private:
 	FAnimParameterTable ParameterTable;
 	bool bHasRootMotion;
 	FTransform RootMotion;
-
-	TMulticastDelegate<const FAnimNotifyEvent&> OnFireNotify;
 };
