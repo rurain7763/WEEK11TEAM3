@@ -5,6 +5,7 @@
 class USkeletalMeshComponent;
 class UCharacterMovementComponent;
 class UScriptComponent;
+class FAnimNotifyEvent;
 
 // 루트 모션 확인용 테스트 폰.
 // Lua가 애니메이션 파라미터만 세팅하고, 실제 이동은 재생 중인 클립의 루트 모션이 만든다.
@@ -16,8 +17,13 @@ class ARootMotionTestActor : public APawn
 public:
 	ARootMotionTestActor();
 
+	virtual void BeginPlay() override;
+
 	USkeletalMeshComponent* GetSkeletalMeshComponent() const { return SkeletalMeshComponent; }
 	UCharacterMovementComponent* GetCharacterMovementComponent() const { return CharacterMovementComponent; }
+
+private:
+	void HandleNotify(const FAnimNotifyEvent& Event);
 
 private:
 	USkeletalMeshComponent* SkeletalMeshComponent = nullptr;
