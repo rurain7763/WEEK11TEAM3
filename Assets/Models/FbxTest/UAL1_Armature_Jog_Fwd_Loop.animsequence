@@ -1,0 +1,18 @@
+{
+    "AnimSequence": {
+        "EnableRootMotion": false,
+        "Notifies": [
+            {
+                "Name": "Foot",
+                "TriggerTime": 0.03333333507180214
+            },
+            {
+                "Name": "Foot",
+                "TriggerTime": 0.5
+            }
+        ],
+        "Properties": {},
+        "Skeleton": "Models/FbxTest/UAL1_Skeleton"
+    },
+    "Version": 1
+}
