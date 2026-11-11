@@ -16,10 +16,14 @@ void FAnimNode_SequencePlayer::Update(FAnimationUpdateContext& UpdateContext)
 	PreviousTime = CurrentTime;
 	CurrentTime += DeltaTime;
 
-	FAnimNotifyContext NotifyContext;
-	NotifyContext.SourcePlayerID = ID;
-	Sequence->GetAnimNotifies(Sequence->GetDuration(), bLooping, PreviousTime, DeltaTime, NotifyContext);
-	UpdateContext.EventQueue->Append(NotifyContext.CollectedNotifies);
+	// EventQueue는 UAnimInstance가 채워주므로, 에디터 프리뷰처럼 노드를 직접 돌리는 경로에서는 비어 있다.
+	if (UpdateContext.EventQueue)
+	{
+		FAnimNotifyContext NotifyContext;
+		NotifyContext.SourcePlayerID = ID;
+		Sequence->GetAnimNotifies(Sequence->GetDuration(), bLooping, PreviousTime, DeltaTime, NotifyContext);
+		UpdateContext.EventQueue->Append(NotifyContext.CollectedNotifies);
+	}
 
 	if (Sequence->HasRootMotion())
 	{
