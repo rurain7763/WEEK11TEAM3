@@ -5,6 +5,12 @@
 
 void FAnimNode_SequencePlayer::Update(FAnimationUpdateContext& UpdateContext)
 {
+	const float Duration = GetCurrentAssetDuration();
+	if (Duration <= 0.f)
+	{
+		return;
+	}
+
 	float DeltaTime = UpdateContext.DeltaTime * Speed;
 
 	PreviousTime = CurrentTime;
@@ -25,7 +31,6 @@ void FAnimNode_SequencePlayer::Update(FAnimationUpdateContext& UpdateContext)
 		UpdateContext.RootMotion = Sequence->ExtractRootMotion(ExtractionContext, Sequence->GetDuration(), DeltaTime);
 	}
 
-	float Duration = GetCurrentAssetDuration();
 	if (CurrentTime >= Duration)
 	{
 		if (bLooping)
@@ -44,7 +49,8 @@ void FAnimNode_SequencePlayer::Update(FAnimationUpdateContext& UpdateContext)
 	{
 		if (bLooping && Duration > 0.f)
 		{
-			CurrentTime = Duration + std::fmod(CurrentTime, Duration);
+			const float Remainder = std::fmod(CurrentTime, Duration);
+			CurrentTime = Remainder == 0.f ? 0.f : Duration + Remainder;
 		}
 		else
 		{

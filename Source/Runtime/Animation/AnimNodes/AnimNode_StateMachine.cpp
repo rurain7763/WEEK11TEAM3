@@ -1,6 +1,7 @@
 #include "EnginePCH.h"
 #include "Animation/AnimNodes/AnimNode_StateMachine.h"
 #include "Animation/AnimationRuntime.h"
+#include "Animation/AnimNodes/AnimNode_AssetPlayerBase.h"
 
 void FAnimNode_StateMachine::Initialize()
 {
@@ -137,6 +138,17 @@ bool FAnimNode_StateMachine::RequestState(const FName& InName, float CrossfadeDu
 FAnimStateTransition* FAnimNode_StateMachine::EvaluateTransitions(const TArray<FAnimStateTransition>& Transitions, const FAnimParameterTable& ParameterTable, bool& OutIsTriggerTransition) const
 {
 	float NormalizedTime = GetNormalizedTime();
+
+	if (CurrentStateIndex != -1)
+	{
+		// States는 SequencePlayer뿐 아니라 TwoWayBlend도 들어갈 수 있다 => dynamic_cast
+		const auto* Player = dynamic_cast<const FAnimNode_AssetPlayerBase*>(States[CurrentStateIndex]);
+
+		if (Player && Player->Speed < 0.f)
+		{
+			NormalizedTime = 1.f - NormalizedTime;
+		}
+	}
 
 	for (int32 i = 0; i < Transitions.Num(); i++)
 	{
