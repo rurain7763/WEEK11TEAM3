@@ -54,35 +54,65 @@ FTransform UAnimSequence::ExtractRootMotion(const FAnimExtractContext& Extractio
 	FTransform Combined = FTransform::Identity;
 	float StartTime = ExtractionContext.CurrentTime;
 
-	while (DeltaTime > 0.f)
+	if (Duration <= 0.f)
 	{
-		float NextTime = StartTime + DeltaTime;
-
-		FTransform DeltaTransform;
-		float DeltaStep = 0.f;
-		if (NextTime > Duration)
+		return Combined;
+	}
+	if (DeltaTime > 0.f)
+	{
+		while (DeltaTime > 0.f)
 		{
-			DeltaTransform = ExtractRootMotionFromRange(ExtractionContext, StartTime, Duration);
+			float NextTime = StartTime + DeltaTime;
 
-			if (ExtractionContext.bLooping)
+			FTransform DeltaTransform;
+			float DeltaStep = 0.f;
+			if (NextTime > Duration)
 			{
-				DeltaStep = Duration - StartTime;
-				StartTime = 0.f;
+				DeltaTransform = ExtractRootMotionFromRange(ExtractionContext, StartTime, Duration);
+
+				if (ExtractionContext.bLooping)
+				{
+					DeltaStep = Duration - StartTime;
+					StartTime = 0.f;
+				}
+				else
+				{
+					DeltaStep = DeltaTime;
+				}
 			}
 			else
 			{
+				DeltaTransform = ExtractRootMotionFromRange(ExtractionContext, StartTime, NextTime);
 				DeltaStep = DeltaTime;
 			}
+
+			Combined = DeltaTransform * Combined;
+
+			DeltaTime -= DeltaStep;
 		}
-		else
+	}
+	else if (DeltaTime < 0.f)
+	{
+		while (DeltaTime < 0.f)
 		{
-			DeltaTransform = ExtractRootMotionFromRange(ExtractionContext, StartTime, NextTime);
-			DeltaStep = DeltaTime;
+			const float NextTime = StartTime + DeltaTime;
+			const bool bCrossedStart = NextTime < 0.f;
+			const float EndTime = bCrossedStart ? 0.f : NextTime;
+
+			if (EndTime < StartTime)
+			{
+				const FTransform DeltaTransform = ExtractRootMotionFromRange(ExtractionContext, StartTime, EndTime);
+				Combined = DeltaTransform * Combined;
+			}
+
+			if (!bCrossedStart || !ExtractionContext.bLooping)
+			{
+				return Combined;
+			}
+
+			DeltaTime += StartTime;
+			StartTime = Duration;
 		}
-
-		Combined = DeltaTransform * Combined;
-
-		DeltaTime -= DeltaStep;
 	}
 
 	return Combined;

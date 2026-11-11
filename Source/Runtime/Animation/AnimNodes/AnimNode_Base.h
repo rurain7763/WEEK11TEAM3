@@ -12,4 +12,5 @@ struct FAnimNode_Base
 
 	// NOTE: -1은 시간 조회가 불가능한 Node라는 의미.
 	virtual float GetNormalizedTime() const { return -1.f; }
+	virtual float GetSpeed() const { return 1.f; }
 };

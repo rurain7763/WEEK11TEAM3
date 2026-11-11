@@ -21,6 +21,8 @@ public:
 		return 0.f;
 	}
 
+	float GetSpeed() const override { return Speed; }
+
 private:
 	inline static int32 NextID = 0;
 };

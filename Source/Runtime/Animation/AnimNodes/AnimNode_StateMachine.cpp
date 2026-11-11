@@ -141,10 +141,9 @@ FAnimStateTransition* FAnimNode_StateMachine::EvaluateTransitions(const TArray<F
 
 	if (CurrentStateIndex != -1)
 	{
-		// States는 SequencePlayer뿐 아니라 TwoWayBlend도 들어갈 수 있다 => dynamic_cast
-		const auto* Player = dynamic_cast<const FAnimNode_AssetPlayerBase*>(States[CurrentStateIndex]);
+		const auto* Player = States[CurrentStateIndex];
 
-		if (Player && Player->Speed < 0.f)
+		if (Player && NormalizedTime >= 0.f && Player->GetSpeed() < 0.f)
 		{
 			NormalizedTime = 1.f - NormalizedTime;
 		}
@@ -170,7 +169,7 @@ FAnimStateTransition* FAnimNode_StateMachine::EvaluateTransitions(const TArray<F
 			OutIsTriggerTransition = Param.Type == EAnimParameterType::Trigger;
 		}
 
-		if (Transition.bHasExitTime && NormalizedTime < Transition.ExitTime)
+		if (Transition.bHasExitTime && (NormalizedTime < 0.f || NormalizedTime < Transition.ExitTime))
 		{
 			continue;
 		}
@@ -215,5 +214,6 @@ float FAnimNode_StateMachine::GetNormalizedTime() const
 		return 0.f;
 	}
 
-	return States[CurrentStateIndex]->GetNormalizedTime();
+	const auto* Node = States[CurrentStateIndex];
+	return Node ? Node->GetNormalizedTime() : -1.f;
 }

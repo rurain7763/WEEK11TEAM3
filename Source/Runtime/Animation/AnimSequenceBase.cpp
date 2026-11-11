@@ -112,22 +112,34 @@ void UAnimSequenceBase::GetAnimNotifiesFromPositions(float PreviousPosition, flo
 		for (int32 i = Notifies.Num() - 1; i >= 0; --i)
 		{
 			FAnimNotifyEvent& Notify = Notifies[i];
-			const float TriggerTime = Notify.TriggerTime;
+			const float StartTime = Notify.TriggerTime;
+			const float EndTime = Notify.GetEndTriggerTime();
 
-			if (TriggerTime < CurrentPosition)
+			// 단발 Notify만 수집하는 조건
+			if (Notify.Duration == 0.f)
 			{
-				break;
+				const bool bPassedStart = StartTime < PreviousPosition || (bIncludeStart && StartTime == PreviousPosition);
+
+				if (!bPassedStart || StartTime < CurrentPosition)
+				{
+					continue;
+				}
+			}
+			else
+			{
+				const bool bOverlapsState =	PreviousPosition > StartTime && CurrentPosition <= EndTime;
+
+				if (!bOverlapsState)
+				{
+					continue;
+				}
 			}
 
-			const bool bPassedStart = TriggerTime < PreviousPosition || (bIncludeStart && TriggerTime == PreviousPosition);
+			auto& Ref = NotifyContext.CollectedNotifies.AddDefaulted_GetRef();
+			Ref.SourcePlayerID = NotifyContext.SourcePlayerID;
+			Ref.Notify = &Notify;
+			Ref.bReachedEnd = (Notify.Duration == 0.f) || CurrentPosition <= StartTime;
 
-			if (Notify.Duration == 0.f && bPassedStart)
-			{
-				auto& Ref = NotifyContext.CollectedNotifies.AddDefaulted_GetRef();
-				Ref.SourcePlayerID = NotifyContext.SourcePlayerID;
-				Ref.Notify = &Notify;
-				Ref.bReachedEnd = true;
-			}
 		}
 
 		return;

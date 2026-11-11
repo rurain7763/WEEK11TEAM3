@@ -92,7 +92,7 @@ float FAnimNode_SequencePlayer::GetNormalizedTime() const
 {
 	if (!Sequence)
 	{
-		return 0.f;
+		return -1.f;
 	}
 
 	return CurrentTime / Sequence->GetDuration();
