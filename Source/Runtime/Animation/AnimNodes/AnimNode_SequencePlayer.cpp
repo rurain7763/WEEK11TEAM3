@@ -10,7 +10,10 @@ void FAnimNode_SequencePlayer::Update(FAnimationUpdateContext& UpdateContext)
 	PreviousTime = CurrentTime;
 	CurrentTime += DeltaTime;
 
-	Sequence->GetAnimNotifies(Sequence->GetDuration(), bLooping, PreviousTime, DeltaTime, *UpdateContext.EventQueue);
+	FAnimNotifyContext NotifyContext;
+	NotifyContext.SourcePlayerID = ID;
+	Sequence->GetAnimNotifies(Sequence->GetDuration(), bLooping, PreviousTime, DeltaTime, NotifyContext);
+	UpdateContext.EventQueue->Append(NotifyContext.CollectedNotifies);
 
 	if (Sequence->HasRootMotion())
 	{

@@ -21,22 +21,24 @@ function Tick(deltaTime)
     end
         
     if(Input.IsKeyPressed(KeyCode.Num5)) then
-        animInstance:SetInt("Action", 0)
-        Log("Action -> " .. animInstance:GetInt("Action"))
+        animInstance:ResetTrigger("Attack")
+        animInstance:ResetTrigger("Hit")
+        animInstance:ResetTrigger("Jump")
+        animInstance:PlayState("test", "Locomotion", 0.2)
     
     elseif(Input.IsKeyPressed(KeyCode.Num6)) then
-        animInstance:SetInt("Action", 1)
-        Log("Attack -> " .. animInstance:GetInt("Action"))
+        animInstance:SetTrigger("Attack")
+        Log("Attack")
     
     elseif(Input.IsKeyPressed(KeyCode.Num7)) then
-        animInstance:SetInt("Action", 2)
-        Log("Hit -> " .. animInstance:GetInt("Action"))
+        animInstance:SetTrigger("Hit")
+        Log("Hit")
     
     elseif(Input.IsKeyPressed(KeyCode.Num8)) then
-        animInstance:SetInt("Action", 3)
-        Log("Jump -> " .. animInstance:GetInt("Action"))
+        animInstance:SetTrigger("Jump")
+        Log("Jump")
     elseif(Input.IsKeyPressed(KeyCode.Num9)) then
-        local ok = animInstance:PlayState("Test", "Attack", 0.2)
+        local ok = animInstance:PlayState("test", "Attack", 0.2)
         Log("PlayState -> " .. tostring(ok))
     end
 

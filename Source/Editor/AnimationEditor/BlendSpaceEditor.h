@@ -12,7 +12,6 @@ class FBlendSpaceEditor : public IEditorPanel
 {
 public:
 	explicit FBlendSpaceEditor(FString InPath);
-	~FBlendSpaceEditor() override;
 	bool Init() override;
 	void OnRender() override;
 	void Tick(float DeltaTime) override;
@@ -34,6 +33,9 @@ private:
 
 	FString Path, PanelName, Status;
 	UBlendSpace1D* BlendSpace = nullptr;
+	USkeleton* EditingSkeleton = nullptr;
+	USkeleton* SavedSkeleton = nullptr;
+	TArray<FBlendSample> SavedSamples;
 	USkeletalMesh* PreviewMesh = nullptr;
 	TArray<FBlendSample> Samples;
 	TArray<USkeleton*> Skeletons;

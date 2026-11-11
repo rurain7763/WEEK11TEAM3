@@ -5,68 +5,76 @@
 #include "Core/Types.h"
 
 
-template <typename T>
+template <typename T, typename KeyFuncs = std::hash<T>>
 class TSet
 {
 public:
+	using SetType = std::unordered_set<T, KeyFuncs>;
+
 	TSet() = default;
 	~TSet() = default;
 
-	std::unordered_set<T>::iterator begin();
-	std::unordered_set<T>::iterator end();
+	inline SetType::iterator begin()
+	{
+		return mSet.begin();
+	}
 
-	std::unordered_set<T>::const_iterator begin() const;
-	std::unordered_set<T>::const_iterator end() const;
+	inline SetType::iterator end()
+	{
+		return mSet.end();
+	}
 
-	bool Add(const T& data);
+	inline SetType::const_iterator begin() const
+	{
+		return mSet.cbegin();
+	}
+
+	inline SetType::const_iterator end() const
+	{
+		return mSet.cend();
+	}
+
+	inline bool Add(const T& data)
+	{
+		return mSet.insert(data).second;
+	}
 
 	// Returns removed count
-	int32 Remove(const T& data);
+	inline int32 Remove(const T& data)
+	{
+		return static_cast<int32>(mSet.erase(data));
+	}
 
-	int32  Num() const;
-	void Reset();
+	inline int32 Num() const
+	{
+		return static_cast<int32>(mSet.size());
+	}
 
-	bool Contains(const T& data) const;
-	bool IsEmpty() const;
-	void Reserve(int32 capacity);
+	inline void Reset()
+	{
+		mSet.clear();
+	}
+
+	inline bool Contains(const T& data) const
+	{
+		return mSet.find(data) != mSet.end();
+	}
+
+	bool IsEmpty() const
+	{
+		return mSet.empty();
+	}
+
+	void Reserve(int32 capacity)
+	{
+		mSet.reserve(capacity);
+	}
 
 	/*
 	void Empty(int32 ExpectedNumElements = 0)
 	*/
 
 private:
-	std::unordered_set<T> mSet;
+	SetType mSet;
 };
 
-template<typename T>
-inline typename std::unordered_set<T>::iterator TSet<T>::begin() { return mSet.begin(); }
-
-template<typename T>
-inline typename std::unordered_set<T>::iterator TSet<T>::end() { return mSet.end(); }
-
-template<typename T>
-inline typename std::unordered_set<T>::const_iterator TSet<T>::begin() const { return mSet.cbegin(); }
-
-template<typename T>
-inline typename std::unordered_set<T>::const_iterator TSet<T>::end() const { return mSet.cend(); }
-
-template<typename T>
-inline bool TSet<T>::Add(const T& data) { return mSet.insert(data).second; }
-
-template<typename T>
-inline int32 TSet<T>::Remove(const T& data) { return static_cast<int32>(mSet.erase(data)); }
-
-template<typename T> 
-inline int32 TSet<T>::Num() const { return static_cast<int32>(mSet.size()); }
-
-template<typename T> 
-inline void TSet<T>::Reset() { mSet.clear(); }
-
-template<typename T> 
-inline bool TSet<T>::Contains(const T& data) const { return mSet.find(data) != mSet.end(); }
-
-template<typename T> 
-inline bool TSet<T>::IsEmpty() const { return mSet.empty(); }
-
-template<typename T> 
-inline void TSet<T>::Reserve(int32 capacity) { mSet.reserve(capacity); }

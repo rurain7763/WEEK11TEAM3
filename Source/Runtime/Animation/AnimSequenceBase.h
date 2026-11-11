@@ -57,9 +57,9 @@ public:
 		return false;
 	}
 
-	void GetAnimNotifies(float Duration, bool bLooping, float StartTime, float DeltaTime, TArray<FAnimNotifyEvent*>& OutEvents);
+	void GetAnimNotifies(float Duration, bool bLooping, float StartTime, float DeltaTime, FAnimNotifyContext& NotifyContext);
 
-	void GetAnimNotifiesFromPositions(float PreviousPosition, float CurrentPosition, bool bIncludeStart, TArray<FAnimNotifyEvent*>& OutEvents);
+	void GetAnimNotifiesFromPositions(float PreviousPosition, float CurrentPosition, bool bIncludeStart, FAnimNotifyContext& NotifyContext);
 
 	UAnimDataModel* GetDataModel() const
 	{

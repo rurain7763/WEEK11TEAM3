@@ -4,7 +4,7 @@
 #include "Math/Transform.h"
 
 class FAnimParameterTable;
-struct FAnimNotifyEvent;
+struct FAnimNotifyEventReference;
 
 struct FPoseContext
 {
@@ -24,7 +24,7 @@ struct FAnimExtractContext
 struct FAnimationUpdateContext
 {
 	FAnimParameterTable* ParameterTable;
-	TArray<FAnimNotifyEvent*>* EventQueue;
+	TArray<FAnimNotifyEventReference>* EventQueue;
 	bool bHasRootMotion;
 	FTransform RootMotion;
 	float DeltaTime = 0.f;

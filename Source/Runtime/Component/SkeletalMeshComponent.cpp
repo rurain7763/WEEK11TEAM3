@@ -5,7 +5,6 @@
 
 #include "Engine/PrimitiveSceneProxy.h"
 #include "Render/RenderPacket.h"
-#include "Sequence/Tests/AnimGraphActionInputTest.h"
 #include "Animation/AnimSequence.h"
 
 USkeletalMeshComponent::USkeletalMeshComponent()
@@ -123,7 +122,6 @@ void USkeletalMeshComponent::BeginPlay()
 	{
 		AnimInstance = AnimGraph->CreateAnimInstance();
 		AnimInstance->NativeInitializeAnimation();
-		FAnimGraphActionInputTest::Announce(AnimInstance, GetOwner() ? GetOwner()->GetName() : GetName());
 	}
 }
 
@@ -145,12 +143,6 @@ void USkeletalMeshComponent::TickComponent(float DeltaTime)
 	if (!AnimInstance)
 	{
 		return;
-	}
-
-	// Temporary parameter input only; playback remains entirely graph-driven.
-	if (AnimGraph)
-	{
-		FAnimGraphActionInputTest::Update(AnimInstance, GetWorld(), GetOwner() ? GetOwner()->GetName() : GetName());
 	}
 
 	AnimInstance->NativeUpdateAnimation(DeltaTime);

@@ -37,7 +37,7 @@ float UAnimSequenceBase::GetDuration() const
 	return 0.f;
 }
 
-void UAnimSequenceBase::GetAnimNotifies(float Duration, bool bLooping, float StartTime, float DeltaTime, TArray<FAnimNotifyEvent*>& OutEvents)
+void UAnimSequenceBase::GetAnimNotifies(float Duration, bool bLooping, float StartTime, float DeltaTime, FAnimNotifyContext& NotifyContext)
 {
 	bool bIncludeStart = false;
 	while (DeltaTime > 0.f)
@@ -47,7 +47,7 @@ void UAnimSequenceBase::GetAnimNotifies(float Duration, bool bLooping, float Sta
 		float DeltaStep = 0.f;
 		if (NextTime > Duration)
 		{
-			GetAnimNotifiesFromPositions(StartTime, Duration, bIncludeStart, OutEvents);
+			GetAnimNotifiesFromPositions(StartTime, Duration, bIncludeStart, NotifyContext);
 
 			if (bLooping)
 			{
@@ -62,7 +62,7 @@ void UAnimSequenceBase::GetAnimNotifies(float Duration, bool bLooping, float Sta
 		}
 		else
 		{
-			GetAnimNotifiesFromPositions(StartTime, NextTime, bIncludeStart, OutEvents);
+			GetAnimNotifiesFromPositions(StartTime, NextTime, bIncludeStart, NotifyContext);
 			DeltaStep = DeltaTime;
 		}
 
@@ -70,13 +70,27 @@ void UAnimSequenceBase::GetAnimNotifies(float Duration, bool bLooping, float Sta
 	}
 }
 
-void UAnimSequenceBase::GetAnimNotifiesFromPositions(float PreviousPosition, float CurrentPosition, bool bIncludeStart, TArray<FAnimNotifyEvent*>& OutEvents)
+void UAnimSequenceBase::GetAnimNotifiesFromPositions(float PreviousPosition, float CurrentPosition, bool bIncludeStart, FAnimNotifyContext& NotifyContext)
 {
-	auto Lower = bIncludeStart ? std::lower_bound(Notifies.begin(), Notifies.end(), PreviousPosition, [](const FAnimNotifyEvent& Element, float Pos) { return Element.TriggerTime < Pos; }) : std::upper_bound(Notifies.begin(), Notifies.end(), PreviousPosition, [](float Pos, const FAnimNotifyEvent& Element) { return Pos < Element.TriggerTime; });
-	auto Upper = std::upper_bound(Notifies.begin(), Notifies.end(), CurrentPosition, [](float Pos, const FAnimNotifyEvent& Element) { return Pos < Element.TriggerTime; });
-
-	for (auto Itr = Lower; Itr != Upper; Itr++)
+	for (int32 i = 0; i < Notifies.Num(); i++)
 	{
-		OutEvents.Emplace(&(*Itr));
+		FAnimNotifyEvent& Notify = Notifies[i];
+
+		const float StartTriggerTime = Notify.TriggerTime;
+		const float EndTriggerTime = Notify.GetEndTriggerTime();
+
+		if (StartTriggerTime > CurrentPosition)
+		{
+			break;
+		}
+
+		// NOTE: 지금 구간에 겹치는 이벤트만을 수집한다.
+		if (StartTriggerTime <= CurrentPosition && (bIncludeStart ? EndTriggerTime >= PreviousPosition : EndTriggerTime > PreviousPosition))
+		{
+			FAnimNotifyEventReference& Ref = NotifyContext.CollectedNotifies.AddDefaulted_GetRef();
+			Ref.SourcePlayerID = NotifyContext.SourcePlayerID;
+			Ref.Notify = &Notify;
+			Ref.bReachedEnd = EndTriggerTime <= CurrentPosition;
+		}
 	}
 }

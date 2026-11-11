@@ -45,10 +45,50 @@ void UAnimInstance::Evaluate(FPoseContext& OutPoseContext)
 
 void UAnimInstance::DispatchQueuedAnimEvents()
 {
-	for (const FAnimNotifyEvent* Notify : EventQueue)
+	for (const FAnimNotifyEventReference& EventRef : EventQueue)
 	{
-		OnFireNotify.Broadcast(*Notify);
+		FAnimNotifyEvent* Notify = EventRef.Notify;
+
+		if (Notify->Duration <= 0.f)
+		{
+			OnFireNotify.Broadcast(*Notify);
+			continue;
+		}
+
+		UAnimNotifyState* NotifyState = Notify->NotifyState;
+		if (!NotifyState)
+		{
+			continue;
+		}
+		
+		FAnimNotifyEventKey EventKey;
+		EventKey.SourcePlayerID = EventRef.SourcePlayerID;
+		EventKey.NotifyPtr = (uintptr_t) Notify;
+
+		if (ActiveEvents.Contains(EventKey))
+		{
+			NotifyState->NotifyTick();
+			if (EventRef.bReachedEnd)
+			{
+				NotifyState->NotifyEnd();
+				ActiveEvents.Remove(EventKey);
+			}
+		}
+		else
+		{
+			NotifyState->NotifyBegin();
+			NotifyState->NotifyTick();
+			if (EventRef.bReachedEnd)
+			{
+				NotifyState->NotifyEnd();
+			}
+			else
+			{
+				ActiveEvents.Add(EventKey);
+			}
+		}
 	}
+
 	EventQueue.Reset();
 }
 

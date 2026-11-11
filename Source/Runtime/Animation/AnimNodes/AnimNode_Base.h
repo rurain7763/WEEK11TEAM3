@@ -4,6 +4,8 @@
 
 struct FAnimNode_Base
 {
+	virtual ~FAnimNode_Base() = default;
+
 	virtual void Initialize() {}
 	virtual void Update(FAnimationUpdateContext& UpdateContext) {}
 	virtual void Evaluate(FPoseContext& OutPoseContext) {}

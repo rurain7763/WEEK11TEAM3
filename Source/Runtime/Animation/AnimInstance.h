@@ -7,6 +7,7 @@
 #include "Animation/AnimationTypes.h"
 #include "Core/Delegate.h"
 #include "Graph/AnimGraphData.h"
+#include "Containers/Set.h"
 
 struct FAnimNode_Base;
 struct FAnimNode_StateMachine;
@@ -102,13 +103,38 @@ public:
 	}
 
 protected:
-	TMulticastDelegate<const FAnimNotifyEvent&> OnFireNotify;
-
 	FAnimNode_Base* RootNode = nullptr;
+
+private:
+	struct FAnimNotifyEventKey
+	{
+		int32 SourcePlayerID;
+		uintptr_t NotifyPtr;
+
+		bool operator==(const FAnimNotifyEventKey& Other) const
+		{
+			return SourcePlayerID == Other.SourcePlayerID && NotifyPtr == Other.NotifyPtr;
+		}
+	};
+
+	struct FAnimNotifyEventKeyHashser
+	{
+		size_t operator()(const FAnimNotifyEventKey& Key) const noexcept
+		{
+			size_t Hash1 = std::hash<int32>{}(Key.SourcePlayerID);
+			size_t Hash2 = std::hash<uintptr_t>{}(Key.NotifyPtr);
+
+			return Hash1 ^ (Hash2 << 1);
+		}
+	};
+
 	TMap<FName, FAnimNode_StateMachine*, FNameHash> StateMachines;
 	FAnimationUpdateContext UpdateContext;
-	TArray<FAnimNotifyEvent*> EventQueue;
+	TArray<FAnimNotifyEventReference> EventQueue;
+	TSet<FAnimNotifyEventKey, FAnimNotifyEventKeyHashser> ActiveEvents;
 	FAnimParameterTable ParameterTable;
 	bool bHasRootMotion;
 	FTransform RootMotion;
+
+	TMulticastDelegate<const FAnimNotifyEvent&> OnFireNotify;
 };

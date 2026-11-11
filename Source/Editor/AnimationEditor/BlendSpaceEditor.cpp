@@ -4,6 +4,7 @@
 #include "Animation/Skeleton.h"
 #include "BlendSpaceEditor.h"
 #include "Core/PathUtils.h"
+#include "Asset/AssetManager.h"
 #include "Serialization/JsonArchive.h"
 #include "UObject/UObjectIterator.h"
 #include "Render/SkeletalMesh.h"
@@ -32,15 +33,14 @@ namespace
 FBlendSpaceEditor::FBlendSpaceEditor(FString InPath)
 	: Path(std::move(InPath)), PanelName("BlendSpace1D Properties##" + Path) {}
 
-FBlendSpaceEditor::~FBlendSpaceEditor() { delete BlendSpace; }
-
 bool FBlendSpaceEditor::Init()
 {
-	BlendSpace = NewObject<UBlendSpace1D>();
-	bLoaded = FJsonArchive::LoadBlend1DGraph(BlendSpace, Path);
+	BlendSpace = UAssetManager::Get().LoadBlendSpace1D(Path);
+	bLoaded = BlendSpace != nullptr;
 	if (!bLoaded) { Status = "Could not load BlendSpace1D."; return false; }
-	BlendSpace->SetAssetFilePath(Path);
 	Samples = BlendSpace->GetBlendSamples();
+	EditingSkeleton = SavedSkeleton = BlendSpace->GetSkeleton();
+	SavedSamples = Samples;
 	BlendSpace->SortBlendSamples();
 	Player.SetBlendSpace(BlendSpace);
 	RefreshAssets();
@@ -64,14 +64,14 @@ void FBlendSpaceEditor::RefreshAssets()
 
 bool FBlendSpaceEditor::Validate(FString& Error) const
 {
-	if (!BlendSpace->GetSkeleton()) { Error = "Select a Skeleton."; return false; }
+	if (!EditingSkeleton) { Error = "Select a Skeleton."; return false; }
 	if (Samples.IsEmpty()) { Error = "Add at least one sample."; return false; }
 	for (int32 i = 0; i < Samples.Num(); ++i)
 	{
 		const auto& Sample = Samples[i];
 		if (!Sample.Animation || !Sample.Animation->GetDataModel() || Sample.Animation->GetDuration() <= 0.f)
 		{ Error = "Each sample needs a valid, non-empty Sequence."; return false; }
-		if (Sample.Animation->GetSkeleton() != BlendSpace->GetSkeleton())
+		if (Sample.Animation->GetSkeleton() != EditingSkeleton)
 		{ Error = "All samples must use the selected Skeleton."; return false; }
 		if (!std::isfinite(Sample.SampleValue.X)) { Error = "Sample X must be finite."; return false; }
 		for (int32 j = 0; j < i; ++j)
@@ -83,10 +83,12 @@ bool FBlendSpaceEditor::Validate(FString& Error) const
 
 void FBlendSpaceEditor::ApplySamples()
 {
-	BlendSpace->SetBlendSamples(Samples);
-	BlendSpace->SortBlendSamples();
 	bDirty = true;
 	Status.clear();
+	if (!Validate(Status)) return;
+	BlendSpace->SetSkeleton(EditingSkeleton);
+	BlendSpace->SetBlendSamples(Samples);
+	BlendSpace->SortBlendSamples();
 }
 
 void FBlendSpaceEditor::Tick(float DeltaTime)
@@ -111,14 +113,14 @@ bool FBlendSpaceEditor::Evaluate(FPoseContext& Pose)
 
 void FBlendSpaceEditor::DrawAssets()
 {
-	USkeleton* Skeleton = BlendSpace->GetSkeleton();
+	USkeleton* Skeleton = EditingSkeleton;
 	if (ImGui::BeginCombo("Skeleton", BlendAssetLabel(Skeleton).c_str()))
 	{
 		if (ImGui::IsWindowAppearing()) RefreshAssets();
 		for (USkeleton* Item : Skeletons)
 			if (ImGui::Selectable(Item->GetPath().c_str(), Item == Skeleton))
 			{
-				BlendSpace->SetSkeleton(Item);
+				EditingSkeleton = Item;
 				PreviewMesh = nullptr;
 				for (auto& Sample : Samples)
 					if (Sample.Animation && Sample.Animation->GetSkeleton() != Item) Sample.Animation = nullptr;
@@ -171,7 +173,7 @@ void FBlendSpaceEditor::DrawSamples()
 				if (ImGui::IsWindowAppearing()) RefreshAssets();
 				for (UAnimSequence* Item : Sequences)
 				{
-					if (Item->GetSkeleton() != BlendSpace->GetSkeleton()) continue;
+					if (Item->GetSkeleton() != EditingSkeleton) continue;
 					ImGui::PushID(Item);
 					if (ImGui::Selectable(BlendSequenceLabel(Item).c_str(), Item == Sample.Animation))
 					{ Sample.Animation = Item; bChanged = true; }
@@ -239,6 +241,8 @@ bool FBlendSpaceEditor::Save()
 		std::error_code Error; std::filesystem::remove(Temporary, Error);
 		Status = "Could not save BlendSpace1D."; return false;
 	}
+	SavedSkeleton = BlendSpace->GetSkeleton();
+	SavedSamples = BlendSpace->GetBlendSamples();
 	bDirty = false; Status = "Saved."; return true;
 }
 
@@ -256,7 +260,14 @@ void FBlendSpaceEditor::DrawCloseConfirmation()
 		ImGui::TextUnformatted("Save changes before closing?");
 		if (ImGui::Button("Save and Close") && Save()) { bCloseApproved = true; ImGui::CloseCurrentPopup(); }
 		ImGui::SameLine();
-		if (ImGui::Button("Discard")) { bCloseApproved = true; ImGui::CloseCurrentPopup(); }
+		if (ImGui::Button("Discard"))
+		{
+			BlendSpace->SetSkeleton(SavedSkeleton);
+			BlendSpace->SetBlendSamples(SavedSamples);
+			BlendSpace->SortBlendSamples();
+			bCloseApproved = true;
+			ImGui::CloseCurrentPopup();
+		}
 		ImGui::SameLine(); if (ImGui::Button("Cancel")) ImGui::CloseCurrentPopup();
 		if (!Status.empty()) ImGui::TextWrapped("%s", Status.c_str());
 		ImGui::EndPopup();

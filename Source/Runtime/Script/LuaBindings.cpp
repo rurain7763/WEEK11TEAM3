@@ -319,6 +319,12 @@ void FLuaBindings::RegisterLuaBindings(sol::state& Lua, FLuaCoroutineScheduler* 
 		"SetInt", [](UAnimInstance& Anim, sol::string_view Name, int32 InValue) {
 			Anim.SetInt(FName(Name.data(), Name.size()), InValue);
 		},
+		"SetTrigger", [](UAnimInstance& Anim, sol::string_view Name) {
+			Anim.SetTrigger(FName(Name.data(), Name.size()));
+		},
+		"ResetTrigger", [](UAnimInstance& Anim, sol::string_view Name) {
+			Anim.ResetTrigger(FName(Name.data(), Name.size()));
+		},
 		"GetFloat", [](UAnimInstance& Anim, sol::string_view Name) {
 			return Anim.GetFloat(FName(Name.data(), Name.size()));
 		},
