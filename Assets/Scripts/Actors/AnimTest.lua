@@ -32,19 +32,23 @@ function Tick(deltaTime)
         animInstance:ResetTrigger("Hit")
         animInstance:ResetTrigger("Jump")
         animInstance:PlayState("test", "Locomotion", 0.2)
+    end
     
-    elseif(Input.IsKeyPressed(KeyCode.Num6)) then
+    -- 전이 규칙 판단
+    if(Input.IsMousePressed(MouseButton.Left)) then
         animInstance:SetTrigger("Attack")
         Log("Attack")
-    
-    elseif(Input.IsKeyPressed(KeyCode.Num7)) then
+    end
+
+    if(Input.IsKeyPressed(KeyCode.Num1)) then
         animInstance:SetTrigger("Hit")
         Log("Hit")
     
-    elseif(Input.IsKeyPressed(KeyCode.Num8)) then
+    elseif(Input.IsKeyPressed(KeyCode.Space)) then
         animInstance:SetTrigger("Jump")
         Log("Jump")
-    elseif(Input.IsKeyPressed(KeyCode.Num9)) then
+    -- 상태 이름으로 직접 전환 
+    elseif(Input.IsKeyPressed(KeyCode.Num2)) then
         local ok = animInstance:PlayState("test", "Attack", 0.2)
         Log("PlayState -> " .. tostring(ok))
     end
