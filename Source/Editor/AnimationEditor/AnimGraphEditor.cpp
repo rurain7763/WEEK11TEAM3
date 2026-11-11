@@ -147,6 +147,8 @@ bool FAnimGraphEditor::Load()
 			{
 				Value.at("BlendSpacePath").get<FString>(); Value.at("Looping").get<bool>();
 				Value.at("Speed").get<float>(); Value.at("X").get<float>(); Value.at("Y").get<float>();
+				// X 파라미터 연결 필드가 없던 구버전 그래프를 호환 처리한다.
+				if (!Value.contains("XParameterName") || !Value["XParameterName"].is_string()) Value["XParameterName"] = "";
 			}
 			else
 			{
@@ -288,7 +290,7 @@ void FAnimGraphEditor::AddNode(int32 Type)
 	Node->DataIndex = static_cast<int32>(Values.size());
 	if (Type == 0) Values.push_back({ {"SequencePath", ""}, {"Looping", true}, {"Speed", 1.f} });
 	else if (Type == 1) Values.push_back({ {"NodeIDA", -1}, {"NodeIDB", -1}, {"Alpha", 0.5f} });
-	else if (Type == 2) Values.push_back({ {"BlendSpacePath", ""}, {"Looping", true}, {"Speed", 1.f}, {"X", 0.f}, {"Y", 0.f} });
+	else if (Type == 2) Values.push_back({ {"BlendSpacePath", ""}, {"Looping", true}, {"Speed", 1.f}, {"X", 0.f}, {"Y", 0.f}, {"XParameterName", ""} });
 	else Values.push_back({ {"InitStateID", -1}, {"Name", "StateMachine" + std::to_string(Node->ID)},
 		{"States", nlohmann::json::array()},
 		{"AnyTransitions", nlohmann::json::array()}, {"Transitions", nlohmann::json::array()} });
@@ -1021,6 +1023,21 @@ void FAnimGraphEditor::DrawDetails()
 		if (ImGui::DragFloat("Speed", &Speed, .01f, -10.0f, 10.f, "%.2f", ImGuiSliderFlags_AlwaysClamp)) { Value["Speed"] = Speed; bDirty = true; }
 		if (ImGui::DragFloat("X", &X, 1.f)) { Value["X"] = X; bDirty = true; }
 		if (ImGui::DragFloat("Y", &Y, 1.f)) { Value["Y"] = Y; bDirty = true; }
+
+		// X축을 Float 파라미터에 연결하면 런타임이 매 프레임 X를 덮어쓴다.
+		if (!Value.contains("XParameterName") || !Value["XParameterName"].is_string()) Value["XParameterName"] = "";
+		const FString BoundX = Value["XParameterName"].get<FString>();
+		if (ImGui::BeginCombo("X Parameter", BoundX.empty() ? "(none)" : BoundX.c_str()))
+		{
+			if (ImGui::Selectable("(none)", BoundX.empty())) { Value["XParameterName"] = ""; bDirty = true; }
+			for (const auto& Parameter : Document["AnimGraph"]["Parameters"])
+			{
+				if (Parameter["Type"].get<int32>() != 2) continue; // Float만 축으로 쓸 수 있다
+				const FString Candidate = Parameter["Name"].get<FString>();
+				if (ImGui::Selectable(Candidate.c_str(), Candidate == BoundX)) { Value["XParameterName"] = Candidate; bDirty = true; }
+			}
+			ImGui::EndCombo();
+		}
 	}
 	else DrawStateMachineDetails(*Node);
 	ImGui::Separator();

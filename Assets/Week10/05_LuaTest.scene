@@ -60,6 +60,7 @@
                                     }
                                 },
                                 "bBlockComponet": false,
+                                "bCPUSkinning": false,
                                 "bCastShadow": false,
                                 "bGenerateOverlapEvents": true,
                                 "bReceiveShadow": true,
@@ -131,6 +132,7 @@
                                     }
                                 },
                                 "bBlockComponet": false,
+                                "bCPUSkinning": false,
                                 "bCastShadow": false,
                                 "bGenerateOverlapEvents": true,
                                 "bReceiveShadow": true,
@@ -202,6 +204,7 @@
                                     }
                                 },
                                 "bBlockComponet": false,
+                                "bCPUSkinning": false,
                                 "bCastShadow": false,
                                 "bGenerateOverlapEvents": true,
                                 "bReceiveShadow": true,
@@ -273,6 +276,7 @@
                                     }
                                 },
                                 "bBlockComponet": false,
+                                "bCPUSkinning": false,
                                 "bCastShadow": false,
                                 "bGenerateOverlapEvents": true,
                                 "bReceiveShadow": true,
@@ -282,85 +286,6 @@
                         }
                     ],
                     "Name": "UAL1_Notify_Test",
-                    "Properties": {
-                        "bTickInEditor": false
-                    },
-                    "RootComponent": "DefaultSceneRoot"
-                },
-                {
-                    "Class": "ASkeletalMeshActor",
-                    "Components": [
-                        {
-                            "Class": "USceneComponent",
-                            "Name": "DefaultSceneRoot",
-                            "Parent": "",
-                            "Properties": {
-                                "Transform": {
-                                    "Location": {
-                                        "X": 2.5,
-                                        "Y": -2.0,
-                                        "Z": 0.5009999871253967
-                                    },
-                                    "Rotation": {
-                                        "Pitch": 0.0,
-                                        "Roll": 0.0,
-                                        "Yaw": 0.0
-                                    },
-                                    "Scale": {
-                                        "X": 1.0,
-                                        "Y": 1.0,
-                                        "Z": 1.0
-                                    }
-                                }
-                            }
-                        },
-                        {
-                            "Class": "USkeletalMeshComponent",
-                            "Name": "USkeletalMeshComponent",
-                            "OverrideMaterials": [],
-                            "Parent": "DefaultSceneRoot",
-                            "Properties": {
-                                "AnimGraph": "Week10/LocomotionActions.animgraph",
-                                "ShowBeginOverlapLog": false,
-                                "ShowEndOverlapLog": false,
-                                "ShowHitLog": false,
-                                "SkeletalMesh": "Models/FbxTest/UAL1.fbx",
-                                "Skeleton": "Models/FbxTest/UAL1_Skeleton",
-                                "Transform": {
-                                    "Location": {
-                                        "X": 0.0,
-                                        "Y": 0.0,
-                                        "Z": 0.0
-                                    },
-                                    "Rotation": {
-                                        "Pitch": 0.0,
-                                        "Roll": 0.0,
-                                        "Yaw": 0.0
-                                    },
-                                    "Scale": {
-                                        "X": 1.0,
-                                        "Y": 1.0,
-                                        "Z": 1.0
-                                    }
-                                },
-                                "bBlockComponet": false,
-                                "bCastShadow": false,
-                                "bGenerateOverlapEvents": true,
-                                "bReceiveShadow": true,
-                                "bReceivesDecals": true,
-                                "bVisible": true
-                            }
-                        },
-                        {
-                            "Class": "UScriptComponent",
-                            "Name": "UScriptComponent_0",
-                            "Parent": "",
-                            "Properties": {
-                                "ScriptPath": "Assets/Scripts/Actors/AnimTest.lua"
-                            }
-                        }
-                    ],
-                    "Name": "UAL1_StateMachine_Crossfade000",
                     "Properties": {
                         "bTickInEditor": false
                     },
@@ -423,6 +348,7 @@
                                     }
                                 },
                                 "bBlockComponet": false,
+                                "bCPUSkinning": false,
                                 "bCastShadow": false,
                                 "bGenerateOverlapEvents": true,
                                 "bReceiveShadow": true,
@@ -494,6 +420,7 @@
                                     }
                                 },
                                 "bBlockComponet": false,
+                                "bCPUSkinning": false,
                                 "bCastShadow": false,
                                 "bGenerateOverlapEvents": true,
                                 "bReceiveShadow": true,
@@ -963,6 +890,7 @@
                                     }
                                 },
                                 "bBlockComponet": false,
+                                "bCPUSkinning": false,
                                 "bCastShadow": false,
                                 "bGenerateOverlapEvents": true,
                                 "bReceiveShadow": true,
@@ -1188,6 +1116,7 @@
                                     }
                                 },
                                 "bBlockComponet": false,
+                                "bCPUSkinning": false,
                                 "bCastShadow": false,
                                 "bGenerateOverlapEvents": true,
                                 "bReceiveShadow": true,
@@ -1413,6 +1342,7 @@
                                     }
                                 },
                                 "bBlockComponet": false,
+                                "bCPUSkinning": false,
                                 "bCastShadow": false,
                                 "bGenerateOverlapEvents": true,
                                 "bReceiveShadow": true,
@@ -1638,6 +1568,7 @@
                                     }
                                 },
                                 "bBlockComponet": false,
+                                "bCPUSkinning": false,
                                 "bCastShadow": false,
                                 "bGenerateOverlapEvents": true,
                                 "bReceiveShadow": true,
@@ -1863,6 +1794,7 @@
                                     }
                                 },
                                 "bBlockComponet": false,
+                                "bCPUSkinning": false,
                                 "bCastShadow": false,
                                 "bGenerateOverlapEvents": true,
                                 "bReceiveShadow": true,
@@ -2088,6 +2020,7 @@
                                     }
                                 },
                                 "bBlockComponet": false,
+                                "bCPUSkinning": false,
                                 "bCastShadow": false,
                                 "bGenerateOverlapEvents": true,
                                 "bReceiveShadow": true,
@@ -2313,6 +2246,7 @@
                                     }
                                 },
                                 "bBlockComponet": false,
+                                "bCPUSkinning": false,
                                 "bCastShadow": false,
                                 "bGenerateOverlapEvents": true,
                                 "bReceiveShadow": true,
@@ -2538,6 +2472,7 @@
                                     }
                                 },
                                 "bBlockComponet": false,
+                                "bCPUSkinning": false,
                                 "bCastShadow": false,
                                 "bGenerateOverlapEvents": true,
                                 "bReceiveShadow": true,
@@ -2763,6 +2698,7 @@
                                     }
                                 },
                                 "bBlockComponet": false,
+                                "bCPUSkinning": false,
                                 "bCastShadow": false,
                                 "bGenerateOverlapEvents": true,
                                 "bReceiveShadow": true,
@@ -2988,6 +2924,7 @@
                                     }
                                 },
                                 "bBlockComponet": false,
+                                "bCPUSkinning": false,
                                 "bCastShadow": false,
                                 "bGenerateOverlapEvents": true,
                                 "bReceiveShadow": true,
@@ -3213,6 +3150,7 @@
                                     }
                                 },
                                 "bBlockComponet": false,
+                                "bCPUSkinning": false,
                                 "bCastShadow": false,
                                 "bGenerateOverlapEvents": true,
                                 "bReceiveShadow": true,
@@ -3347,6 +3285,7 @@
                                     }
                                 },
                                 "bBlockComponet": false,
+                                "bCPUSkinning": false,
                                 "bCastShadow": false,
                                 "bGenerateOverlapEvents": true,
                                 "bReceiveShadow": true,
@@ -3481,6 +3420,7 @@
                                     }
                                 },
                                 "bBlockComponet": false,
+                                "bCPUSkinning": false,
                                 "bCastShadow": false,
                                 "bGenerateOverlapEvents": true,
                                 "bReceiveShadow": true,
@@ -3615,6 +3555,7 @@
                                     }
                                 },
                                 "bBlockComponet": false,
+                                "bCPUSkinning": false,
                                 "bCastShadow": false,
                                 "bGenerateOverlapEvents": true,
                                 "bReceiveShadow": true,
@@ -3749,6 +3690,7 @@
                                     }
                                 },
                                 "bBlockComponet": false,
+                                "bCPUSkinning": false,
                                 "bCastShadow": false,
                                 "bGenerateOverlapEvents": true,
                                 "bReceiveShadow": true,
@@ -3883,6 +3825,7 @@
                                     }
                                 },
                                 "bBlockComponet": false,
+                                "bCPUSkinning": false,
                                 "bCastShadow": false,
                                 "bGenerateOverlapEvents": true,
                                 "bReceiveShadow": true,
@@ -4110,6 +4053,7 @@
                                     }
                                 },
                                 "bBlockComponet": false,
+                                "bCPUSkinning": false,
                                 "bCastShadow": true,
                                 "bGenerateOverlapEvents": true,
                                 "bReceiveShadow": true,
@@ -4120,6 +4064,239 @@
                     ],
                     "Name": "ASkeletalMeshActor_47",
                     "Properties": {
+                        "bTickInEditor": false
+                    },
+                    "RootComponent": "DefaultSceneRoot"
+                },
+                {
+                    "Class": "ARootMotionTestActor",
+                    "Components": [
+                        {
+                            "Class": "USceneComponent",
+                            "Name": "DefaultSceneRoot",
+                            "Parent": "",
+                            "Properties": {
+                                "Transform": {
+                                    "Location": {
+                                        "X": 2.13675594329834,
+                                        "Y": -3.2080302238464355,
+                                        "Z": 0.5
+                                    },
+                                    "Rotation": {
+                                        "Pitch": 0.0,
+                                        "Roll": 0.0,
+                                        "Yaw": 0.0
+                                    },
+                                    "Scale": {
+                                        "X": 1.0,
+                                        "Y": 1.0,
+                                        "Z": 1.0
+                                    }
+                                }
+                            }
+                        },
+                        {
+                            "Class": "USkeletalMeshComponent",
+                            "Name": "SkeletalMeshComponent",
+                            "OverrideMaterials": [
+                                {
+                                    "Base": "DefaultMaterial",
+                                    "Instance": {
+                                        "BaseColor": {
+                                            "A": 1.0,
+                                            "B": 0.042311523109674454,
+                                            "G": 0.40197819471359253,
+                                            "R": 0.7990983128547668
+                                        },
+                                        "BlendState": "Opaque",
+                                        "DecalColorBlendMode": "Alpha",
+                                        "MaterialDomain": "Surface",
+                                        "Properties": {},
+                                        "SamplerState": "LinearClamp",
+                                        "Shininess": 25.0,
+                                        "SpecularColor": {
+                                            "A": 1.0,
+                                            "B": 0.042311523109674454,
+                                            "G": 0.40197819471359253,
+                                            "R": 0.7990983128547668
+                                        },
+                                        "Textures": [
+                                            "WhiteTexture",
+                                            ""
+                                        ],
+                                        "UVScrollSpeed": [
+                                            0.0,
+                                            0.0
+                                        ],
+                                        "bAffectBaseColor": true,
+                                        "bAffectNormal": true,
+                                        "bFlipNormalGreen": false
+                                    }
+                                },
+                                {
+                                    "Base": "DefaultMaterial",
+                                    "Instance": {
+                                        "BaseColor": {
+                                            "A": 1.0,
+                                            "B": 0.7083759903907776,
+                                            "G": 0.132868230342865,
+                                            "R": 0.40197500586509705
+                                        },
+                                        "BlendState": "Opaque",
+                                        "DecalColorBlendMode": "Alpha",
+                                        "MaterialDomain": "Surface",
+                                        "Properties": {},
+                                        "SamplerState": "LinearClamp",
+                                        "Shininess": 25.0,
+                                        "SpecularColor": {
+                                            "A": 1.0,
+                                            "B": 0.7083759903907776,
+                                            "G": 0.132868230342865,
+                                            "R": 0.40197500586509705
+                                        },
+                                        "Textures": [
+                                            "WhiteTexture",
+                                            ""
+                                        ],
+                                        "UVScrollSpeed": [
+                                            0.0,
+                                            0.0
+                                        ],
+                                        "bAffectBaseColor": true,
+                                        "bAffectNormal": true,
+                                        "bFlipNormalGreen": false
+                                    }
+                                }
+                            ],
+                            "Parent": "DefaultSceneRoot",
+                            "Properties": {
+                                "AnimGraph": "Week10/LocomotionActions.animgraph",
+                                "ShowBeginOverlapLog": false,
+                                "ShowEndOverlapLog": false,
+                                "ShowHitLog": false,
+                                "SkeletalMesh": "Models/FbxTest/UAL1_RM.fbx",
+                                "Skeleton": "Models/FbxTest/UAL1_RM_Skeleton",
+                                "Transform": {
+                                    "Location": {
+                                        "X": 0.0,
+                                        "Y": 0.0,
+                                        "Z": 0.0
+                                    },
+                                    "Rotation": {
+                                        "Pitch": 0.0,
+                                        "Roll": 0.0,
+                                        "Yaw": 90.0
+                                    },
+                                    "Scale": {
+                                        "X": 1.0,
+                                        "Y": 1.0,
+                                        "Z": 1.0
+                                    }
+                                },
+                                "bBlockComponet": false,
+                                "bCPUSkinning": false,
+                                "bCastShadow": true,
+                                "bGenerateOverlapEvents": true,
+                                "bReceiveShadow": true,
+                                "bReceivesDecals": true,
+                                "bVisible": true
+                            }
+                        },
+                        {
+                            "Class": "UCharacterMovementComponent",
+                            "Name": "CharacterMovementComponent",
+                            "Parent": "",
+                            "Properties": {
+                                "RotationRate": 540.0,
+                                "bOrientRotationToMovement": true
+                            }
+                        },
+                        {
+                            "Class": "UScriptComponent",
+                            "Name": "ScriptComponent",
+                            "Parent": "",
+                            "Properties": {
+                                "ScriptPath": "Assets/Scripts/Actors/AnimTest.lua"
+                            }
+                        },
+                        {
+                            "Class": "USpringArmComponent",
+                            "Name": "USpringArmComponent_0",
+                            "Parent": "DefaultSceneRoot",
+                            "Properties": {
+                                "CameraLagMaxDistance": 0.0,
+                                "CameraLagSpeed": 10.0,
+                                "CameraRotationLagSpeed": 10.0,
+                                "ProbeSize": 0.15000000596046448,
+                                "SocketOffset": {
+                                    "X": 0.0,
+                                    "Y": 0.0,
+                                    "Z": 0.0
+                                },
+                                "TargetArmLength": 4.0,
+                                "TargetOffset": {
+                                    "X": 0.0,
+                                    "Y": 0.0,
+                                    "Z": 0.0
+                                },
+                                "Transform": {
+                                    "Location": {
+                                        "X": 0.0,
+                                        "Y": 0.0,
+                                        "Z": 1.185920238494873
+                                    },
+                                    "Rotation": {
+                                        "Pitch": 0.0,
+                                        "Roll": 0.0,
+                                        "Yaw": 0.0
+                                    },
+                                    "Scale": {
+                                        "X": 1.0,
+                                        "Y": 1.0,
+                                        "Z": 1.0
+                                    }
+                                },
+                                "bDoCollisionTest": true,
+                                "bEnableCameraLag": false,
+                                "bEnableCameraRotationLag": false,
+                                "bUsePawnControlRotation": true
+                            }
+                        },
+                        {
+                            "Class": "UCameraComponent",
+                            "Name": "UCameraComponent_0",
+                            "Parent": "USpringArmComponent_0",
+                            "Properties": {
+                                "AspectRatio": 1.7777780294418335,
+                                "FarClipPlane": 10000.0,
+                                "FieldOfView": 60.0,
+                                "NearClipPlane": 0.10000000149011612,
+                                "OrthoWidth": 16.0,
+                                "Transform": {
+                                    "Location": {
+                                        "X": 0.0,
+                                        "Y": 0.0,
+                                        "Z": 0.0
+                                    },
+                                    "Rotation": {
+                                        "Pitch": -0.0,
+                                        "Roll": 0.0,
+                                        "Yaw": 0.0
+                                    },
+                                    "Scale": {
+                                        "X": 1.0,
+                                        "Y": 1.0,
+                                        "Z": 1.0
+                                    }
+                                },
+                                "bConstrainAspectRatio": false,
+                                "bIsOrthogonal": false
+                            }
+                        }
+                    ],
+                    "Name": "ARootMotionTestActor_1",
+                    "Properties": {
+                        "bAutoPossessPlayer": true,
                         "bTickInEditor": false
                     },
                     "RootComponent": "DefaultSceneRoot"

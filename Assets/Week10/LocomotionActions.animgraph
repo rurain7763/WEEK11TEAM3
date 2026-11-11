@@ -24,6 +24,7 @@
                 "Looping": true,
                 "Speed": 1.0,
                 "X": 0.0,
+                "XParameterName": "Speed",
                 "Y": 0.0
             }
         ],
@@ -74,6 +75,11 @@
                 "Name": "Action",
                 "Type": 0,
                 "Value": 0
+            },
+            {
+                "Name": "Speed",
+                "Type": 2,
+                "Value": 0.0
             }
         ],
         "Properties": {},
@@ -95,7 +101,7 @@
                     }
                 ],
                 "InitStateID": 0,
-                "Name": "Default",
+                "Name": "test",
                 "States": [
                     {
                         "Name": "Locomotion",

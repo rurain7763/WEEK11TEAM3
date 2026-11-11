@@ -1,33 +1,41 @@
 {
-  "Version": 1,
-  "Blend1D": {
-    "Properties": {},
-    "Skeleton": "Models/FbxTest/UAL1_Skeleton",
-    "Samples": [
-      {
-        "Animation": "Models/FbxTest/UAL1_Armature|Idle_Loop",
-        "SampleValue": {
-          "Z": 0.0,
-          "Y": 0.0,
-          "X": 0.0
-        }
-      },
-      {
-        "Animation": "Models/FbxTest/UAL1_Armature|Walk_Loop",
-        "SampleValue": {
-          "Z": 0.0,
-          "Y": 0.0,
-          "X": 100.0
-        }
-      },
-      {
-        "Animation": "Models/FbxTest/UAL1_Armature|Sprint_Loop",
-        "SampleValue": {
-          "Z": 0.0,
-          "Y": 0.0,
-          "X": 300.0
-        }
-      }
-    ]
-  }
+    "Blend1D": {
+        "Properties": {},
+        "Samples": [
+            {
+                "Animation": "Models/FbxTest/UAL1_RM_Armature|Jog_Bwd_Loop",
+                "SampleValue": {
+                    "X": -200.0,
+                    "Y": 0.0,
+                    "Z": 0.0
+                }
+            },
+            {
+                "Animation": "Models/FbxTest/UAL1_RM_Armature|Idle_Loop",
+                "SampleValue": {
+                    "X": 0.0,
+                    "Y": 0.0,
+                    "Z": 0.0
+                }
+            },
+            {
+                "Animation": "Models/FbxTest/UAL1_RM_Armature|Walk_Loop",
+                "SampleValue": {
+                    "X": 100.0,
+                    "Y": 0.0,
+                    "Z": 0.0
+                }
+            },
+            {
+                "Animation": "Models/FbxTest/UAL1_RM_Armature|Jog_Fwd_Loop",
+                "SampleValue": {
+                    "X": 200.0,
+                    "Y": 0.0,
+                    "Z": 0.0
+                }
+            }
+        ],
+        "Skeleton": "Models/FbxTest/UAL1_RM_Skeleton"
+    },
+    "Version": 1
 }
