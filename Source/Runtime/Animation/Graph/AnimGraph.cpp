@@ -90,9 +90,23 @@ T* UAnimGraph::BuildAnimGraph(TMap<int32, FAnimNode_Base*>& NodeInstances, int32
 			const FBlendSpacePlayerData& ActualData = BlendSpacePlayers[NodeData.ActualDataIndex];
 
 			FAnimNode_BlendSpacePlayer* Player = new FAnimNode_BlendSpacePlayer();
-			Player->SetBlendSpace(UAssetManager::GetAssetByPath<UBlendSpace>(ActualData.BlendSpacePath));
+
+			UBlendSpace* BlendSpace = UAssetManager::GetAssetByPath<UBlendSpace>(ActualData.BlendSpacePath);
+			if (BlendSpace)
+			{
+				// GetSamples는 샘플이 X 오름차순으로 정렬돼 있다고 가정한다.
+				// 에디터는 저장 시 정렬하지만 에셋을 직접 편집한 경우를 대비해 한 번 보장한다.
+				BlendSpace->SortBlendSamples();
+			}
+			Player->SetBlendSpace(BlendSpace);
+
 			Player->SetX(ActualData.X);
 			Player->SetY(ActualData.Y);
+			// 빈 문자열을 FName으로 만들면 NAME_None이 아닐 수 있으므로 지정된 경우에만 넘긴다.
+			if (!ActualData.XParameterName.empty())
+			{
+				Player->SetXParameterName(FName(ActualData.XParameterName));
+			}
 			Player->bLooping = ActualData.bLooping;
 			Player->Speed = ActualData.Speed;
 
@@ -228,6 +242,7 @@ void UAnimGraph::SerializeData(FStructuredArchiveRecord& Record, FBlendSpacePlay
 	Record << SA_VALUE("Speed", Player.Speed);
 	Record << SA_VALUE("X", Player.X);
 	Record << SA_VALUE("Y", Player.Y);
+	Record << SA_VALUE("XParameterName", Player.XParameterName);
 }
 
 const FAnimParameterData* UAnimGraph::FindParameterData(const FString& Name) const

@@ -40,6 +40,8 @@ struct FBlendSpacePlayerData
 	float Speed;
 	float X;
 	float Y;
+	// 비어 있지 않으면 매 프레임 이 Float 파라미터 값으로 X를 덮어쓴다.
+	FString XParameterName;
 };
 
 struct FAnimStateData

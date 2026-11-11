@@ -2,6 +2,7 @@
 #include "Animation/AnimNodes/AnimNode_BlendSpacePlayer.h"
 #include "Animation/AnimSequence.h"
 #include "Animation/AnimationRuntime.h"
+#include "Animation/AnimParameter.h"
 #include <cmath>
 
 void FAnimNode_BlendSpacePlayer::UpdateSampleCache()
@@ -26,6 +27,16 @@ void FAnimNode_BlendSpacePlayer::UpdateSampleCache()
 
 void FAnimNode_BlendSpacePlayer::Update(FAnimationUpdateContext& UpdateContext)
 {
+	// 파라미터가 지정돼 있으면 샘플을 고르기 전에 X를 갱신한다.
+	if (!XParameterName.IsNone() && UpdateContext.ParameterTable)
+	{
+		float ParameterValue = 0.f;
+		if (UpdateContext.ParameterTable->TryGetFloat(XParameterName, ParameterValue))
+		{
+			X = ParameterValue;
+		}
+	}
+
 	UpdateSampleCache();
 
 	float StartNormalizedTime = NormalizedTime;
