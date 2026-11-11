@@ -19,6 +19,7 @@
 #include "Component/ScriptComponent.h"
 #include "Component/SphereComponent.h"
 #include "Component/SkeletalMeshComponent.h"
+#include "Component/CharacterMovementComponent.h"
 #include "Camera/CameraComponent.h"
 #include "Animation/AnimInstance.h"
 
@@ -356,6 +357,16 @@ void FLuaBindings::RegisterLuaBindings(sol::state& Lua, FLuaCoroutineScheduler* 
 		"GetAnimInstance", &USkeletalMeshComponent::GetAnimInstance
 	);
 
+	Lua.new_usertype<UCharacterMovementComponent>(
+		"CharacterMovementComponent",
+		sol::no_constructor,
+		sol::base_classes, sol::bases<UActorComponent, UObject>(),
+		"StaticClass", &UCharacterMovementComponent::StaticClass,
+		"Jump", &UCharacterMovementComponent::Jump,
+		"IsGrounded", &UCharacterMovementComponent::IsGrounded,
+		"GetVelocity", [](UCharacterMovementComponent& Movement) { return Movement.Velocity; }
+	);
+
 	Lua.new_usertype<FWaitForSeconds>(
 		"WaitForSeconds",
 		sol::constructors<FWaitForSeconds(double)>(),
@@ -590,6 +601,11 @@ static sol::object ConvertComponentToActual(UActorComponent* Component)
 
 	if (USkeletalMeshComponent* SkeletalMesh = Cast<USkeletalMeshComponent>(Component)) {
 		return sol::make_object(FLuaScriptSystem::Get().GetLuaState(), SkeletalMesh);
+	}
+
+	if (UCharacterMovementComponent* Movement = Cast<UCharacterMovementComponent>(Component))
+	{
+		return sol::make_object(FLuaScriptSystem::Get().GetLuaState(), Movement);
 	}
 
 	return sol::object();

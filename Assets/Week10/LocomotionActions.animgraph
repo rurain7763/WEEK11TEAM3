@@ -15,6 +15,16 @@
                 "Looping": false,
                 "SequencePath": "Models/FbxTest/UAL1_Armature|Jump_Start",
                 "Speed": 1.0
+            },
+            {
+                "Looping": true,
+                "SequencePath": "Models/FbxTest/UAL1_Armature|Jump_Loop",
+                "Speed": 1.0
+            },
+            {
+                "Looping": false,
+                "SequencePath": "Models/FbxTest/UAL1_Armature|Jump_Land",
+                "Speed": 1.0
             }
         ],
         "AnimTwoWayBlends": [],
@@ -53,6 +63,16 @@
                 "ActualType": 0,
                 "NodeID": 5,
                 "Type": 3
+            },
+            {
+                "ActualType": 3,
+                "NodeID": 6,
+                "Type": 0
+            },
+            {
+                "ActualType": 4,
+                "NodeID": 7,
+                "Type": 0
             }
         ],
         "Parameters": [
@@ -80,6 +100,16 @@
                 "Name": "Speed",
                 "Type": 2,
                 "Value": 0.0
+            },
+            {
+                "Name": "ZVelocity",
+                "Type": 2,
+                "Value": 0.0
+            },
+            {
+                "Name": "Grounded",
+                "Type": 1,
+                "Value": false
             }
         ],
         "Properties": {},
@@ -119,9 +149,19 @@
                         "StateID": 2
                     },
                     {
-                        "Name": "Jump",
+                        "Name": "Jump_Start",
                         "NodeID": 4,
                         "StateID": 3
+                    },
+                    {
+                        "Name": "Jump_Loop",
+                        "NodeID": 6,
+                        "StateID": 4
+                    },
+                    {
+                        "Name": "Jump_Land",
+                        "NodeID": 7,
+                        "StateID": 5
                     }
                 ],
                 "Transitions": [
@@ -211,26 +251,37 @@
                     },
                     {
                         "Condition": {
-                            "ComparisonOperator": 4,
-                            "ParameterName": "Action",
-                            "Value": 0
+                            "ComparisonOperator": 0,
+                            "ParameterName": "Grounded",
+                            "Value": true
+                        },
+                        "CrossfadeDuration": 0.20000000298023224,
+                        "ExitTime": 1.0,
+                        "HasExitTime": false,
+                        "NextStateID": 5,
+                        "PreviousStateID": 4
+                    },
+                    {
+                        "Condition": {
+                            "ComparisonOperator": 0,
+                            "ParameterName": ""
                         },
                         "CrossfadeDuration": 0.20000000298023224,
                         "ExitTime": 1.0,
                         "HasExitTime": true,
                         "NextStateID": 0,
-                        "PreviousStateID": 3
+                        "PreviousStateID": 5
                     },
                     {
                         "Condition": {
-                            "ComparisonOperator": 0,
-                            "ParameterName": "Attack",
-                            "Value": false
+                            "ComparisonOperator": 5,
+                            "ParameterName": "ZVelocity",
+                            "Value": 0.0
                         },
                         "CrossfadeDuration": 0.20000000298023224,
                         "ExitTime": 1.0,
                         "HasExitTime": false,
-                        "NextStateID": 1,
+                        "NextStateID": 4,
                         "PreviousStateID": 3
                     }
                 ]
@@ -263,6 +314,16 @@
                 "NodeID": 5,
                 "X": 560.0,
                 "Y": 260.0
+            },
+            {
+                "NodeID": 6,
+                "X": 82.0,
+                "Y": 792.0
+            },
+            {
+                "NodeID": 7,
+                "X": 78.0,
+                "Y": 969.0
             }
         ],
         "States": [
@@ -287,8 +348,20 @@
             {
                 "MachineNodeID": 5,
                 "StateID": 3,
-                "X": 866.0020751953125,
-                "Y": 1165.8076171875
+                "X": 667.0020751953125,
+                "Y": 1047.8076171875
+            },
+            {
+                "MachineNodeID": 5,
+                "StateID": 4,
+                "X": 883.0,
+                "Y": 1314.0
+            },
+            {
+                "MachineNodeID": 5,
+                "StateID": 5,
+                "X": 909.0,
+                "Y": 1444.0
             },
             {
                 "MachineNodeID": 5,

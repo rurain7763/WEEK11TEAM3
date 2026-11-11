@@ -43,28 +43,51 @@ function Tick(deltaTime)
         animInstance:ResetTrigger("Hit")
         animInstance:ResetTrigger("Jump")
         animInstance:PlayState("test", "Locomotion", 0.2)
+    end
     
-    elseif(Input.IsKeyPressed(KeyCode.Num6)) then
+    -- 전이 규칙 판단
+    if(Input.IsMousePressed(MouseButton.Left)) then
         animInstance:SetTrigger("Attack")
         Log("Attack")
-    
-    elseif(Input.IsKeyPressed(KeyCode.Num7)) then
+    end
+
+    if(Input.IsKeyPressed(KeyCode.Num1)) then
         animInstance:SetTrigger("Hit")
         Log("Hit")
-    
-    elseif(Input.IsKeyPressed(KeyCode.Num8)) then
-        animInstance:SetTrigger("Jump")
-        Log("Jump")
-    elseif(Input.IsKeyPressed(KeyCode.Num9)) then
+    end
+
+    -- 상태 이름으로 직접 전환
+    if(Input.IsKeyPressed(KeyCode.Num2)) then
         local ok = animInstance:PlayState("test", "Attack", 0.2)
         Log("PlayState -> " .. tostring(ok))
     end
 
+    UpdateJump(animInstance)
     UpdateMovement(deltaTime, animInstance)
 end
 
--- BlendSpace(Locomotion)가 Idle(0) / Walk(100) / Jog(300)을 섞고,
--- 실제 이동은 루트 모션이 담당하므로 여기서 액터 위치를 건드리지 않는다.
+--   올라가는 중(ZVelocity > 0)  : Jump_Start
+--   내려오는 중(ZVelocity <= 0) : Jump_Loop
+--   바닥에 닿음(Grounded)       : Jump_Land
+local JumpSpeed = 8.0
+
+function UpdateJump(animInstance)
+    local movement = owner:FindComponentByClass(CharacterMovementComponent.StaticClass())
+    if movement == nil then
+        return
+    end
+
+    if Input.IsKeyPressed(KeyCode.Space) and movement:IsGrounded() then
+        movement:Jump(JumpSpeed)
+        animInstance:SetTrigger("Jump")
+        Log("Jump")
+    end
+
+    animInstance:SetFloat("ZVelocity", movement:GetVelocity().z)
+    animInstance:SetBool("Grounded", movement:IsGrounded())
+end
+
+-- BlendSpace(Locomotion) Idle(0) / Walk(100) / Jog(300)
 local WalkSpeed = 100.0
 local SprintSpeed = 300.0
 
@@ -81,7 +104,6 @@ function UpdateMovement(deltaTime, animInstance)
     end
 
     if owner:IsInputEnabled() then
-        -- 루트 모션이 월드 공간으로 변환되기 전에 캐릭터를 시점의 수평 방향으로 돌린다.
         local cameraYaw = owner:GetControlRotation().Yaw
         owner:SetActorRotation(Rotator.new(0.0, cameraYaw, 0.0))
     end

@@ -365,8 +365,11 @@ bool FAnimGraphEditor::ValidateForSave()
 					if (!StateIDs.Contains(Transition.at("NextStateID").get<int32>()) ||
 						(std::strcmp(Field, "Transitions") == 0 && !StateIDs.Contains(Transition.at("PreviousStateID").get<int32>())))
 					{ Status = "Transition references a missing state."; return false; }
-					if (!ParameterNames.Contains(Transition.at("Condition").at("ParameterName").get<FString>()))
+					const FString ConditionParameter = Transition.at("Condition").at("ParameterName").get<FString>();
+					if (!ConditionParameter.empty() && !ParameterNames.Contains(ConditionParameter))
 					{ Status = "Select a valid parameter for every transition."; return false; }
+					if (ConditionParameter.empty() && !Transition.value("HasExitTime", false))
+					{ Status = "A transition needs either a parameter or an exit time."; return false; }
 					const float Duration = Transition.at("CrossfadeDuration").get<float>();
 					if (!std::isfinite(Duration) || Duration < 0.f) { Status = "Crossfade duration must be non-negative."; return false; }
 					const float ExitTime = Transition.value("ExitTime", 1.f);
@@ -784,6 +787,11 @@ void FAnimGraphEditor::DrawTransitions(FNode& Machine, const char* Field)
 			FString Name = Condition["ParameterName"].get<FString>();
 			if (ImGui::BeginCombo("Parameter", Name.empty() ? "Select parameter" : Name.c_str()))
 			{
+				if (ImGui::Selectable("(none)", Name.empty()))
+				{
+					Condition["ParameterName"] = ""; Name.clear();
+					bDirty = true;
+				}
 				for (const auto& Parameter : Document["AnimGraph"]["Parameters"])
 				{
 					const FString Candidate = Parameter["Name"].get<FString>();
