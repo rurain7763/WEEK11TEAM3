@@ -3939,7 +3939,7 @@
                                     "Location": {
                                         "X": 4.601630210876465,
                                         "Y": -4.953518867492676,
-                                        "Z": 0.5158593654632568
+                                        "Z": 0.5
                                     },
                                     "Rotation": {
                                         "Pitch": 0.0,
@@ -4052,7 +4052,7 @@
                                         "Z": 1.0
                                     }
                                 },
-                                "bBlockComponet": false,
+                                "bBlockComponet": true,
                                 "bCPUSkinning": false,
                                 "bCastShadow": true,
                                 "bGenerateOverlapEvents": true,
@@ -4080,7 +4080,7 @@
                                     "Location": {
                                         "X": 0.0,
                                         "Y": 0.0,
-                                        "Z": -1.0
+                                        "Z": -1.100000023841858
                                     },
                                     "Rotation": {
                                         "Pitch": -0.0,
