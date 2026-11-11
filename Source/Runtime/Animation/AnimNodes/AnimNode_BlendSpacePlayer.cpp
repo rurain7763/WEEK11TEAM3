@@ -45,7 +45,8 @@ void FAnimNode_BlendSpacePlayer::Update(FAnimationUpdateContext& UpdateContext)
 	NormalizedTime += NormalizedDeltaTime;
 
 	// NOTE: Notify 계산 (지금은 가장 Weight가 높은 이벤트만 호출한다.)
-	if (MaxSample)
+	// EventQueue는 UAnimInstance가 채워주므로, 에디터 프리뷰처럼 노드를 직접 돌리는 경로에서는 비어 있다.
+	if (MaxSample && UpdateContext.EventQueue)
 	{
 		float Duration = MaxSample->Animation->GetDuration();
 		float StartTime = Duration * StartNormalizedTime;

@@ -3939,7 +3939,7 @@
                                     "Location": {
                                         "X": 4.601630210876465,
                                         "Y": -4.953518867492676,
-                                        "Z": 0.5158593654632568
+                                        "Z": 0.5
                                     },
                                     "Rotation": {
                                         "Pitch": 0.0,
@@ -4052,7 +4052,7 @@
                                         "Z": 1.0
                                     }
                                 },
-                                "bBlockComponet": false,
+                                "bBlockComponet": true,
                                 "bCPUSkinning": false,
                                 "bCastShadow": true,
                                 "bGenerateOverlapEvents": true,
@@ -4074,16 +4074,16 @@
                         {
                             "Class": "USceneComponent",
                             "Name": "DefaultSceneRoot",
-                            "Parent": "",
+                            "Parent": "UCapsuleComponent_0",
                             "Properties": {
                                 "Transform": {
                                     "Location": {
-                                        "X": 2.13675594329834,
-                                        "Y": -3.2080302238464355,
-                                        "Z": 0.5
+                                        "X": 0.0,
+                                        "Y": 0.0,
+                                        "Z": -1.100000023841858
                                     },
                                     "Rotation": {
-                                        "Pitch": 0.0,
+                                        "Pitch": -0.0,
                                         "Roll": 0.0,
                                         "Yaw": 0.0
                                     },
@@ -4292,6 +4292,49 @@
                                 "bConstrainAspectRatio": false,
                                 "bIsOrthogonal": false
                             }
+                        },
+                        {
+                            "Class": "UCapsuleComponent",
+                            "Name": "UCapsuleComponent_0",
+                            "Parent": "",
+                            "Properties": {
+                                "CapsuleHalfHeight": 1.0,
+                                "CapsuleRadius": 0.5,
+                                "ShapeColor": {
+                                    "A": 255,
+                                    "B": 0,
+                                    "G": 0,
+                                    "R": 0
+                                },
+                                "ShowBeginOverlapLog": false,
+                                "ShowEndOverlapLog": false,
+                                "ShowHitLog": false,
+                                "Transform": {
+                                    "Location": {
+                                        "X": 2.13675594329834,
+                                        "Y": -3.2080302238464355,
+                                        "Z": 1.5910953283309937
+                                    },
+                                    "Rotation": {
+                                        "Pitch": -0.0,
+                                        "Roll": 0.0,
+                                        "Yaw": 0.0
+                                    },
+                                    "Scale": {
+                                        "X": 1.0,
+                                        "Y": 1.0,
+                                        "Z": 1.0
+                                    }
+                                },
+                                "bBlockComponet": true,
+                                "bCastShadow": false,
+                                "bDrawOnlyIfSelected": false,
+                                "bGenerateOverlapEvents": true,
+                                "bIsGameHidden": true,
+                                "bReceiveShadow": false,
+                                "bReceivesDecals": true,
+                                "bVisible": true
+                            }
                         }
                     ],
                     "Name": "ARootMotionTestActor_1",
@@ -4299,7 +4342,7 @@
                         "bAutoPossessPlayer": true,
                         "bTickInEditor": false
                     },
-                    "RootComponent": "DefaultSceneRoot"
+                    "RootComponent": "UCapsuleComponent_0"
                 }
             ],
             "Properties": {}
