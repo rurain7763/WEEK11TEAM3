@@ -1,10 +1,33 @@
 local MouseSensitivity = 0.1
+local mesh
+local animInstance
+local handleNotifyDelegateKey
 
 function Init()
     Log("Init AnimTest")
 end
 
+function HandleNotify(name)
+    if name == "Footstep" then
+        GamePlayStatics.PlaySound("Assets/Sounds/Pop.wav", 1.0)
+    end
+end
+
 function BeginPlay()
+    mesh = owner:FindComponentByClass(SkeletalMeshComponent.StaticClass())    
+    if(mesh == nil) then
+        Log("No Skeletal Mesh Component mesh")
+        return
+    end
+    
+    animInstance = mesh:GetAnimInstance()
+    if(animInstance == nil) then
+        Log("No Anim Instance")
+        return
+    end
+
+    handleNotifyDelegateKey = animInstance:BindNoifyCallback(HandleNotify)
+
     Log("BeginPlay")
 end
 
@@ -13,18 +36,6 @@ function Tick(deltaTime)
         local dx, dy = Input.GetMouseDelta()
         owner:AddYawInput(dx * MouseSensitivity)
         owner:AddPitchInput(dy * MouseSensitivity)
-    end
-
-    local mesh = owner:FindComponentByClass(SkeletalMeshComponent.StaticClass())    
-    if(mesh == nil) then
-        Log("No Skeletal Mesh Component mesh")
-        return
-    end
-    
-    local animInstance = mesh:GetAnimInstance()
-    if(animInstance == nil) then
-        Log("No Anim Instance")
-        return
     end
         
     if(Input.IsKeyPressed(KeyCode.Num5)) then
@@ -91,4 +102,11 @@ end
 
 
 function EndPlay()
+    animInstance = mesh:GetAnimInstance()
+    if(animInstance == nil) then
+        Log("No Anim Instance")
+        return
+    end
+
+    animInstance:UnbindNotifyCallback(handleNotifyDelegateKey)
 end

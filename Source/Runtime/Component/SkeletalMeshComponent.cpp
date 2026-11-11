@@ -27,6 +27,7 @@ void USkeletalMeshComponent::SetAnimationMode(EAnimationMode AnimationMode)
 			SingleNode = NewObject<UAnimSingleNodeInstance>();
 			AnimInstance = SingleNode;
 		}
+		SingleNode->SetSkeletalMeshComponent(this);
 	}
 }
 
@@ -121,6 +122,7 @@ void USkeletalMeshComponent::BeginPlay()
 	if (AnimGraph)
 	{
 		AnimInstance = AnimGraph->CreateAnimInstance();
+		AnimInstance->SetSkeletalMeshComponent(this);
 		AnimInstance->NativeInitializeAnimation();
 	}
 }

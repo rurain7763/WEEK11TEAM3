@@ -4,12 +4,20 @@
 #include "UObject/Object.h"
 #include "Containers/Array.h"
 
+class UAnimInstance;
+class UAnimSequenceBase;
+class USkeletalMeshComponent;
+
+struct FAnimNotifyEvent;
+
 class UAnimNotifyState : public UObject
 {
+	DECLARE_CLASS(UAnimNotifyState, UObject)
+
 public:
-	virtual void NotifyBegin() {}
-	virtual void NotifyTick() {}
-	virtual void NotifyEnd() {}
+	virtual void NotifyBegin(USkeletalMeshComponent* MeshComp, UAnimSequenceBase* Sequence, const FAnimNotifyEvent& Event) {}
+	virtual void NotifyTick(USkeletalMeshComponent* MeshComp, UAnimSequenceBase* Sequence, float DeltaTime, const FAnimNotifyEvent& Event) {}
+	virtual void NotifyEnd(USkeletalMeshComponent* MeshComp, UAnimSequenceBase* Sequence, const FAnimNotifyEvent& Event) {}
 };
 
 struct FAnimNotifyEvent
@@ -27,6 +35,7 @@ struct FAnimNotifyEvent
 
 struct FAnimNotifyEventReference
 {
+	UAnimSequenceBase* Sequence;
 	int32 SourcePlayerID;
 	FAnimNotifyEvent* Notify;
 	bool bReachedEnd;

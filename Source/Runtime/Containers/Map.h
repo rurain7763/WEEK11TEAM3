@@ -40,6 +40,11 @@ public:
 		return static_cast<int32>(mMap.erase(Key));
 	}
 
+	MapType::iterator Remove(MapType::iterator Pos)
+	{
+		return mMap.erase(Pos);
+	}
+
 	uint32 Num() const
 	{
 		return static_cast<uint32>(mMap.size());

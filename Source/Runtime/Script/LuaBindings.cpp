@@ -339,6 +339,12 @@ void FLuaBindings::RegisterLuaBindings(sol::state& Lua, FLuaCoroutineScheduler* 
 		},
 		"PlayState", [](UAnimInstance& Anim, sol::string_view Name, sol::string_view StateName, float CrossfadeDuration) {
 			return Anim.PlayState(FName(Name.data(), Name.size()), FName(StateName.data(), StateName.size()), CrossfadeDuration);
+		},
+		"BindNoifyCallback", [](UAnimInstance& Anim, sol::protected_function Callback) -> FDelegateKey {
+			return Anim.OnFireNotify.Add([Callback](const FAnimNotifyEvent& Event) { Callback(Event.Name.ToString()); });
+		},
+		"UnbindNotifyCallback", [](UAnimInstance& Anim, FDelegateKey Key) {
+			return Anim.OnFireNotify.Remove(Key);
 		}
 	);
 

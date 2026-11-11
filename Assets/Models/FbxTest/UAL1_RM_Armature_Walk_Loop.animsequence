@@ -3,11 +3,15 @@
         "EnableRootMotion": true,
         "Notifies": [
             {
-                "Name": "Foot",
+                "Duration": 0.0,
+                "Name": "Footstep",
+                "NotifyStateName": "",
                 "TriggerTime": 0.20000000298023224
             },
             {
-                "Name": "Foot",
+                "Duration": 0.0,
+                "Name": "Footstep",
+                "NotifyStateName": "",
                 "TriggerTime": 0.800000011920929
             }
         ],

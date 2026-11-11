@@ -24,6 +24,11 @@ public:
 		RootNode = InRoot;
 	}
 
+	inline void SetSkeletalMeshComponent(USkeletalMeshComponent* InMeshComp)
+	{
+		MeshComp = InMeshComp;
+	}
+
 	void AddStateMachine(const FName& InName, FAnimNode_StateMachine* InStateMachine) {
 		StateMachines.Add(InName, InStateMachine);
 	}
@@ -131,10 +136,19 @@ private:
 		}
 	};
 
+	struct FActiveAnimNotifyEventEntry
+	{
+		UAnimSequenceBase* Sequence;
+		FAnimNotifyEvent Copied;
+		uint32 Version = 0;
+	};
+
+	USkeletalMeshComponent* MeshComp;
 	TMap<FName, FAnimNode_StateMachine*, FNameHash> StateMachines;
 	FAnimationUpdateContext UpdateContext;
 	TArray<FAnimNotifyEventReference> EventQueue;
-	TSet<FAnimNotifyEventKey, FAnimNotifyEventKeyHashser> ActiveEvents;
+	uint32 CurrentActiveEventVersion = 0;
+	TMap<FAnimNotifyEventKey, FActiveAnimNotifyEventEntry, FAnimNotifyEventKeyHashser> ActiveEvents;
 	FAnimParameterTable ParameterTable;
 	bool bHasRootMotion;
 	FTransform RootMotion;

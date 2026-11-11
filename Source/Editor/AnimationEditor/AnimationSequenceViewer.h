@@ -8,6 +8,7 @@
 class UAnimSequence;
 class USkeleton;
 class USkeletalMesh;
+class UClass;
 
 class FAnimationSequenceViewer : public IEditorPanel
 {
@@ -32,6 +33,10 @@ private:
 	void SelectSkeleton(USkeleton* InSkeleton);
 	void DrawPlaybackControls();
 	void DrawTimeline();
+	void DrawNotifyDetails();
+	void DrawAddNotifyMenu();
+	void AddNotifyAtCursor(UClass* StateClass);
+	void SortSelectedNotify();
 
 private:
 	FString PanelName;
@@ -49,6 +54,11 @@ private:
 	bool bReversePlay = false;
 	char NotifyName[128] = "Notify";
 	int32 SelectedNotify = -1;
+	bool bNotifyOrderDirty = false;
+	int32 DraggedPointNotify = -1;
+	int32 DraggedPointStartFrame = 0;
+	float DraggedPointMouseX = 0.f;
+	ImGuiTextFilter NotifyClassFilter;
 	FString SaveStatus;
 	std::unordered_set<UAnimSequence*> ModifiedSequences;
 };
