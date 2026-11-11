@@ -36,6 +36,7 @@ struct FAnimTwoWayBlendData
 struct FBlendSpacePlayerData
 {
 	FString BlendSpacePath;
+	FString XParameterName;
 	bool bLooping;
 	float Speed;
 	float X;

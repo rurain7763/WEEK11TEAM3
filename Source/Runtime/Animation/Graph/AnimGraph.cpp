@@ -88,13 +88,17 @@ T* UAnimGraph::BuildAnimGraph(TMap<int32, FAnimNode_Base*>& NodeInstances, int32
 		case EAnimNodeDataType::BlendSpacePlayer:
 		{
 			const FBlendSpacePlayerData& ActualData = BlendSpacePlayers[NodeData.ActualDataIndex];
+			
+			UBlendSpace* BlendSpace = UAssetManager::GetAssetByPath<UBlendSpace>(ActualData.BlendSpacePath);
+			if (BlendSpace) BlendSpace->SortBlendSamples();
 
 			FAnimNode_BlendSpacePlayer* Player = new FAnimNode_BlendSpacePlayer();
-			Player->SetBlendSpace(UAssetManager::GetAssetByPath<UBlendSpace>(ActualData.BlendSpacePath));
+			Player->SetBlendSpace(BlendSpace);
 			Player->SetX(ActualData.X);
 			Player->SetY(ActualData.Y);
 			Player->bLooping = ActualData.bLooping;
 			Player->Speed = ActualData.Speed;
+			Player->SetXParameterName(FName(ActualData.XParameterName));
 
 			Node = Player;
 			break;
@@ -224,6 +228,7 @@ void UAnimGraph::SerializeValue(FStructuredArchiveRecord& Parent, EAnimParameter
 void UAnimGraph::SerializeData(FStructuredArchiveRecord& Record, FBlendSpacePlayerData& Player)
 {
 	Record << SA_VALUE("BlendSpacePath", Player.BlendSpacePath);
+	Record << SA_VALUE("XParameterName", Player.XParameterName);
 	Record << SA_VALUE("Looping", Player.bLooping);
 	Record << SA_VALUE("Speed", Player.Speed);
 	Record << SA_VALUE("X", Player.X);

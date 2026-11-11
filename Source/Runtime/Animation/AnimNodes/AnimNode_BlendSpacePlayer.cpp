@@ -2,6 +2,7 @@
 #include "Animation/AnimNodes/AnimNode_BlendSpacePlayer.h"
 #include "Animation/AnimSequence.h"
 #include "Animation/AnimationRuntime.h"
+#include "Animation/AnimParameter.h"
 #include <cmath>
 
 void FAnimNode_BlendSpacePlayer::UpdateSampleCache()
@@ -26,6 +27,11 @@ void FAnimNode_BlendSpacePlayer::UpdateSampleCache()
 
 void FAnimNode_BlendSpacePlayer::Update(FAnimationUpdateContext& UpdateContext)
 {
+	float XParameter = 0.0f;
+	if (!XParameterName.IsNone() && UpdateContext.ParameterTable
+		&& UpdateContext.ParameterTable->TryGetFloat(XParameterName, XParameter))
+			X = XParameter;
+
 	UpdateSampleCache();
 
 	float StartNormalizedTime = NormalizedTime;
