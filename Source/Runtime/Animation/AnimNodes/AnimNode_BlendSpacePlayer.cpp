@@ -27,6 +27,7 @@ void FAnimNode_BlendSpacePlayer::UpdateSampleCache()
 
 void FAnimNode_BlendSpacePlayer::Update(FAnimationUpdateContext& UpdateContext)
 {
+	bExtractRootMotion = UpdateContext.bExtractRootMotion;
 	// 파라미터가 지정돼 있으면 샘플을 고르기 전에 X를 갱신한다.
 	if (!XParameterName.IsNone() && UpdateContext.ParameterTable)
 	{
@@ -59,34 +60,36 @@ void FAnimNode_BlendSpacePlayer::Update(FAnimationUpdateContext& UpdateContext)
 		UpdateContext.EventQueue->Append(NotifyCtx.CollectedNotifies);
 	}
 
-	// NOTE: Root motion 계산
-	float WeightSum = 0.f;
-	for (int32 i = 0; i < CachedSampleCount; i++)
+	if (bExtractRootMotion)
 	{
-		FBlendSampleData& SampleData = CachedSamples[i];
-		if (SampleData.Weight <= 0.f)
+		float WeightSum = 0.f;
+		for (int32 i = 0; i < CachedSampleCount; i++)
 		{
-			continue;
+			const FBlendSampleData& SampleData = CachedSamples[i];
+			if (SampleData.Weight <= 0.f)
+			{
+				continue;
+			}
+
+			WeightSum += SampleData.Weight;
+
+			FTransform RootMotion = FTransform::Identity;
+			if (SampleData.Animation->HasRootMotion())
+			{
+				const float Duration = SampleData.Animation->GetDuration();
+				const float DeltaTime = Duration * NormalizedDeltaTime;
+
+				FAnimExtractContext Context;
+				Context.CurrentTime = Duration * StartNormalizedTime;
+				Context.bLooping = bLooping;
+
+				RootMotion = SampleData.Animation->ExtractRootMotion(Context, Duration, DeltaTime);
+				UpdateContext.bHasRootMotion = true;
+			}
+
+			const float Alpha = SampleData.Weight / WeightSum;
+			UpdateContext.RootMotion = FTransform::Blend(UpdateContext.RootMotion, RootMotion, Alpha);
 		}
-
-		WeightSum += SampleData.Weight;
-
-		FTransform RootMotion = FTransform::Identity;
-		if (SampleData.Animation->HasRootMotion())
-		{
-			float Duration = SampleData.Animation->GetDuration();
-			float DeltaTime = Duration * NormalizedDeltaTime;
-
-			FAnimExtractContext Context;
-			Context.CurrentTime = Duration * StartNormalizedTime;
-			Context.bLooping = bLooping;
-
-			RootMotion = SampleData.Animation->ExtractRootMotion(Context, Duration, DeltaTime);
-		}
-
-		float Alpha = SampleData.Weight / WeightSum;
-		UpdateContext.bHasRootMotion |= SampleData.Animation->HasRootMotion();
-		UpdateContext.RootMotion = FTransform::Blend(UpdateContext.RootMotion, RootMotion, Alpha);
 	}
 
 	if (NormalizedTime >= 1.f)
@@ -125,7 +128,7 @@ void FAnimNode_BlendSpacePlayer::Evaluate(FPoseContext& OutPoseContext)
 		FAnimExtractContext ExtractionContext;
 		ExtractionContext.CurrentTime = SampleData.Animation->GetDuration() * NormalizedTime;
 		ExtractionContext.bLooping = bLooping;
-		ExtractionContext.bExtractRootMotion = SampleData.Animation->HasRootMotion();
+		ExtractionContext.bExtractRootMotion = bExtractRootMotion && SampleData.Animation->HasRootMotion();
 
 		SampleData.Animation->GetAnimationPose(ExtractionContext, OutPoseContext);
 	}
@@ -137,7 +140,7 @@ void FAnimNode_BlendSpacePlayer::Evaluate(FPoseContext& OutPoseContext)
 		FAnimExtractContext ExtractionContextA;
 		ExtractionContextA.CurrentTime = SampleDataA.Animation->GetDuration() * NormalizedTime;
 		ExtractionContextA.bLooping = bLooping;
-		ExtractionContextA.bExtractRootMotion = SampleDataA.Animation->HasRootMotion();
+		ExtractionContextA.bExtractRootMotion = bExtractRootMotion && SampleDataA.Animation->HasRootMotion();
 
 		FPoseContext PoseA;
 		SampleDataA.Animation->GetAnimationPose(ExtractionContextA, PoseA);
@@ -145,7 +148,7 @@ void FAnimNode_BlendSpacePlayer::Evaluate(FPoseContext& OutPoseContext)
 		FAnimExtractContext ExtractionContextB;
 		ExtractionContextB.CurrentTime = SampleDataB.Animation->GetDuration() * NormalizedTime;
 		ExtractionContextB.bLooping = bLooping;
-		ExtractionContextB.bExtractRootMotion = SampleDataB.Animation->HasRootMotion();
+		ExtractionContextB.bExtractRootMotion = bExtractRootMotion && SampleDataB.Animation->HasRootMotion();
 
 		FPoseContext PoseB;
 		SampleDataB.Animation->GetAnimationPose(ExtractionContextB, PoseB);

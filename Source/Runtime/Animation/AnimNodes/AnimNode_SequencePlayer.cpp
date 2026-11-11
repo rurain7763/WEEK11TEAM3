@@ -5,6 +5,7 @@
 
 void FAnimNode_SequencePlayer::Update(FAnimationUpdateContext& UpdateContext)
 {
+	bExtractRootMotion = UpdateContext.bExtractRootMotion;
 	const float Duration = GetCurrentAssetDuration();
 	if (Duration <= 0.f)
 	{
@@ -25,7 +26,7 @@ void FAnimNode_SequencePlayer::Update(FAnimationUpdateContext& UpdateContext)
 		UpdateContext.EventQueue->Append(NotifyContext.CollectedNotifies);
 	}
 
-	if (Sequence->HasRootMotion())
+	if (bExtractRootMotion && Sequence->HasRootMotion())
 	{
 		FAnimExtractContext ExtractionContext;
 		ExtractionContext.CurrentTime = PreviousTime;
@@ -73,7 +74,7 @@ void FAnimNode_SequencePlayer::Evaluate(FPoseContext& OutPoseContext)
 	FAnimExtractContext ExtractionContext;
 	ExtractionContext.CurrentTime = CurrentTime;
 	ExtractionContext.bLooping = bLooping;
-	ExtractionContext.bExtractRootMotion = Sequence->HasRootMotion();
+	ExtractionContext.bExtractRootMotion = bExtractRootMotion && Sequence->HasRootMotion();
 
 	Sequence->GetAnimationPose(ExtractionContext, OutPoseContext);
 }

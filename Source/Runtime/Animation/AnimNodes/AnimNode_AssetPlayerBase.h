@@ -23,6 +23,9 @@ public:
 
 	float GetSpeed() const override { return Speed; }
 
+protected:
+	bool bExtractRootMotion = true;
+
 private:
 	inline static int32 NextID = 0;
 };

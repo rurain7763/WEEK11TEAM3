@@ -28,4 +28,5 @@ struct FAnimationUpdateContext
 	bool bHasRootMotion;
 	FTransform RootMotion;
 	float DeltaTime = 0.f;
+	bool bExtractRootMotion = true;
 };

@@ -17,6 +17,7 @@ class USkeletalMeshComponent : public USkinnedMeshComponent
 
 	REFLECT_START(ThisClass)
 		PROPERTY(AnimGraph)
+		PROPERTY(bExtractRootMotion)
 	REFLECT_END()
 
 public:
@@ -27,6 +28,7 @@ public:
 	void PlayAnimation(UAnimationAsset* NewAnimAsset, bool bLooping, float PlayRate = 1.0f);
 
 	bool HasRootMotion() const;
+	bool ShouldExtractRootMotion() const { return bExtractRootMotion; }
 	FTransform ConsumeRootMotion();
 	FTransform ConvertLocalRootMotionToWorld(const FTransform& InLocal);
 
@@ -52,6 +54,7 @@ private:
 private:
 	UAnimGraph* AnimGraph = nullptr;
 	UAnimInstance* AnimInstance = nullptr;
+	bool bExtractRootMotion = true;
 	bool bBoneWeightVisualizationEnabled = false;
 	int32 HeatmapBoneIndex = -1;
 };

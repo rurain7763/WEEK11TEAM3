@@ -5,8 +5,31 @@
             "Actors": [
                 {
                     "Class": "ACameraActor",
-                    "Name": "Overview_Camera",
                     "Components": [
+                        {
+                            "Class": "USceneComponent",
+                            "Name": "DefaultSceneRoot",
+                            "Parent": "",
+                            "Properties": {
+                                "Transform": {
+                                    "Location": {
+                                        "X": 0.0,
+                                        "Y": 0.0,
+                                        "Z": 0.0
+                                    },
+                                    "Rotation": {
+                                        "Pitch": 0.0,
+                                        "Roll": 0.0,
+                                        "Yaw": 0.0
+                                    },
+                                    "Scale": {
+                                        "X": 1.0,
+                                        "Y": 1.0,
+                                        "Z": 1.0
+                                    }
+                                }
+                            }
+                        },
                         {
                             "Class": "UCameraComponent",
                             "Name": "CameraComponent",
@@ -19,139 +42,67 @@
                                 "OrthoWidth": 16.0,
                                 "Transform": {
                                     "Location": {
-                                        "X": 0,
-                                        "Y": -10.9,
-                                        "Z": 3.35
+                                        "X": 0.0,
+                                        "Y": -10.899999618530273,
+                                        "Z": 3.3499999046325684
                                     },
                                     "Rotation": {
                                         "Pitch": 10.0,
-                                        "Roll": 0,
-                                        "Yaw": 90
+                                        "Roll": 0.0,
+                                        "Yaw": 90.0
                                     },
                                     "Scale": {
-                                        "X": 1,
-                                        "Y": 1,
-                                        "Z": 1
+                                        "X": 1.0,
+                                        "Y": 1.0,
+                                        "Z": 1.0
                                     }
                                 },
                                 "bConstrainAspectRatio": false,
                                 "bIsOrthogonal": false
                             }
-                        }
-                    ],
-                    "Properties": {
-                        "bTickInEditor": false
-                    },
-                    "RootComponent": "CameraComponent"
-                },
-                {
-                    "Class": "ASkeletalMeshActor",
-                    "Components": [
-                        {
-                            "Class": "USceneComponent",
-                            "Name": "DefaultSceneRoot",
-                            "Parent": "",
-                            "Properties": {
-                                "Transform": {
-                                    "Location": {
-                                        "X": 2.65,
-                                        "Y": 0.18,
-                                        "Z": 0.005
-                                    },
-                                    "Rotation": {
-                                        "Pitch": 0,
-                                        "Roll": 0,
-                                        "Yaw": 90.0
-                                    },
-                                    "Scale": {
-                                        "X": 1,
-                                        "Y": 1,
-                                        "Z": 1
-                                    }
-                                }
-                            }
                         },
                         {
-                            "Class": "USkeletalMeshComponent",
-                            "Name": "USkeletalMeshComponent",
-                            "OverrideMaterials": [
-                                {
-                                    "Base": "DefaultMaterial",
-                                    "Instance": {
-                                        "BaseColor": {
-                                            "R": 0.68,
-                                            "G": 0.76,
-                                            "B": 0.82,
-                                            "A": 1.0
-                                        },
-                                        "BlendState": "Opaque",
-                                        "DecalColorBlendMode": "Alpha",
-                                        "MaterialDomain": "Surface",
-                                        "Properties": {},
-                                        "SamplerState": "LinearClamp",
-                                        "Shininess": 25.0,
-                                        "SpecularColor": {
-                                            "R": 0.26,
-                                            "G": 0.26,
-                                            "B": 0.26,
-                                            "A": 1.0
-                                        },
-                                        "Textures": [
-                                            "WhiteTexture",
-                                            ""
-                                        ],
-                                        "UVScrollSpeed": [
-                                            0.0,
-                                            0.0
-                                        ],
-                                        "bAffectBaseColor": true,
-                                        "bAffectNormal": true,
-                                        "bFlipNormalGreen": false
-                                    }
-                                },
-                                {
-                                    "Base": "DefaultMaterial",
-                                    "Instance": {
-                                        "BaseColor": {
-                                            "R": 0.1,
-                                            "G": 0.21,
-                                            "B": 0.31,
-                                            "A": 1.0
-                                        },
-                                        "BlendState": "Opaque",
-                                        "DecalColorBlendMode": "Alpha",
-                                        "MaterialDomain": "Surface",
-                                        "Properties": {},
-                                        "SamplerState": "LinearClamp",
-                                        "Shininess": 25.0,
-                                        "SpecularColor": {
-                                            "R": 0.18,
-                                            "G": 0.18,
-                                            "B": 0.18,
-                                            "A": 1.0
-                                        },
-                                        "Textures": [
-                                            "WhiteTexture",
-                                            ""
-                                        ],
-                                        "UVScrollSpeed": [
-                                            0.0,
-                                            0.0
-                                        ],
-                                        "bAffectBaseColor": true,
-                                        "bAffectNormal": true,
-                                        "bFlipNormalGreen": false
-                                    }
+                            "Class": "UBillboardComponent",
+                            "Material": {
+                                "Base": "BillboardMaterial",
+                                "Instance": {
+                                    "BaseColor": {
+                                        "A": 1.0,
+                                        "B": 1.0,
+                                        "G": 1.0,
+                                        "R": 1.0
+                                    },
+                                    "BlendState": "AlphaBlend",
+                                    "DecalColorBlendMode": "Alpha",
+                                    "MaterialDomain": "Surface",
+                                    "Properties": {},
+                                    "SamplerState": "LinearClamp",
+                                    "Shininess": 32.0,
+                                    "SpecularColor": {
+                                        "A": 1.0,
+                                        "B": 0.5,
+                                        "G": 0.5,
+                                        "R": 0.5
+                                    },
+                                    "Textures": [
+                                        "Resources/Icons/S_SceneCaptureIcon.png"
+                                    ],
+                                    "UVScrollSpeed": [
+                                        0.0,
+                                        0.0
+                                    ],
+                                    "bAffectBaseColor": true,
+                                    "bAffectNormal": true,
+                                    "bFlipNormalGreen": false
                                 }
-                            ],
-                            "Parent": "DefaultSceneRoot",
+                            },
+                            "Name": "BillboardComponent",
+                            "Parent": "CameraComponent",
                             "Properties": {
-                                "AnimGraph": "Week10/Week11BlendSpacePreview.animgraph",
+                                "Material": null,
                                 "ShowBeginOverlapLog": false,
                                 "ShowEndOverlapLog": false,
                                 "ShowHitLog": false,
-                                "SkeletalMesh": "Models/FbxTest/UAL1_RM.fbx",
-                                "Skeleton": "Models/FbxTest/UAL1_RM_Skeleton",
                                 "Transform": {
                                     "Location": {
                                         "X": 0.0,
@@ -170,20 +121,19 @@
                                     }
                                 },
                                 "bBlockComponet": false,
-                                "bCPUSkinning": false,
-                                "bCastShadow": false,
-                                "bGenerateOverlapEvents": false,
+                                "bCastShadow": true,
+                                "bGenerateOverlapEvents": true,
                                 "bReceiveShadow": true,
                                 "bReceivesDecals": true,
                                 "bVisible": true
                             }
                         }
                     ],
-                    "Name": "BlendSpace_Preview",
+                    "Name": "Overview_Camera",
                     "Properties": {
                         "bTickInEditor": false
                     },
-                    "RootComponent": "DefaultSceneRoot"
+                    "RootComponent": "CameraComponent"
                 },
                 {
                     "Class": "ARootMotionTestActor",
@@ -220,10 +170,10 @@
                                     "Base": "DefaultMaterial",
                                     "Instance": {
                                         "BaseColor": {
-                                            "R": 0.53,
-                                            "G": 0.68,
-                                            "B": 0.82,
-                                            "A": 1.0
+                                            "A": 1.0,
+                                            "B": 0.8199999928474426,
+                                            "G": 0.7599999904632568,
+                                            "R": 0.6800000071525574
                                         },
                                         "BlendState": "Opaque",
                                         "DecalColorBlendMode": "Alpha",
@@ -232,10 +182,10 @@
                                         "SamplerState": "LinearClamp",
                                         "Shininess": 25.0,
                                         "SpecularColor": {
-                                            "R": 0.26,
-                                            "G": 0.26,
-                                            "B": 0.26,
-                                            "A": 1.0
+                                            "A": 1.0,
+                                            "B": 0.25999999046325684,
+                                            "G": 0.25999999046325684,
+                                            "R": 0.25999999046325684
                                         },
                                         "Textures": [
                                             "WhiteTexture",
@@ -254,10 +204,10 @@
                                     "Base": "DefaultMaterial",
                                     "Instance": {
                                         "BaseColor": {
-                                            "R": 0.075,
-                                            "G": 0.17,
-                                            "B": 0.28,
-                                            "A": 1.0
+                                            "A": 1.0,
+                                            "B": 0.2800000011920929,
+                                            "G": 0.17000000178813934,
+                                            "R": 0.07500000298023224
                                         },
                                         "BlendState": "Opaque",
                                         "DecalColorBlendMode": "Alpha",
@@ -266,10 +216,10 @@
                                         "SamplerState": "LinearClamp",
                                         "Shininess": 25.0,
                                         "SpecularColor": {
-                                            "R": 0.18,
-                                            "G": 0.18,
-                                            "B": 0.18,
-                                            "A": 1.0
+                                            "A": 1.0,
+                                            "B": 0.18000000715255737,
+                                            "G": 0.18000000715255737,
+                                            "R": 0.18000000715255737
                                         },
                                         "Textures": [
                                             "WhiteTexture",
@@ -287,7 +237,7 @@
                             ],
                             "Parent": "DefaultSceneRoot",
                             "Properties": {
-                                "AnimGraph": "Week10/Week11BlendSpacePreview.animgraph",
+                                "AnimGraph": "Week10/Week11RootMotionCollision.animgraph",
                                 "ShowBeginOverlapLog": false,
                                 "ShowEndOverlapLog": false,
                                 "ShowHitLog": false,
@@ -312,7 +262,8 @@
                                 },
                                 "bBlockComponet": false,
                                 "bCPUSkinning": false,
-                                "bCastShadow": false,
+                                "bCastShadow": true,
+                                "bExtractRootMotion": false,
                                 "bGenerateOverlapEvents": false,
                                 "bReceiveShadow": true,
                                 "bReceivesDecals": true,
@@ -337,19 +288,292 @@
                                 "ShowHitLog": false,
                                 "Transform": {
                                     "Location": {
-                                        "X": -4.54,
-                                        "Y": 0.18,
-                                        "Z": 1.005
+                                        "X": 1.0,
+                                        "Y": 0.18000000715255737,
+                                        "Z": 0.7850000262260437
                                     },
                                     "Rotation": {
-                                        "Pitch": 0,
-                                        "Roll": 0,
-                                        "Yaw": 0
+                                        "Pitch": 0.0,
+                                        "Roll": 0.0,
+                                        "Yaw": 0.0
                                     },
                                     "Scale": {
-                                        "X": 1,
-                                        "Y": 1,
-                                        "Z": 1
+                                        "X": 0.7799999713897705,
+                                        "Y": 0.7799999713897705,
+                                        "Z": 0.7799999713897705
+                                    }
+                                },
+                                "bBlockComponet": true,
+                                "bCastShadow": false,
+                                "bDrawOnlyIfSelected": true,
+                                "bGenerateOverlapEvents": false,
+                                "bIsGameHidden": true,
+                                "bReceiveShadow": true,
+                                "bReceivesDecals": true,
+                                "bVisible": false
+                            }
+                        },
+                        {
+                            "Class": "UCharacterMovementComponent",
+                            "Name": "CharacterMovementComponent",
+                            "Parent": "",
+                            "Properties": {
+                                "RotationRate": 540.0,
+                                "bOrientRotationToMovement": false
+                            }
+                        },
+                        {
+                            "Class": "UScriptComponent",
+                            "Name": "ScriptComponent",
+                            "Parent": "",
+                            "Properties": {
+                                "ScriptPath": ""
+                            }
+                        },
+                        {
+                            "Class": "UStaticMeshComponent",
+                            "Name": "Actor_Position_Marker",
+                            "OverrideMaterials": [
+                                {
+                                    "Base": "DefaultMaterial",
+                                    "Instance": {
+                                        "BaseColor": {
+                                            "A": 1.0,
+                                            "B": 0.7300000190734863,
+                                            "G": 0.6000000238418579,
+                                            "R": 0.03999999910593033
+                                        },
+                                        "BlendState": "Opaque",
+                                        "DecalColorBlendMode": "Alpha",
+                                        "MaterialDomain": "Surface",
+                                        "Properties": {},
+                                        "SamplerState": "LinearClamp",
+                                        "Shininess": 32.0,
+                                        "SpecularColor": {
+                                            "A": 1.0,
+                                            "B": 0.07999999821186066,
+                                            "G": 0.07999999821186066,
+                                            "R": 0.07999999821186066
+                                        },
+                                        "Textures": [
+                                            "WhiteTexture",
+                                            ""
+                                        ],
+                                        "UVScrollSpeed": [
+                                            0.0,
+                                            0.0
+                                        ],
+                                        "bAffectBaseColor": true,
+                                        "bAffectNormal": true,
+                                        "bFlipNormalGreen": false
+                                    }
+                                }
+                            ],
+                            "Parent": "DefaultSceneRoot",
+                            "Properties": {
+                                "ShowBeginOverlapLog": false,
+                                "ShowEndOverlapLog": false,
+                                "ShowHitLog": false,
+                                "StaticMesh": "Cube",
+                                "Transform": {
+                                    "Location": {
+                                        "X": 0.0,
+                                        "Y": 0.0,
+                                        "Z": 0.03500000014901161
+                                    },
+                                    "Rotation": {
+                                        "Pitch": 0.0,
+                                        "Roll": 0.0,
+                                        "Yaw": 0.0
+                                    },
+                                    "Scale": {
+                                        "X": 0.9200000166893005,
+                                        "Y": 0.8999999761581421,
+                                        "Z": 0.035999998450279236
+                                    }
+                                },
+                                "bBlockComponet": false,
+                                "bCastShadow": false,
+                                "bGenerateOverlapEvents": false,
+                                "bReceiveShadow": true,
+                                "bReceivesDecals": true,
+                                "bVisible": true
+                            }
+                        }
+                    ],
+                    "Name": "MeshOnly_Demo",
+                    "Properties": {
+                        "bAutoPossessPlayer": false,
+                        "bTickInEditor": false
+                    },
+                    "RootComponent": "CapsuleComponent"
+                },
+                {
+                    "Class": "ARootMotionTestActor",
+                    "Components": [
+                        {
+                            "Class": "USceneComponent",
+                            "Name": "DefaultSceneRoot",
+                            "Parent": "CapsuleComponent",
+                            "Properties": {
+                                "Transform": {
+                                    "Location": {
+                                        "X": 0.0,
+                                        "Y": 0.0,
+                                        "Z": -1.0
+                                    },
+                                    "Rotation": {
+                                        "Pitch": 0.0,
+                                        "Roll": 0.0,
+                                        "Yaw": 0.0
+                                    },
+                                    "Scale": {
+                                        "X": 1.0,
+                                        "Y": 1.0,
+                                        "Z": 1.0
+                                    }
+                                }
+                            }
+                        },
+                        {
+                            "Class": "USkeletalMeshComponent",
+                            "Name": "SkeletalMeshComponent",
+                            "OverrideMaterials": [
+                                {
+                                    "Base": "DefaultMaterial",
+                                    "Instance": {
+                                        "BaseColor": {
+                                            "A": 1.0,
+                                            "B": 0.8199999928474426,
+                                            "G": 0.7599999904632568,
+                                            "R": 0.6800000071525574
+                                        },
+                                        "BlendState": "Opaque",
+                                        "DecalColorBlendMode": "Alpha",
+                                        "MaterialDomain": "Surface",
+                                        "Properties": {},
+                                        "SamplerState": "LinearClamp",
+                                        "Shininess": 25.0,
+                                        "SpecularColor": {
+                                            "A": 1.0,
+                                            "B": 0.25999999046325684,
+                                            "G": 0.25999999046325684,
+                                            "R": 0.25999999046325684
+                                        },
+                                        "Textures": [
+                                            "WhiteTexture",
+                                            ""
+                                        ],
+                                        "UVScrollSpeed": [
+                                            0.0,
+                                            0.0
+                                        ],
+                                        "bAffectBaseColor": true,
+                                        "bAffectNormal": true,
+                                        "bFlipNormalGreen": false
+                                    }
+                                },
+                                {
+                                    "Base": "DefaultMaterial",
+                                    "Instance": {
+                                        "BaseColor": {
+                                            "A": 1.0,
+                                            "B": 0.2800000011920929,
+                                            "G": 0.17000000178813934,
+                                            "R": 0.07500000298023224
+                                        },
+                                        "BlendState": "Opaque",
+                                        "DecalColorBlendMode": "Alpha",
+                                        "MaterialDomain": "Surface",
+                                        "Properties": {},
+                                        "SamplerState": "LinearClamp",
+                                        "Shininess": 25.0,
+                                        "SpecularColor": {
+                                            "A": 1.0,
+                                            "B": 0.18000000715255737,
+                                            "G": 0.18000000715255737,
+                                            "R": 0.18000000715255737
+                                        },
+                                        "Textures": [
+                                            "WhiteTexture",
+                                            ""
+                                        ],
+                                        "UVScrollSpeed": [
+                                            0.0,
+                                            0.0
+                                        ],
+                                        "bAffectBaseColor": true,
+                                        "bAffectNormal": true,
+                                        "bFlipNormalGreen": false
+                                    }
+                                }
+                            ],
+                            "Parent": "DefaultSceneRoot",
+                            "Properties": {
+                                "AnimGraph": "Week10/Week11RootMotionCollision.animgraph",
+                                "ShowBeginOverlapLog": false,
+                                "ShowEndOverlapLog": false,
+                                "ShowHitLog": false,
+                                "SkeletalMesh": "Models/FbxTest/UAL1_RM.fbx",
+                                "Skeleton": "Models/FbxTest/UAL1_RM_Skeleton",
+                                "Transform": {
+                                    "Location": {
+                                        "X": 0.0,
+                                        "Y": 0.0,
+                                        "Z": 0.0
+                                    },
+                                    "Rotation": {
+                                        "Pitch": 0.0,
+                                        "Roll": 0.0,
+                                        "Yaw": 90.0
+                                    },
+                                    "Scale": {
+                                        "X": 1.0,
+                                        "Y": 1.0,
+                                        "Z": 1.0
+                                    }
+                                },
+                                "bBlockComponet": false,
+                                "bCPUSkinning": false,
+                                "bCastShadow": true,
+                                "bExtractRootMotion": true,
+                                "bGenerateOverlapEvents": false,
+                                "bReceiveShadow": true,
+                                "bReceivesDecals": true,
+                                "bVisible": true
+                            }
+                        },
+                        {
+                            "Class": "UCapsuleComponent",
+                            "Name": "CapsuleComponent",
+                            "Parent": "",
+                            "Properties": {
+                                "CapsuleHalfHeight": 1.0,
+                                "CapsuleRadius": 0.5,
+                                "ShapeColor": {
+                                    "A": 255,
+                                    "B": 0,
+                                    "G": 0,
+                                    "R": 0
+                                },
+                                "ShowBeginOverlapLog": false,
+                                "ShowEndOverlapLog": false,
+                                "ShowHitLog": false,
+                                "Transform": {
+                                    "Location": {
+                                        "X": -4.300000190734863,
+                                        "Y": 0.18620890378952026,
+                                        "Z": 0.7850000262260437
+                                    },
+                                    "Rotation": {
+                                        "Pitch": 0.0,
+                                        "Roll": 0.0,
+                                        "Yaw": 0.0
+                                    },
+                                    "Scale": {
+                                        "X": 0.7799999713897705,
+                                        "Y": 0.7799999713897705,
+                                        "Z": 0.7799999713897705
                                     }
                                 },
                                 "bBlockComponet": true,
@@ -377,6 +601,76 @@
                             "Parent": "",
                             "Properties": {
                                 "ScriptPath": "Assets/Scripts/Actors/Week11AnimationDemo.lua"
+                            }
+                        },
+                        {
+                            "Class": "UStaticMeshComponent",
+                            "Name": "Actor_Position_Marker",
+                            "OverrideMaterials": [
+                                {
+                                    "Base": "DefaultMaterial",
+                                    "Instance": {
+                                        "BaseColor": {
+                                            "A": 1.0,
+                                            "B": 0.7300000190734863,
+                                            "G": 0.6000000238418579,
+                                            "R": 0.03999999910593033
+                                        },
+                                        "BlendState": "Opaque",
+                                        "DecalColorBlendMode": "Alpha",
+                                        "MaterialDomain": "Surface",
+                                        "Properties": {},
+                                        "SamplerState": "LinearClamp",
+                                        "Shininess": 32.0,
+                                        "SpecularColor": {
+                                            "A": 1.0,
+                                            "B": 0.07999999821186066,
+                                            "G": 0.07999999821186066,
+                                            "R": 0.07999999821186066
+                                        },
+                                        "Textures": [
+                                            "WhiteTexture",
+                                            ""
+                                        ],
+                                        "UVScrollSpeed": [
+                                            0.0,
+                                            0.0
+                                        ],
+                                        "bAffectBaseColor": true,
+                                        "bAffectNormal": true,
+                                        "bFlipNormalGreen": false
+                                    }
+                                }
+                            ],
+                            "Parent": "DefaultSceneRoot",
+                            "Properties": {
+                                "ShowBeginOverlapLog": false,
+                                "ShowEndOverlapLog": false,
+                                "ShowHitLog": false,
+                                "StaticMesh": "Cube",
+                                "Transform": {
+                                    "Location": {
+                                        "X": 0.0,
+                                        "Y": 0.0,
+                                        "Z": 0.03500000014901161
+                                    },
+                                    "Rotation": {
+                                        "Pitch": 0.0,
+                                        "Roll": 0.0,
+                                        "Yaw": 0.0
+                                    },
+                                    "Scale": {
+                                        "X": 0.9200000166893005,
+                                        "Y": 0.8999999761581421,
+                                        "Z": 0.035999998450279236
+                                    }
+                                },
+                                "bBlockComponet": false,
+                                "bCastShadow": false,
+                                "bGenerateOverlapEvents": false,
+                                "bReceiveShadow": true,
+                                "bReceivesDecals": true,
+                                "bVisible": true
                             }
                         }
                     ],
@@ -422,10 +716,10 @@
                                     "Base": "DefaultMaterial",
                                     "Instance": {
                                         "BaseColor": {
-                                            "R": 0.92,
-                                            "G": 0.45,
-                                            "B": 0.09,
-                                            "A": 1.0
+                                            "A": 1.0,
+                                            "B": 0.09000000357627869,
+                                            "G": 0.44999998807907104,
+                                            "R": 0.9200000166893005
                                         },
                                         "BlendState": "Opaque",
                                         "DecalColorBlendMode": "Alpha",
@@ -434,10 +728,10 @@
                                         "SamplerState": "LinearClamp",
                                         "Shininess": 25.0,
                                         "SpecularColor": {
-                                            "R": 0.26,
-                                            "G": 0.26,
-                                            "B": 0.26,
-                                            "A": 1.0
+                                            "A": 1.0,
+                                            "B": 0.25999999046325684,
+                                            "G": 0.25999999046325684,
+                                            "R": 0.25999999046325684
                                         },
                                         "Textures": [
                                             "WhiteTexture",
@@ -456,10 +750,10 @@
                                     "Base": "DefaultMaterial",
                                     "Instance": {
                                         "BaseColor": {
-                                            "R": 0.14,
-                                            "G": 0.21,
-                                            "B": 0.27,
-                                            "A": 1.0
+                                            "A": 1.0,
+                                            "B": 0.27000001072883606,
+                                            "G": 0.20999999344348907,
+                                            "R": 0.14000000059604645
                                         },
                                         "BlendState": "Opaque",
                                         "DecalColorBlendMode": "Alpha",
@@ -468,10 +762,10 @@
                                         "SamplerState": "LinearClamp",
                                         "Shininess": 25.0,
                                         "SpecularColor": {
-                                            "R": 0.18,
-                                            "G": 0.18,
-                                            "B": 0.18,
-                                            "A": 1.0
+                                            "A": 1.0,
+                                            "B": 0.18000000715255737,
+                                            "G": 0.18000000715255737,
+                                            "R": 0.18000000715255737
                                         },
                                         "Textures": [
                                             "WhiteTexture",
@@ -514,7 +808,8 @@
                                 },
                                 "bBlockComponet": false,
                                 "bCPUSkinning": false,
-                                "bCastShadow": false,
+                                "bCastShadow": true,
+                                "bExtractRootMotion": true,
                                 "bGenerateOverlapEvents": false,
                                 "bReceiveShadow": true,
                                 "bReceivesDecals": true,
@@ -540,18 +835,18 @@
                                 "Transform": {
                                     "Location": {
                                         "X": 0.0,
-                                        "Y": -3.9,
-                                        "Z": 1.005
+                                        "Y": -3.9000000953674316,
+                                        "Z": 1.0049999952316284
                                     },
                                     "Rotation": {
-                                        "Pitch": 0,
-                                        "Roll": 0,
+                                        "Pitch": 0.0,
+                                        "Roll": 0.0,
                                         "Yaw": 90.0
                                     },
                                     "Scale": {
-                                        "X": 1,
-                                        "Y": 1,
-                                        "Z": 1
+                                        "X": 1.0,
+                                        "Y": 1.0,
+                                        "Z": 1.0
                                     }
                                 },
                                 "bBlockComponet": true,
@@ -586,7 +881,7 @@
                             "Name": "USpringArmComponent_0",
                             "Parent": "DefaultSceneRoot",
                             "Properties": {
-                                "CameraLagMaxDistance": 0.8,
+                                "CameraLagMaxDistance": 0.800000011920929,
                                 "CameraLagSpeed": 12.0,
                                 "CameraRotationLagSpeed": 10.0,
                                 "ProbeSize": 0.15000000596046448,
@@ -595,7 +890,7 @@
                                     "Y": 0.0,
                                     "Z": 0.0
                                 },
-                                "TargetArmLength": 4.65,
+                                "TargetArmLength": 4.650000095367432,
                                 "TargetOffset": {
                                     "X": 0.0,
                                     "Y": 0.0,
@@ -603,19 +898,19 @@
                                 },
                                 "Transform": {
                                     "Location": {
-                                        "X": 0,
-                                        "Y": 0,
-                                        "Z": 1.55
+                                        "X": 0.0,
+                                        "Y": 0.0,
+                                        "Z": 1.5499999523162842
                                     },
                                     "Rotation": {
-                                        "Pitch": 17,
-                                        "Roll": 0,
-                                        "Yaw": 0
+                                        "Pitch": 17.0,
+                                        "Roll": 0.0,
+                                        "Yaw": 0.0
                                     },
                                     "Scale": {
-                                        "X": 1,
-                                        "Y": 1,
-                                        "Z": 1
+                                        "X": 1.0,
+                                        "Y": 1.0,
+                                        "Z": 1.0
                                     }
                                 },
                                 "bDoCollisionTest": true,
@@ -695,7 +990,7 @@
                             "Name": "UAmbientLightComponent",
                             "Parent": "",
                             "Properties": {
-                                "Intensity": 0.53,
+                                "Intensity": 0.5299999713897705,
                                 "LightColor": {
                                     "A": 255,
                                     "B": 255,
@@ -829,7 +1124,7 @@
                             "Name": "UDirectionalLightComponent",
                             "Parent": "",
                             "Properties": {
-                                "Intensity": 1.18,
+                                "Intensity": 1.1799999475479126,
                                 "LightColor": {
                                     "A": 255,
                                     "B": 255,
@@ -842,19 +1137,19 @@
                                 "ShadowResolution": 2048,
                                 "Transform": {
                                     "Location": {
-                                        "X": 0,
-                                        "Y": 0,
-                                        "Z": -2
+                                        "X": 0.0,
+                                        "Y": 0.0,
+                                        "Z": -2.0
                                     },
                                     "Rotation": {
-                                        "Pitch": 43,
-                                        "Roll": 0,
-                                        "Yaw": 48
+                                        "Pitch": 43.0,
+                                        "Roll": 0.0,
+                                        "Yaw": 48.0
                                     },
                                     "Scale": {
-                                        "X": 1,
-                                        "Y": 1,
-                                        "Z": 1
+                                        "X": 1.0,
+                                        "Y": 1.0,
+                                        "Z": 1.0
                                     }
                                 },
                                 "bCastShadows": false,
@@ -945,19 +1240,19 @@
                             "Properties": {
                                 "Transform": {
                                     "Location": {
-                                        "X": 0,
-                                        "Y": 0,
-                                        "Z": -0.24
+                                        "X": 0.0,
+                                        "Y": 0.0,
+                                        "Z": -0.23999999463558197
                                     },
                                     "Rotation": {
-                                        "Pitch": 0,
-                                        "Roll": 0,
-                                        "Yaw": 0
+                                        "Pitch": 0.0,
+                                        "Roll": 0.0,
+                                        "Yaw": 0.0
                                     },
                                     "Scale": {
-                                        "X": 18,
-                                        "Y": 18,
-                                        "Z": 0.48
+                                        "X": 18.0,
+                                        "Y": 18.0,
+                                        "Z": 0.47999998927116394
                                     }
                                 }
                             }
@@ -970,10 +1265,10 @@
                                     "Base": "DefaultMaterial",
                                     "Instance": {
                                         "BaseColor": {
-                                            "R": 0.032,
-                                            "G": 0.09,
-                                            "B": 0.16,
-                                            "A": 1.0
+                                            "A": 1.0,
+                                            "B": 0.1599999964237213,
+                                            "G": 0.09000000357627869,
+                                            "R": 0.03200000151991844
                                         },
                                         "BlendState": "Opaque",
                                         "DecalColorBlendMode": "Alpha",
@@ -982,10 +1277,10 @@
                                         "SamplerState": "LinearClamp",
                                         "Shininess": 32.0,
                                         "SpecularColor": {
-                                            "R": 0.08,
-                                            "G": 0.08,
-                                            "B": 0.08,
-                                            "A": 1.0
+                                            "A": 1.0,
+                                            "B": 0.07999999821186066,
+                                            "G": 0.07999999821186066,
+                                            "R": 0.07999999821186066
                                         },
                                         "Textures": [
                                             "WhiteTexture",
@@ -1095,19 +1390,19 @@
                             "Properties": {
                                 "Transform": {
                                     "Location": {
-                                        "X": 0,
+                                        "X": 0.0,
                                         "Y": 3.75,
-                                        "Z": 2.68
+                                        "Z": 2.680000066757202
                                     },
                                     "Rotation": {
-                                        "Pitch": 0,
-                                        "Roll": 0,
-                                        "Yaw": 0
+                                        "Pitch": 0.0,
+                                        "Roll": 0.0,
+                                        "Yaw": 0.0
                                     },
                                     "Scale": {
-                                        "X": 15,
-                                        "Y": 0.26,
-                                        "Z": 5.36
+                                        "X": 15.0,
+                                        "Y": 0.25999999046325684,
+                                        "Z": 5.360000133514404
                                     }
                                 }
                             }
@@ -1120,10 +1415,10 @@
                                     "Base": "DefaultMaterial",
                                     "Instance": {
                                         "BaseColor": {
-                                            "R": 0.028,
-                                            "G": 0.116,
-                                            "B": 0.31,
-                                            "A": 1.0
+                                            "A": 1.0,
+                                            "B": 0.3100000023841858,
+                                            "G": 0.11599999666213989,
+                                            "R": 0.02800000086426735
                                         },
                                         "BlendState": "Opaque",
                                         "DecalColorBlendMode": "Alpha",
@@ -1132,10 +1427,10 @@
                                         "SamplerState": "LinearClamp",
                                         "Shininess": 32.0,
                                         "SpecularColor": {
-                                            "R": 0.08,
-                                            "G": 0.08,
-                                            "B": 0.08,
-                                            "A": 1.0
+                                            "A": 1.0,
+                                            "B": 0.07999999821186066,
+                                            "G": 0.07999999821186066,
+                                            "R": 0.07999999821186066
                                         },
                                         "Textures": [
                                             "WhiteTexture",
@@ -1199,19 +1494,19 @@
                             "Properties": {
                                 "Transform": {
                                     "Location": {
-                                        "X": 0,
+                                        "X": 0.0,
                                         "Y": 3.5,
-                                        "Z": 5.09
+                                        "Z": 5.090000152587891
                                     },
                                     "Rotation": {
-                                        "Pitch": 0,
-                                        "Roll": 0,
-                                        "Yaw": 0
+                                        "Pitch": 0.0,
+                                        "Roll": 0.0,
+                                        "Yaw": 0.0
                                     },
                                     "Scale": {
-                                        "X": 12.7,
-                                        "Y": 0.31,
-                                        "Z": 0.27
+                                        "X": 12.699999809265137,
+                                        "Y": 0.3100000023841858,
+                                        "Z": 0.27000001072883606
                                     }
                                 }
                             }
@@ -1224,10 +1519,10 @@
                                     "Base": "DefaultMaterial",
                                     "Instance": {
                                         "BaseColor": {
-                                            "R": 0.62,
-                                            "G": 0.73,
-                                            "B": 0.84,
-                                            "A": 1.0
+                                            "A": 1.0,
+                                            "B": 0.8399999737739563,
+                                            "G": 0.7300000190734863,
+                                            "R": 0.6200000047683716
                                         },
                                         "BlendState": "Opaque",
                                         "DecalColorBlendMode": "Alpha",
@@ -1236,10 +1531,10 @@
                                         "SamplerState": "LinearClamp",
                                         "Shininess": 32.0,
                                         "SpecularColor": {
-                                            "R": 0.08,
-                                            "G": 0.08,
-                                            "B": 0.08,
-                                            "A": 1.0
+                                            "A": 1.0,
+                                            "B": 0.07999999821186066,
+                                            "G": 0.07999999821186066,
+                                            "R": 0.07999999821186066
                                         },
                                         "Textures": [
                                             "WhiteTexture",
@@ -1303,19 +1598,19 @@
                             "Properties": {
                                 "Transform": {
                                     "Location": {
-                                        "X": 0,
-                                        "Y": 3.52,
-                                        "Z": 0.12
+                                        "X": 0.0,
+                                        "Y": 3.5199999809265137,
+                                        "Z": 0.11999999731779099
                                     },
                                     "Rotation": {
-                                        "Pitch": 0,
-                                        "Roll": 0,
-                                        "Yaw": 0
+                                        "Pitch": 0.0,
+                                        "Roll": 0.0,
+                                        "Yaw": 0.0
                                     },
                                     "Scale": {
-                                        "X": 12.7,
-                                        "Y": 0.32,
-                                        "Z": 0.24
+                                        "X": 12.699999809265137,
+                                        "Y": 0.3199999928474426,
+                                        "Z": 0.23999999463558197
                                     }
                                 }
                             }
@@ -1328,10 +1623,10 @@
                                     "Base": "DefaultMaterial",
                                     "Instance": {
                                         "BaseColor": {
-                                            "R": 0.026,
-                                            "G": 0.074,
-                                            "B": 0.14,
-                                            "A": 1.0
+                                            "A": 1.0,
+                                            "B": 0.14000000059604645,
+                                            "G": 0.07400000095367432,
+                                            "R": 0.026000000536441803
                                         },
                                         "BlendState": "Opaque",
                                         "DecalColorBlendMode": "Alpha",
@@ -1340,10 +1635,10 @@
                                         "SamplerState": "LinearClamp",
                                         "Shininess": 32.0,
                                         "SpecularColor": {
-                                            "R": 0.08,
-                                            "G": 0.08,
-                                            "B": 0.08,
-                                            "A": 1.0
+                                            "A": 1.0,
+                                            "B": 0.07999999821186066,
+                                            "G": 0.07999999821186066,
+                                            "R": 0.07999999821186066
                                         },
                                         "Textures": [
                                             "WhiteTexture",
@@ -1407,19 +1702,19 @@
                             "Properties": {
                                 "Transform": {
                                     "Location": {
-                                        "X": 6.1,
-                                        "Y": 3.53,
-                                        "Z": 2.55
+                                        "X": 6.099999904632568,
+                                        "Y": 3.5299999713897705,
+                                        "Z": 2.549999952316284
                                     },
                                     "Rotation": {
-                                        "Pitch": 0,
-                                        "Roll": 0,
-                                        "Yaw": 0
+                                        "Pitch": 0.0,
+                                        "Roll": 0.0,
+                                        "Yaw": 0.0
                                     },
                                     "Scale": {
-                                        "X": 0.56,
-                                        "Y": 0.38,
-                                        "Z": 5.1
+                                        "X": 0.5600000023841858,
+                                        "Y": 0.3799999952316284,
+                                        "Z": 5.099999904632568
                                     }
                                 }
                             }
@@ -1432,10 +1727,10 @@
                                     "Base": "DefaultMaterial",
                                     "Instance": {
                                         "BaseColor": {
-                                            "R": 0.62,
-                                            "G": 0.73,
-                                            "B": 0.84,
-                                            "A": 1.0
+                                            "A": 1.0,
+                                            "B": 0.8399999737739563,
+                                            "G": 0.7300000190734863,
+                                            "R": 0.6200000047683716
                                         },
                                         "BlendState": "Opaque",
                                         "DecalColorBlendMode": "Alpha",
@@ -1444,10 +1739,10 @@
                                         "SamplerState": "LinearClamp",
                                         "Shininess": 32.0,
                                         "SpecularColor": {
-                                            "R": 0.08,
-                                            "G": 0.08,
-                                            "B": 0.08,
-                                            "A": 1.0
+                                            "A": 1.0,
+                                            "B": 0.07999999821186066,
+                                            "G": 0.07999999821186066,
+                                            "R": 0.07999999821186066
                                         },
                                         "Textures": [
                                             "WhiteTexture",
@@ -1511,19 +1806,19 @@
                             "Properties": {
                                 "Transform": {
                                     "Location": {
-                                        "X": -6.1,
-                                        "Y": 3.53,
-                                        "Z": 2.55
+                                        "X": -6.099999904632568,
+                                        "Y": 3.5299999713897705,
+                                        "Z": 2.549999952316284
                                     },
                                     "Rotation": {
-                                        "Pitch": 0,
-                                        "Roll": 0,
-                                        "Yaw": 0
+                                        "Pitch": 0.0,
+                                        "Roll": 0.0,
+                                        "Yaw": 0.0
                                     },
                                     "Scale": {
-                                        "X": 0.56,
-                                        "Y": 0.38,
-                                        "Z": 5.1
+                                        "X": 0.5600000023841858,
+                                        "Y": 0.3799999952316284,
+                                        "Z": 5.099999904632568
                                     }
                                 }
                             }
@@ -1536,10 +1831,10 @@
                                     "Base": "DefaultMaterial",
                                     "Instance": {
                                         "BaseColor": {
-                                            "R": 0.62,
-                                            "G": 0.73,
-                                            "B": 0.84,
-                                            "A": 1.0
+                                            "A": 1.0,
+                                            "B": 0.8399999737739563,
+                                            "G": 0.7300000190734863,
+                                            "R": 0.6200000047683716
                                         },
                                         "BlendState": "Opaque",
                                         "DecalColorBlendMode": "Alpha",
@@ -1548,10 +1843,10 @@
                                         "SamplerState": "LinearClamp",
                                         "Shininess": 32.0,
                                         "SpecularColor": {
-                                            "R": 0.08,
-                                            "G": 0.08,
-                                            "B": 0.08,
-                                            "A": 1.0
+                                            "A": 1.0,
+                                            "B": 0.07999999821186066,
+                                            "G": 0.07999999821186066,
+                                            "R": 0.07999999821186066
                                         },
                                         "Textures": [
                                             "WhiteTexture",
@@ -1615,19 +1910,19 @@
                             "Properties": {
                                 "Transform": {
                                     "Location": {
-                                        "X": 6.47,
-                                        "Y": 1.72,
-                                        "Z": 2.55
+                                        "X": 6.46999979019165,
+                                        "Y": 1.7200000286102295,
+                                        "Z": 2.549999952316284
                                     },
                                     "Rotation": {
-                                        "Pitch": 0,
-                                        "Roll": 0,
-                                        "Yaw": 0
+                                        "Pitch": 0.0,
+                                        "Roll": 0.0,
+                                        "Yaw": 0.0
                                     },
                                     "Scale": {
-                                        "X": 0.21,
-                                        "Y": 3.9,
-                                        "Z": 5.1
+                                        "X": 0.20999999344348907,
+                                        "Y": 3.9000000953674316,
+                                        "Z": 5.099999904632568
                                     }
                                 }
                             }
@@ -1640,10 +1935,10 @@
                                     "Base": "DefaultMaterial",
                                     "Instance": {
                                         "BaseColor": {
-                                            "R": 0.62,
-                                            "G": 0.73,
-                                            "B": 0.84,
-                                            "A": 1.0
+                                            "A": 1.0,
+                                            "B": 0.8399999737739563,
+                                            "G": 0.7300000190734863,
+                                            "R": 0.6200000047683716
                                         },
                                         "BlendState": "Opaque",
                                         "DecalColorBlendMode": "Alpha",
@@ -1652,10 +1947,10 @@
                                         "SamplerState": "LinearClamp",
                                         "Shininess": 32.0,
                                         "SpecularColor": {
-                                            "R": 0.08,
-                                            "G": 0.08,
-                                            "B": 0.08,
-                                            "A": 1.0
+                                            "A": 1.0,
+                                            "B": 0.07999999821186066,
+                                            "G": 0.07999999821186066,
+                                            "R": 0.07999999821186066
                                         },
                                         "Textures": [
                                             "WhiteTexture",
@@ -1719,19 +2014,19 @@
                             "Properties": {
                                 "Transform": {
                                     "Location": {
-                                        "X": -6.47,
-                                        "Y": 1.72,
-                                        "Z": 2.55
+                                        "X": -6.46999979019165,
+                                        "Y": 1.7200000286102295,
+                                        "Z": 2.549999952316284
                                     },
                                     "Rotation": {
-                                        "Pitch": 0,
-                                        "Roll": 0,
-                                        "Yaw": 0
+                                        "Pitch": 0.0,
+                                        "Roll": 0.0,
+                                        "Yaw": 0.0
                                     },
                                     "Scale": {
-                                        "X": 0.21,
-                                        "Y": 3.9,
-                                        "Z": 5.1
+                                        "X": 0.20999999344348907,
+                                        "Y": 3.9000000953674316,
+                                        "Z": 5.099999904632568
                                     }
                                 }
                             }
@@ -1744,10 +2039,10 @@
                                     "Base": "DefaultMaterial",
                                     "Instance": {
                                         "BaseColor": {
-                                            "R": 0.62,
-                                            "G": 0.73,
-                                            "B": 0.84,
-                                            "A": 1.0
+                                            "A": 1.0,
+                                            "B": 0.8399999737739563,
+                                            "G": 0.7300000190734863,
+                                            "R": 0.6200000047683716
                                         },
                                         "BlendState": "Opaque",
                                         "DecalColorBlendMode": "Alpha",
@@ -1756,10 +2051,10 @@
                                         "SamplerState": "LinearClamp",
                                         "Shininess": 32.0,
                                         "SpecularColor": {
-                                            "R": 0.08,
-                                            "G": 0.08,
-                                            "B": 0.08,
-                                            "A": 1.0
+                                            "A": 1.0,
+                                            "B": 0.07999999821186066,
+                                            "G": 0.07999999821186066,
+                                            "R": 0.07999999821186066
                                         },
                                         "Textures": [
                                             "WhiteTexture",
@@ -1823,19 +2118,19 @@
                             "Properties": {
                                 "Transform": {
                                     "Location": {
-                                        "X": 0,
-                                        "Y": 3.58,
-                                        "Z": 4.12
+                                        "X": 0.0,
+                                        "Y": 3.5799999237060547,
+                                        "Z": 4.119999885559082
                                     },
                                     "Rotation": {
-                                        "Pitch": 0,
-                                        "Roll": 0,
-                                        "Yaw": 0
+                                        "Pitch": 0.0,
+                                        "Roll": 0.0,
+                                        "Yaw": 0.0
                                     },
                                     "Scale": {
                                         "X": 10.5,
-                                        "Y": 0.06,
-                                        "Z": 0.021
+                                        "Y": 0.05999999865889549,
+                                        "Z": 0.020999999716877937
                                     }
                                 }
                             }
@@ -1848,10 +2143,10 @@
                                     "Base": "DefaultMaterial",
                                     "Instance": {
                                         "BaseColor": {
-                                            "R": 0.09,
-                                            "G": 0.6,
-                                            "B": 0.88,
-                                            "A": 1.0
+                                            "A": 1.0,
+                                            "B": 0.8799999952316284,
+                                            "G": 0.6000000238418579,
+                                            "R": 0.09000000357627869
                                         },
                                         "BlendState": "Opaque",
                                         "DecalColorBlendMode": "Alpha",
@@ -1860,10 +2155,10 @@
                                         "SamplerState": "LinearClamp",
                                         "Shininess": 32.0,
                                         "SpecularColor": {
-                                            "R": 0.08,
-                                            "G": 0.08,
-                                            "B": 0.08,
-                                            "A": 1.0
+                                            "A": 1.0,
+                                            "B": 0.07999999821186066,
+                                            "G": 0.07999999821186066,
+                                            "R": 0.07999999821186066
                                         },
                                         "Textures": [
                                             "WhiteTexture",
@@ -1927,19 +2222,19 @@
                             "Properties": {
                                 "Transform": {
                                     "Location": {
-                                        "X": 0,
-                                        "Y": 3.58,
-                                        "Z": 1.9
+                                        "X": 0.0,
+                                        "Y": 3.5799999237060547,
+                                        "Z": 1.899999976158142
                                     },
                                     "Rotation": {
-                                        "Pitch": 0,
-                                        "Roll": 0,
-                                        "Yaw": 0
+                                        "Pitch": 0.0,
+                                        "Roll": 0.0,
+                                        "Yaw": 0.0
                                     },
                                     "Scale": {
-                                        "X": 0.025,
-                                        "Y": 0.06,
-                                        "Z": 2.96
+                                        "X": 0.02500000037252903,
+                                        "Y": 0.05999999865889549,
+                                        "Z": 2.9600000381469727
                                     }
                                 }
                             }
@@ -1952,10 +2247,10 @@
                                     "Base": "DefaultMaterial",
                                     "Instance": {
                                         "BaseColor": {
-                                            "R": 0.062,
-                                            "G": 0.29,
+                                            "A": 1.0,
                                             "B": 0.5,
-                                            "A": 1.0
+                                            "G": 0.28999999165534973,
+                                            "R": 0.06199999898672104
                                         },
                                         "BlendState": "Opaque",
                                         "DecalColorBlendMode": "Alpha",
@@ -1964,10 +2259,10 @@
                                         "SamplerState": "LinearClamp",
                                         "Shininess": 32.0,
                                         "SpecularColor": {
-                                            "R": 0.08,
-                                            "G": 0.08,
-                                            "B": 0.08,
-                                            "A": 1.0
+                                            "A": 1.0,
+                                            "B": 0.07999999821186066,
+                                            "G": 0.07999999821186066,
+                                            "R": 0.07999999821186066
                                         },
                                         "Textures": [
                                             "WhiteTexture",
@@ -2031,19 +2326,19 @@
                             "Properties": {
                                 "Transform": {
                                     "Location": {
-                                        "X": 0,
-                                        "Y": 0.02,
-                                        "Z": 0.008
+                                        "X": 0.0,
+                                        "Y": 0.019999999552965164,
+                                        "Z": 0.00800000037997961
                                     },
                                     "Rotation": {
-                                        "Pitch": 0,
-                                        "Roll": 0,
-                                        "Yaw": 0
+                                        "Pitch": 0.0,
+                                        "Roll": 0.0,
+                                        "Yaw": 0.0
                                     },
                                     "Scale": {
-                                        "X": 0.026,
-                                        "Y": 6.9,
-                                        "Z": 0.014
+                                        "X": 0.026000000536441803,
+                                        "Y": 6.900000095367432,
+                                        "Z": 0.014000000432133675
                                     }
                                 }
                             }
@@ -2056,10 +2351,10 @@
                                     "Base": "DefaultMaterial",
                                     "Instance": {
                                         "BaseColor": {
-                                            "R": 0.09,
-                                            "G": 0.6,
-                                            "B": 0.88,
-                                            "A": 1.0
+                                            "A": 1.0,
+                                            "B": 0.8799999952316284,
+                                            "G": 0.6000000238418579,
+                                            "R": 0.09000000357627869
                                         },
                                         "BlendState": "Opaque",
                                         "DecalColorBlendMode": "Alpha",
@@ -2068,10 +2363,10 @@
                                         "SamplerState": "LinearClamp",
                                         "Shininess": 32.0,
                                         "SpecularColor": {
-                                            "R": 0.08,
-                                            "G": 0.08,
-                                            "B": 0.08,
-                                            "A": 1.0
+                                            "A": 1.0,
+                                            "B": 0.07999999821186066,
+                                            "G": 0.07999999821186066,
+                                            "R": 0.07999999821186066
                                         },
                                         "Textures": [
                                             "WhiteTexture",
@@ -2135,19 +2430,19 @@
                             "Properties": {
                                 "Transform": {
                                     "Location": {
-                                        "X": 2.65,
-                                        "Y": 0.18,
-                                        "Z": 0.003
+                                        "X": 2.6500000953674316,
+                                        "Y": 0.18000000715255737,
+                                        "Z": 0.003000000026077032
                                     },
                                     "Rotation": {
-                                        "Pitch": 0,
-                                        "Roll": 0,
-                                        "Yaw": 0
+                                        "Pitch": 0.0,
+                                        "Roll": 0.0,
+                                        "Yaw": 0.0
                                     },
                                     "Scale": {
-                                        "X": 4.85,
-                                        "Y": 2.85,
-                                        "Z": 0.006
+                                        "X": 4.849999904632568,
+                                        "Y": 2.8499999046325684,
+                                        "Z": 0.006000000052154064
                                     }
                                 }
                             }
@@ -2160,10 +2455,10 @@
                                     "Base": "DefaultMaterial",
                                     "Instance": {
                                         "BaseColor": {
-                                            "R": 0.045,
-                                            "G": 0.18,
-                                            "B": 0.31,
-                                            "A": 1.0
+                                            "A": 1.0,
+                                            "B": 0.3100000023841858,
+                                            "G": 0.18000000715255737,
+                                            "R": 0.04500000178813934
                                         },
                                         "BlendState": "Opaque",
                                         "DecalColorBlendMode": "Alpha",
@@ -2172,10 +2467,10 @@
                                         "SamplerState": "LinearClamp",
                                         "Shininess": 32.0,
                                         "SpecularColor": {
-                                            "R": 0.08,
-                                            "G": 0.08,
-                                            "B": 0.08,
-                                            "A": 1.0
+                                            "A": 1.0,
+                                            "B": 0.07999999821186066,
+                                            "G": 0.07999999821186066,
+                                            "R": 0.07999999821186066
                                         },
                                         "Textures": [
                                             "WhiteTexture",
@@ -2239,19 +2534,19 @@
                             "Properties": {
                                 "Transform": {
                                     "Location": {
-                                        "X": -2.65,
-                                        "Y": 0.18,
-                                        "Z": 0.003
+                                        "X": -2.6500000953674316,
+                                        "Y": 0.18000000715255737,
+                                        "Z": 0.003000000026077032
                                     },
                                     "Rotation": {
-                                        "Pitch": 0,
-                                        "Roll": 0,
-                                        "Yaw": 0
+                                        "Pitch": 0.0,
+                                        "Roll": 0.0,
+                                        "Yaw": 0.0
                                     },
                                     "Scale": {
-                                        "X": 5.2,
-                                        "Y": 2.85,
-                                        "Z": 0.006
+                                        "X": 5.199999809265137,
+                                        "Y": 2.8499999046325684,
+                                        "Z": 0.006000000052154064
                                     }
                                 }
                             }
@@ -2264,10 +2559,10 @@
                                     "Base": "DefaultMaterial",
                                     "Instance": {
                                         "BaseColor": {
-                                            "R": 0.048,
-                                            "G": 0.17,
-                                            "B": 0.28,
-                                            "A": 1.0
+                                            "A": 1.0,
+                                            "B": 0.2800000011920929,
+                                            "G": 0.17000000178813934,
+                                            "R": 0.04800000041723251
                                         },
                                         "BlendState": "Opaque",
                                         "DecalColorBlendMode": "Alpha",
@@ -2276,10 +2571,10 @@
                                         "SamplerState": "LinearClamp",
                                         "Shininess": 32.0,
                                         "SpecularColor": {
-                                            "R": 0.08,
-                                            "G": 0.08,
-                                            "B": 0.08,
-                                            "A": 1.0
+                                            "A": 1.0,
+                                            "B": 0.07999999821186066,
+                                            "G": 0.07999999821186066,
+                                            "R": 0.07999999821186066
                                         },
                                         "Textures": [
                                             "WhiteTexture",
@@ -2343,19 +2638,19 @@
                             "Properties": {
                                 "Transform": {
                                     "Location": {
-                                        "X": -0.16,
-                                        "Y": 0.18,
-                                        "Z": 0.22
+                                        "X": -2.950000047683716,
+                                        "Y": 0.18000000715255737,
+                                        "Z": 0.5249999761581421
                                     },
                                     "Rotation": {
-                                        "Pitch": 0,
-                                        "Roll": 0,
-                                        "Yaw": 0
+                                        "Pitch": 0.0,
+                                        "Roll": 0.0,
+                                        "Yaw": 0.0
                                     },
                                     "Scale": {
-                                        "X": 0.1,
-                                        "Y": 2.45,
-                                        "Z": 0.44
+                                        "X": 0.2199999988079071,
+                                        "Y": 1.899999976158142,
+                                        "Z": 1.0499999523162842
                                     }
                                 }
                             }
@@ -2368,10 +2663,10 @@
                                     "Base": "DefaultMaterial",
                                     "Instance": {
                                         "BaseColor": {
-                                            "R": 0.62,
-                                            "G": 0.73,
-                                            "B": 0.84,
-                                            "A": 1.0
+                                            "A": 1.0,
+                                            "B": 0.07000000029802322,
+                                            "G": 0.18000000715255737,
+                                            "R": 0.5799999833106995
                                         },
                                         "BlendState": "Opaque",
                                         "DecalColorBlendMode": "Alpha",
@@ -2380,10 +2675,10 @@
                                         "SamplerState": "LinearClamp",
                                         "Shininess": 32.0,
                                         "SpecularColor": {
-                                            "R": 0.08,
-                                            "G": 0.08,
-                                            "B": 0.08,
-                                            "A": 1.0
+                                            "A": 1.0,
+                                            "B": 0.07999999821186066,
+                                            "G": 0.07999999821186066,
+                                            "R": 0.07999999821186066
                                         },
                                         "Textures": [
                                             "WhiteTexture",
@@ -2432,7 +2727,7 @@
                         },
                         {
                             "Class": "UBoxComponent",
-                            "Name": "Movement_Forward_Stop_Collision",
+                            "Name": "RootMotion_Wall_Collision",
                             "Parent": "DefaultSceneRoot",
                             "Properties": {
                                 "BoxExtent": {
@@ -2477,7 +2772,7 @@
                             }
                         }
                     ],
-                    "Name": "Movement_Forward_Stop",
+                    "Name": "RootMotion_Wall",
                     "Properties": {
                         "bTickInEditor": false
                     },
@@ -2493,19 +2788,19 @@
                             "Properties": {
                                 "Transform": {
                                     "Location": {
-                                        "X": -5.14,
-                                        "Y": 0.18,
-                                        "Z": 0.22
+                                        "X": 2.3499999046325684,
+                                        "Y": 0.18000000715255737,
+                                        "Z": 0.5249999761581421
                                     },
                                     "Rotation": {
-                                        "Pitch": 0,
-                                        "Roll": 0,
-                                        "Yaw": 0
+                                        "Pitch": 0.0,
+                                        "Roll": 0.0,
+                                        "Yaw": 0.0
                                     },
                                     "Scale": {
-                                        "X": 0.1,
-                                        "Y": 2.45,
-                                        "Z": 0.44
+                                        "X": 0.2199999988079071,
+                                        "Y": 1.899999976158142,
+                                        "Z": 1.0499999523162842
                                     }
                                 }
                             }
@@ -2518,10 +2813,10 @@
                                     "Base": "DefaultMaterial",
                                     "Instance": {
                                         "BaseColor": {
-                                            "R": 0.62,
-                                            "G": 0.73,
-                                            "B": 0.84,
-                                            "A": 1.0
+                                            "A": 1.0,
+                                            "B": 0.07000000029802322,
+                                            "G": 0.18000000715255737,
+                                            "R": 0.5799999833106995
                                         },
                                         "BlendState": "Opaque",
                                         "DecalColorBlendMode": "Alpha",
@@ -2530,10 +2825,10 @@
                                         "SamplerState": "LinearClamp",
                                         "Shininess": 32.0,
                                         "SpecularColor": {
-                                            "R": 0.08,
-                                            "G": 0.08,
-                                            "B": 0.08,
-                                            "A": 1.0
+                                            "A": 1.0,
+                                            "B": 0.07999999821186066,
+                                            "G": 0.07999999821186066,
+                                            "R": 0.07999999821186066
                                         },
                                         "Textures": [
                                             "WhiteTexture",
@@ -2582,7 +2877,7 @@
                         },
                         {
                             "Class": "UBoxComponent",
-                            "Name": "Movement_Backward_Stop_Collision",
+                            "Name": "MeshOnly_Wall_Collision",
                             "Parent": "DefaultSceneRoot",
                             "Properties": {
                                 "BoxExtent": {
@@ -2627,7 +2922,7 @@
                             }
                         }
                     ],
-                    "Name": "Movement_Backward_Stop",
+                    "Name": "MeshOnly_Wall",
                     "Properties": {
                         "bTickInEditor": false
                     },
@@ -2643,19 +2938,19 @@
                             "Properties": {
                                 "Transform": {
                                     "Location": {
-                                        "X": 0,
-                                        "Y": 3.56,
-                                        "Z": 4.36
+                                        "X": 0.0,
+                                        "Y": 3.559999942779541,
+                                        "Z": 4.360000133514404
                                     },
                                     "Rotation": {
-                                        "Pitch": 0,
-                                        "Roll": 0,
-                                        "Yaw": 90
+                                        "Pitch": 0.0,
+                                        "Roll": 0.0,
+                                        "Yaw": 90.0
                                     },
                                     "Scale": {
-                                        "X": 1,
-                                        "Y": 1,
-                                        "Z": 1
+                                        "X": 1.0,
+                                        "Y": 1.0,
+                                        "Z": 1.0
                                     }
                                 }
                             }
@@ -2669,8 +2964,8 @@
                                 "ShowBeginOverlapLog": false,
                                 "ShowEndOverlapLog": false,
                                 "ShowHitLog": false,
-                                "Text": "BLEND SPACE 1D",
-                                "TextSize": 0.62,
+                                "Text": "ROOT MOTION COLLISION",
+                                "TextSize": 0.6000000238418579,
                                 "Transform": {
                                     "Location": {
                                         "X": 0.0,
@@ -2692,12 +2987,15 @@
                                 "bCastShadow": false,
                                 "bGenerateOverlapEvents": false,
                                 "bReceiveShadow": true,
+                                "bReceivesDecals": true,
                                 "bVisible": true
                             }
                         }
                     ],
                     "Name": "Exhibit_Title",
-                    "Properties": {},
+                    "Properties": {
+                        "bTickInEditor": false
+                    },
                     "RootComponent": "DefaultSceneRoot"
                 },
                 {
@@ -2710,19 +3008,19 @@
                             "Properties": {
                                 "Transform": {
                                     "Location": {
-                                        "X": 0,
-                                        "Y": 3.56,
-                                        "Z": 3.76
+                                        "X": 0.0,
+                                        "Y": 3.559999942779541,
+                                        "Z": 3.759999990463257
                                     },
                                     "Rotation": {
-                                        "Pitch": 0,
-                                        "Roll": 0,
-                                        "Yaw": 90
+                                        "Pitch": 0.0,
+                                        "Roll": 0.0,
+                                        "Yaw": 90.0
                                     },
                                     "Scale": {
-                                        "X": 1,
-                                        "Y": 1,
-                                        "Z": 1
+                                        "X": 1.0,
+                                        "Y": 1.0,
+                                        "Z": 1.0
                                     }
                                 }
                             }
@@ -2736,8 +3034,8 @@
                                 "ShowBeginOverlapLog": false,
                                 "ShowEndOverlapLog": false,
                                 "ShowHitLog": false,
-                                "Text": "C  Overview / Player     RMB  Orbit",
-                                "TextSize": 0.29,
+                                "Text": "Same Jog clip   |   Cyan pad shows actor position",
+                                "TextSize": 0.28999999165534973,
                                 "Transform": {
                                     "Location": {
                                         "X": 0.0,
@@ -2759,12 +3057,15 @@
                                 "bCastShadow": false,
                                 "bGenerateOverlapEvents": false,
                                 "bReceiveShadow": true,
+                                "bReceivesDecals": true,
                                 "bVisible": true
                             }
                         }
                     ],
                     "Name": "Exhibit_CameraControls",
-                    "Properties": {},
+                    "Properties": {
+                        "bTickInEditor": false
+                    },
                     "RootComponent": "DefaultSceneRoot"
                 },
                 {
@@ -2777,19 +3078,19 @@
                             "Properties": {
                                 "Transform": {
                                     "Location": {
-                                        "X": 2.65,
-                                        "Y": 3.56,
-                                        "Z": 3.12
+                                        "X": 2.6500000953674316,
+                                        "Y": 3.559999942779541,
+                                        "Z": 3.119999885559082
                                     },
                                     "Rotation": {
-                                        "Pitch": 0,
-                                        "Roll": 0,
-                                        "Yaw": 90
+                                        "Pitch": 0.0,
+                                        "Roll": 0.0,
+                                        "Yaw": 90.0
                                     },
                                     "Scale": {
-                                        "X": 1,
-                                        "Y": 1,
-                                        "Z": 1
+                                        "X": 1.0,
+                                        "Y": 1.0,
+                                        "Z": 1.0
                                     }
                                 }
                             }
@@ -2803,8 +3104,8 @@
                                 "ShowBeginOverlapLog": false,
                                 "ShowEndOverlapLog": false,
                                 "ShowHitLog": false,
-                                "Text": "POSE PREVIEW",
-                                "TextSize": 0.43,
+                                "Text": "MESH ONLY",
+                                "TextSize": 0.4300000071525574,
                                 "Transform": {
                                     "Location": {
                                         "X": 0.0,
@@ -2826,12 +3127,15 @@
                                 "bCastShadow": false,
                                 "bGenerateOverlapEvents": false,
                                 "bReceiveShadow": true,
+                                "bReceivesDecals": true,
                                 "bVisible": true
                             }
                         }
                     ],
                     "Name": "Preview_Title",
-                    "Properties": {},
+                    "Properties": {
+                        "bTickInEditor": false
+                    },
                     "RootComponent": "DefaultSceneRoot"
                 },
                 {
@@ -2844,19 +3148,19 @@
                             "Properties": {
                                 "Transform": {
                                     "Location": {
-                                        "X": 2.65,
-                                        "Y": 3.56,
-                                        "Z": 2.73
+                                        "X": 2.6500000953674316,
+                                        "Y": 3.559999942779541,
+                                        "Z": 2.7300000190734863
                                     },
                                     "Rotation": {
-                                        "Pitch": 0,
-                                        "Roll": 0,
-                                        "Yaw": 90
+                                        "Pitch": 0.0,
+                                        "Roll": 0.0,
+                                        "Yaw": 90.0
                                     },
                                     "Scale": {
-                                        "X": 1,
-                                        "Y": 1,
-                                        "Z": 1
+                                        "X": 1.0,
+                                        "Y": 1.0,
+                                        "Z": 1.0
                                     }
                                 }
                             }
@@ -2870,8 +3174,8 @@
                                 "ShowBeginOverlapLog": false,
                                 "ShowEndOverlapLog": false,
                                 "ShowHitLog": false,
-                                "Text": "Automatic loop   |   Pose only",
-                                "TextSize": 0.25,
+                                "Text": "Mesh crosses wall   |   Actor stays at start",
+                                "TextSize": 0.23999999463558197,
                                 "Transform": {
                                     "Location": {
                                         "X": 0.0,
@@ -2893,12 +3197,15 @@
                                 "bCastShadow": false,
                                 "bGenerateOverlapEvents": false,
                                 "bReceiveShadow": true,
+                                "bReceivesDecals": true,
                                 "bVisible": true
                             }
                         }
                     ],
                     "Name": "Preview_Controls",
-                    "Properties": {},
+                    "Properties": {
+                        "bTickInEditor": false
+                    },
                     "RootComponent": "DefaultSceneRoot"
                 },
                 {
@@ -2911,19 +3218,19 @@
                             "Properties": {
                                 "Transform": {
                                     "Location": {
-                                        "X": -2.65,
-                                        "Y": 3.56,
-                                        "Z": 3.12
+                                        "X": -2.6500000953674316,
+                                        "Y": 3.559999942779541,
+                                        "Z": 3.119999885559082
                                     },
                                     "Rotation": {
-                                        "Pitch": 0,
-                                        "Roll": 0,
-                                        "Yaw": 90
+                                        "Pitch": 0.0,
+                                        "Roll": 0.0,
+                                        "Yaw": 90.0
                                     },
                                     "Scale": {
-                                        "X": 1,
-                                        "Y": 1,
-                                        "Z": 1
+                                        "X": 1.0,
+                                        "Y": 1.0,
+                                        "Z": 1.0
                                     }
                                 }
                             }
@@ -2938,7 +3245,7 @@
                                 "ShowEndOverlapLog": false,
                                 "ShowHitLog": false,
                                 "Text": "ROOT MOTION",
-                                "TextSize": 0.43,
+                                "TextSize": 0.4300000071525574,
                                 "Transform": {
                                     "Location": {
                                         "X": 0.0,
@@ -2960,12 +3267,15 @@
                                 "bCastShadow": false,
                                 "bGenerateOverlapEvents": false,
                                 "bReceiveShadow": true,
+                                "bReceivesDecals": true,
                                 "bVisible": true
                             }
                         }
                     ],
                     "Name": "Movement_Title",
-                    "Properties": {},
+                    "Properties": {
+                        "bTickInEditor": false
+                    },
                     "RootComponent": "DefaultSceneRoot"
                 },
                 {
@@ -2978,19 +3288,19 @@
                             "Properties": {
                                 "Transform": {
                                     "Location": {
-                                        "X": -2.65,
-                                        "Y": 3.56,
-                                        "Z": 2.73
+                                        "X": -2.6500000953674316,
+                                        "Y": 3.559999942779541,
+                                        "Z": 2.7300000190734863
                                     },
                                     "Rotation": {
-                                        "Pitch": 0,
-                                        "Roll": 0,
-                                        "Yaw": 90
+                                        "Pitch": 0.0,
+                                        "Roll": 0.0,
+                                        "Yaw": 90.0
                                     },
                                     "Scale": {
-                                        "X": 1,
-                                        "Y": 1,
-                                        "Z": 1
+                                        "X": 1.0,
+                                        "Y": 1.0,
+                                        "Z": 1.0
                                     }
                                 }
                             }
@@ -3004,8 +3314,8 @@
                                 "ShowBeginOverlapLog": false,
                                 "ShowEndOverlapLog": false,
                                 "ShowHitLog": false,
-                                "Text": "Same Speed loop   |   Actor movement",
-                                "TextSize": 0.25,
+                                "Text": "Actor moves   |   Capsule stops at wall",
+                                "TextSize": 0.23999999463558197,
                                 "Transform": {
                                     "Location": {
                                         "X": 0.0,
@@ -3027,12 +3337,15 @@
                                 "bCastShadow": false,
                                 "bGenerateOverlapEvents": false,
                                 "bReceiveShadow": true,
+                                "bReceivesDecals": true,
                                 "bVisible": true
                             }
                         }
                     ],
                     "Name": "Movement_Controls",
-                    "Properties": {},
+                    "Properties": {
+                        "bTickInEditor": false
+                    },
                     "RootComponent": "DefaultSceneRoot"
                 },
                 {
@@ -3046,18 +3359,18 @@
                                 "Transform": {
                                     "Location": {
                                         "X": 0.0,
-                                        "Y": 3.56,
-                                        "Z": 2.32
+                                        "Y": 3.559999942779541,
+                                        "Z": 2.319999933242798
                                     },
                                     "Rotation": {
-                                        "Pitch": 0,
-                                        "Roll": 0,
-                                        "Yaw": 90
+                                        "Pitch": 0.0,
+                                        "Roll": 0.0,
+                                        "Yaw": 90.0
                                     },
                                     "Scale": {
-                                        "X": 1,
-                                        "Y": 1,
-                                        "Z": 1
+                                        "X": 1.0,
+                                        "Y": 1.0,
+                                        "Z": 1.0
                                     }
                                 }
                             }
@@ -3071,8 +3384,8 @@
                                 "ShowBeginOverlapLog": false,
                                 "ShowEndOverlapLog": false,
                                 "ShowHitLog": false,
-                                "Text": "PLAYER   WASD  Move    Shift  Jog    Space  Jump",
-                                "TextSize": 0.24,
+                                "Text": "PLAYER   WASD Move    C Camera    RMB Orbit    Space Jump",
+                                "TextSize": 0.23000000417232513,
                                 "Transform": {
                                     "Location": {
                                         "X": 0.0,
@@ -3094,12 +3407,15 @@
                                 "bCastShadow": false,
                                 "bGenerateOverlapEvents": false,
                                 "bReceiveShadow": true,
+                                "bReceivesDecals": true,
                                 "bVisible": true
                             }
                         }
                     ],
                     "Name": "Player_Controls",
-                    "Properties": {},
+                    "Properties": {
+                        "bTickInEditor": false
+                    },
                     "RootComponent": "DefaultSceneRoot"
                 },
                 {
@@ -3112,19 +3428,19 @@
                             "Properties": {
                                 "Transform": {
                                     "Location": {
-                                        "X": 2.65,
-                                        "Y": -2.06,
-                                        "Z": 0.18
+                                        "X": 2.6500000953674316,
+                                        "Y": -2.059999942779541,
+                                        "Z": 0.18000000715255737
                                     },
                                     "Rotation": {
-                                        "Pitch": 0,
-                                        "Roll": 0,
-                                        "Yaw": 0
+                                        "Pitch": 0.0,
+                                        "Roll": 0.0,
+                                        "Yaw": 0.0
                                     },
                                     "Scale": {
-                                        "X": 4.05,
+                                        "X": 4.050000190734863,
                                         "Y": 0.75,
-                                        "Z": 0.36
+                                        "Z": 0.36000001430511475
                                     }
                                 }
                             }
@@ -3137,10 +3453,10 @@
                                     "Base": "DefaultMaterial",
                                     "Instance": {
                                         "BaseColor": {
-                                            "R": 0.026,
-                                            "G": 0.074,
-                                            "B": 0.14,
-                                            "A": 1.0
+                                            "A": 1.0,
+                                            "B": 0.14000000059604645,
+                                            "G": 0.07400000095367432,
+                                            "R": 0.026000000536441803
                                         },
                                         "BlendState": "Opaque",
                                         "DecalColorBlendMode": "Alpha",
@@ -3149,10 +3465,10 @@
                                         "SamplerState": "LinearClamp",
                                         "Shininess": 32.0,
                                         "SpecularColor": {
-                                            "R": 0.08,
-                                            "G": 0.08,
-                                            "B": 0.08,
-                                            "A": 1.0
+                                            "A": 1.0,
+                                            "B": 0.07999999821186066,
+                                            "G": 0.07999999821186066,
+                                            "R": 0.07999999821186066
                                         },
                                         "Textures": [
                                             "WhiteTexture",
@@ -3200,7 +3516,7 @@
                             }
                         }
                     ],
-                    "Name": "Preview_Speed_Base",
+                    "Name": "Preview_Progress_Base",
                     "Properties": {
                         "bTickInEditor": false
                     },
@@ -3216,19 +3532,19 @@
                             "Properties": {
                                 "Transform": {
                                     "Location": {
-                                        "X": 2.65,
-                                        "Y": -2.06,
-                                        "Z": 0.372
+                                        "X": 2.6500000953674316,
+                                        "Y": -2.059999942779541,
+                                        "Z": 0.3720000088214874
                                     },
                                     "Rotation": {
-                                        "Pitch": 0,
-                                        "Roll": 0,
-                                        "Yaw": 0
+                                        "Pitch": 0.0,
+                                        "Roll": 0.0,
+                                        "Yaw": 0.0
                                     },
                                     "Scale": {
                                         "X": 3.25,
-                                        "Y": 0.1,
-                                        "Z": 0.024
+                                        "Y": 0.10000000149011612,
+                                        "Z": 0.024000000208616257
                                     }
                                 }
                             }
@@ -3241,10 +3557,10 @@
                                     "Base": "DefaultMaterial",
                                     "Instance": {
                                         "BaseColor": {
-                                            "R": 0.09,
-                                            "G": 0.6,
-                                            "B": 0.88,
-                                            "A": 1.0
+                                            "A": 1.0,
+                                            "B": 0.8799999952316284,
+                                            "G": 0.6000000238418579,
+                                            "R": 0.09000000357627869
                                         },
                                         "BlendState": "Opaque",
                                         "DecalColorBlendMode": "Alpha",
@@ -3253,10 +3569,10 @@
                                         "SamplerState": "LinearClamp",
                                         "Shininess": 32.0,
                                         "SpecularColor": {
-                                            "R": 0.08,
-                                            "G": 0.08,
-                                            "B": 0.08,
-                                            "A": 1.0
+                                            "A": 1.0,
+                                            "B": 0.07999999821186066,
+                                            "G": 0.07999999821186066,
+                                            "R": 0.07999999821186066
                                         },
                                         "Textures": [
                                             "WhiteTexture",
@@ -3304,7 +3620,7 @@
                             }
                         }
                     ],
-                    "Name": "Preview_Speed_Rail",
+                    "Name": "Preview_Progress_Rail",
                     "Properties": {
                         "bTickInEditor": false
                     },
@@ -3320,19 +3636,19 @@
                             "Properties": {
                                 "Transform": {
                                     "Location": {
-                                        "X": 2.65,
-                                        "Y": -2.06,
-                                        "Z": 0.45
+                                        "X": 2.6500000953674316,
+                                        "Y": -2.059999942779541,
+                                        "Z": 0.44999998807907104
                                     },
                                     "Rotation": {
-                                        "Pitch": 0,
-                                        "Roll": 0,
-                                        "Yaw": 0
+                                        "Pitch": 0.0,
+                                        "Roll": 0.0,
+                                        "Yaw": 0.0
                                     },
                                     "Scale": {
-                                        "X": 0.22,
-                                        "Y": 0.24,
-                                        "Z": 0.13
+                                        "X": 0.2199999988079071,
+                                        "Y": 0.23999999463558197,
+                                        "Z": 0.12999999523162842
                                     }
                                 }
                             }
@@ -3345,10 +3661,10 @@
                                     "Base": "DefaultMaterial",
                                     "Instance": {
                                         "BaseColor": {
-                                            "R": 1.0,
-                                            "G": 0.65,
-                                            "B": 0.095,
-                                            "A": 1.0
+                                            "A": 1.0,
+                                            "B": 0.0949999988079071,
+                                            "G": 0.6499999761581421,
+                                            "R": 1.0
                                         },
                                         "BlendState": "Opaque",
                                         "DecalColorBlendMode": "Alpha",
@@ -3357,10 +3673,10 @@
                                         "SamplerState": "LinearClamp",
                                         "Shininess": 32.0,
                                         "SpecularColor": {
-                                            "R": 0.08,
-                                            "G": 0.08,
-                                            "B": 0.08,
-                                            "A": 1.0
+                                            "A": 1.0,
+                                            "B": 0.07999999821186066,
+                                            "G": 0.07999999821186066,
+                                            "R": 0.07999999821186066
                                         },
                                         "Textures": [
                                             "WhiteTexture",
@@ -3408,178 +3724,7 @@
                             }
                         }
                     ],
-                    "Name": "Preview_Speed_Handle",
-                    "Properties": {
-                        "bTickInEditor": false
-                    },
-                    "RootComponent": "DefaultSceneRoot"
-                },
-                {
-                    "Class": "ATextRenderActor",
-                    "Components": [
-                        {
-                            "Class": "USceneComponent",
-                            "Name": "DefaultSceneRoot",
-                            "Parent": "",
-                            "Properties": {
-                                "Transform": {
-                                    "Location": {
-                                        "X": 2.65,
-                                        "Y": -2.45,
-                                        "Z": 0.06
-                                    },
-                                    "Rotation": {
-                                        "Pitch": 0,
-                                        "Roll": 0,
-                                        "Yaw": 90
-                                    },
-                                    "Scale": {
-                                        "X": 1,
-                                        "Y": 1,
-                                        "Z": 1
-                                    }
-                                }
-                            }
-                        },
-                        {
-                            "Class": "UTextRenderComponent",
-                            "Name": "TextRenderComponent",
-                            "Parent": "DefaultSceneRoot",
-                            "Properties": {
-                                "Font": "Resources/Fonts/Pretendard.json",
-                                "ShowBeginOverlapLog": false,
-                                "ShowEndOverlapLog": false,
-                                "ShowHitLog": false,
-                                "Text": "SPEED",
-                                "TextSize": 0.16,
-                                "Transform": {
-                                    "Location": {
-                                        "X": 0.0,
-                                        "Y": 0.0,
-                                        "Z": 0.0
-                                    },
-                                    "Rotation": {
-                                        "Pitch": 0.0,
-                                        "Roll": 0.0,
-                                        "Yaw": 0.0
-                                    },
-                                    "Scale": {
-                                        "X": 1.0,
-                                        "Y": 1.0,
-                                        "Z": 1.0
-                                    }
-                                },
-                                "bBlockComponet": false,
-                                "bCastShadow": false,
-                                "bGenerateOverlapEvents": false,
-                                "bReceiveShadow": true,
-                                "bVisible": true
-                            }
-                        }
-                    ],
-                    "Name": "Preview_Speed_Caption",
-                    "Properties": {},
-                    "RootComponent": "DefaultSceneRoot"
-                },
-                {
-                    "Class": "AStaticMeshActor",
-                    "Components": [
-                        {
-                            "Class": "USceneComponent",
-                            "Name": "DefaultSceneRoot",
-                            "Parent": "",
-                            "Properties": {
-                                "Transform": {
-                                    "Location": {
-                                        "X": 4.2,
-                                        "Y": -2.22,
-                                        "Z": 0.37
-                                    },
-                                    "Rotation": {
-                                        "Pitch": 0,
-                                        "Roll": 0,
-                                        "Yaw": 0
-                                    },
-                                    "Scale": {
-                                        "X": 0.025,
-                                        "Y": 0.14,
-                                        "Z": 0.018
-                                    }
-                                }
-                            }
-                        },
-                        {
-                            "Class": "UStaticMeshComponent",
-                            "Name": "UStaticMeshComponent",
-                            "OverrideMaterials": [
-                                {
-                                    "Base": "DefaultMaterial",
-                                    "Instance": {
-                                        "BaseColor": {
-                                            "R": 0.62,
-                                            "G": 0.73,
-                                            "B": 0.84,
-                                            "A": 1.0
-                                        },
-                                        "BlendState": "Opaque",
-                                        "DecalColorBlendMode": "Alpha",
-                                        "MaterialDomain": "Surface",
-                                        "Properties": {},
-                                        "SamplerState": "LinearClamp",
-                                        "Shininess": 32.0,
-                                        "SpecularColor": {
-                                            "R": 0.08,
-                                            "G": 0.08,
-                                            "B": 0.08,
-                                            "A": 1.0
-                                        },
-                                        "Textures": [
-                                            "WhiteTexture",
-                                            ""
-                                        ],
-                                        "UVScrollSpeed": [
-                                            0.0,
-                                            0.0
-                                        ],
-                                        "bAffectBaseColor": true,
-                                        "bAffectNormal": true,
-                                        "bFlipNormalGreen": false
-                                    }
-                                }
-                            ],
-                            "Parent": "DefaultSceneRoot",
-                            "Properties": {
-                                "ShowBeginOverlapLog": false,
-                                "ShowEndOverlapLog": false,
-                                "ShowHitLog": false,
-                                "StaticMesh": "Cube",
-                                "Transform": {
-                                    "Location": {
-                                        "X": 0.0,
-                                        "Y": 0.0,
-                                        "Z": 0.0
-                                    },
-                                    "Rotation": {
-                                        "Pitch": 0.0,
-                                        "Roll": 0.0,
-                                        "Yaw": 0.0
-                                    },
-                                    "Scale": {
-                                        "X": 1.0,
-                                        "Y": 1.0,
-                                        "Z": 1.0
-                                    }
-                                },
-                                "bBlockComponet": false,
-                                "bCastShadow": false,
-                                "bGenerateOverlapEvents": false,
-                                "bReceiveShadow": true,
-                                "bReceivesDecals": true,
-                                "bVisible": true
-                            }
-                        }
-                    ],
-                    "Name": "Preview_Tick_BACK",
+                    "Name": "Preview_Progress_Handle",
                     "Properties": {
                         "bTickInEditor": false
                     },
@@ -3595,19 +3740,19 @@
                             "Properties": {
                                 "Transform": {
                                     "Location": {
-                                        "X": 4.2,
-                                        "Y": -2.45,
-                                        "Z": 0.2
+                                        "X": 2.6500000953674316,
+                                        "Y": -2.450000047683716,
+                                        "Z": 0.05999999865889549
                                     },
                                     "Rotation": {
-                                        "Pitch": 0,
-                                        "Roll": 0,
-                                        "Yaw": 90
+                                        "Pitch": 0.0,
+                                        "Roll": 0.0,
+                                        "Yaw": 90.0
                                     },
                                     "Scale": {
-                                        "X": 1,
-                                        "Y": 1,
-                                        "Z": 1
+                                        "X": 1.0,
+                                        "Y": 1.0,
+                                        "Z": 1.0
                                     }
                                 }
                             }
@@ -3621,8 +3766,8 @@
                                 "ShowBeginOverlapLog": false,
                                 "ShowEndOverlapLog": false,
                                 "ShowHitLog": false,
-                                "Text": "BACK -200",
-                                "TextSize": 0.13,
+                                "Text": "CLIP PROGRESS",
+                                "TextSize": 0.1599999964237213,
                                 "Transform": {
                                     "Location": {
                                         "X": 0.0,
@@ -3644,12 +3789,15 @@
                                 "bCastShadow": false,
                                 "bGenerateOverlapEvents": false,
                                 "bReceiveShadow": true,
+                                "bReceivesDecals": true,
                                 "bVisible": true
                             }
                         }
                     ],
-                    "Name": "Preview_Label_BACK",
-                    "Properties": {},
+                    "Name": "Preview_Progress_Caption",
+                    "Properties": {
+                        "bTickInEditor": false
+                    },
                     "RootComponent": "DefaultSceneRoot"
                 },
                 {
@@ -3662,19 +3810,19 @@
                             "Properties": {
                                 "Transform": {
                                     "Location": {
-                                        "X": 2.65,
-                                        "Y": -2.22,
-                                        "Z": 0.37
+                                        "X": 4.199999809265137,
+                                        "Y": -2.2200000286102295,
+                                        "Z": 0.3700000047683716
                                     },
                                     "Rotation": {
-                                        "Pitch": 0,
-                                        "Roll": 0,
-                                        "Yaw": 0
+                                        "Pitch": 0.0,
+                                        "Roll": 0.0,
+                                        "Yaw": 0.0
                                     },
                                     "Scale": {
-                                        "X": 0.025,
-                                        "Y": 0.14,
-                                        "Z": 0.018
+                                        "X": 0.02500000037252903,
+                                        "Y": 0.14000000059604645,
+                                        "Z": 0.017999999225139618
                                     }
                                 }
                             }
@@ -3687,10 +3835,10 @@
                                     "Base": "DefaultMaterial",
                                     "Instance": {
                                         "BaseColor": {
-                                            "R": 0.62,
-                                            "G": 0.73,
-                                            "B": 0.84,
-                                            "A": 1.0
+                                            "A": 1.0,
+                                            "B": 0.8399999737739563,
+                                            "G": 0.7300000190734863,
+                                            "R": 0.6200000047683716
                                         },
                                         "BlendState": "Opaque",
                                         "DecalColorBlendMode": "Alpha",
@@ -3699,10 +3847,10 @@
                                         "SamplerState": "LinearClamp",
                                         "Shininess": 32.0,
                                         "SpecularColor": {
-                                            "R": 0.08,
-                                            "G": 0.08,
-                                            "B": 0.08,
-                                            "A": 1.0
+                                            "A": 1.0,
+                                            "B": 0.07999999821186066,
+                                            "G": 0.07999999821186066,
+                                            "R": 0.07999999821186066
                                         },
                                         "Textures": [
                                             "WhiteTexture",
@@ -3750,7 +3898,7 @@
                             }
                         }
                     ],
-                    "Name": "Preview_Tick_IDLE",
+                    "Name": "Preview_Tick_Start",
                     "Properties": {
                         "bTickInEditor": false
                     },
@@ -3766,19 +3914,19 @@
                             "Properties": {
                                 "Transform": {
                                     "Location": {
-                                        "X": 2.65,
-                                        "Y": -2.45,
-                                        "Z": 0.2
+                                        "X": 4.199999809265137,
+                                        "Y": -2.450000047683716,
+                                        "Z": 0.20000000298023224
                                     },
                                     "Rotation": {
-                                        "Pitch": 0,
-                                        "Roll": 0,
-                                        "Yaw": 90
+                                        "Pitch": 0.0,
+                                        "Roll": 0.0,
+                                        "Yaw": 90.0
                                     },
                                     "Scale": {
-                                        "X": 1,
-                                        "Y": 1,
-                                        "Z": 1
+                                        "X": 1.0,
+                                        "Y": 1.0,
+                                        "Z": 1.0
                                     }
                                 }
                             }
@@ -3792,8 +3940,8 @@
                                 "ShowBeginOverlapLog": false,
                                 "ShowEndOverlapLog": false,
                                 "ShowHitLog": false,
-                                "Text": "IDLE 0",
-                                "TextSize": 0.13,
+                                "Text": "0%",
+                                "TextSize": 0.1599999964237213,
                                 "Transform": {
                                     "Location": {
                                         "X": 0.0,
@@ -3815,12 +3963,15 @@
                                 "bCastShadow": false,
                                 "bGenerateOverlapEvents": false,
                                 "bReceiveShadow": true,
+                                "bReceivesDecals": true,
                                 "bVisible": true
                             }
                         }
                     ],
-                    "Name": "Preview_Label_IDLE",
-                    "Properties": {},
+                    "Name": "Preview_Label_Start",
+                    "Properties": {
+                        "bTickInEditor": false
+                    },
                     "RootComponent": "DefaultSceneRoot"
                 },
                 {
@@ -3833,19 +3984,19 @@
                             "Properties": {
                                 "Transform": {
                                     "Location": {
-                                        "X": 1.875,
-                                        "Y": -2.22,
-                                        "Z": 0.37
+                                        "X": 2.6500000953674316,
+                                        "Y": -2.2200000286102295,
+                                        "Z": 0.3700000047683716
                                     },
                                     "Rotation": {
-                                        "Pitch": 0,
-                                        "Roll": 0,
-                                        "Yaw": 0
+                                        "Pitch": 0.0,
+                                        "Roll": 0.0,
+                                        "Yaw": 0.0
                                     },
                                     "Scale": {
-                                        "X": 0.025,
-                                        "Y": 0.14,
-                                        "Z": 0.018
+                                        "X": 0.02500000037252903,
+                                        "Y": 0.14000000059604645,
+                                        "Z": 0.017999999225139618
                                     }
                                 }
                             }
@@ -3858,10 +4009,10 @@
                                     "Base": "DefaultMaterial",
                                     "Instance": {
                                         "BaseColor": {
-                                            "R": 0.62,
-                                            "G": 0.73,
-                                            "B": 0.84,
-                                            "A": 1.0
+                                            "A": 1.0,
+                                            "B": 0.8399999737739563,
+                                            "G": 0.7300000190734863,
+                                            "R": 0.6200000047683716
                                         },
                                         "BlendState": "Opaque",
                                         "DecalColorBlendMode": "Alpha",
@@ -3870,10 +4021,10 @@
                                         "SamplerState": "LinearClamp",
                                         "Shininess": 32.0,
                                         "SpecularColor": {
-                                            "R": 0.08,
-                                            "G": 0.08,
-                                            "B": 0.08,
-                                            "A": 1.0
+                                            "A": 1.0,
+                                            "B": 0.07999999821186066,
+                                            "G": 0.07999999821186066,
+                                            "R": 0.07999999821186066
                                         },
                                         "Textures": [
                                             "WhiteTexture",
@@ -3921,7 +4072,7 @@
                             }
                         }
                     ],
-                    "Name": "Preview_Tick_WALK",
+                    "Name": "Preview_Tick_Middle",
                     "Properties": {
                         "bTickInEditor": false
                     },
@@ -3937,19 +4088,19 @@
                             "Properties": {
                                 "Transform": {
                                     "Location": {
-                                        "X": 1.875,
-                                        "Y": -2.45,
-                                        "Z": 0.2
+                                        "X": 2.6500000953674316,
+                                        "Y": -2.450000047683716,
+                                        "Z": 0.20000000298023224
                                     },
                                     "Rotation": {
-                                        "Pitch": 0,
-                                        "Roll": 0,
-                                        "Yaw": 90
+                                        "Pitch": 0.0,
+                                        "Roll": 0.0,
+                                        "Yaw": 90.0
                                     },
                                     "Scale": {
-                                        "X": 1,
-                                        "Y": 1,
-                                        "Z": 1
+                                        "X": 1.0,
+                                        "Y": 1.0,
+                                        "Z": 1.0
                                     }
                                 }
                             }
@@ -3963,8 +4114,8 @@
                                 "ShowBeginOverlapLog": false,
                                 "ShowEndOverlapLog": false,
                                 "ShowHitLog": false,
-                                "Text": "WALK 100",
-                                "TextSize": 0.13,
+                                "Text": "50%",
+                                "TextSize": 0.1599999964237213,
                                 "Transform": {
                                     "Location": {
                                         "X": 0.0,
@@ -3986,12 +4137,15 @@
                                 "bCastShadow": false,
                                 "bGenerateOverlapEvents": false,
                                 "bReceiveShadow": true,
+                                "bReceivesDecals": true,
                                 "bVisible": true
                             }
                         }
                     ],
-                    "Name": "Preview_Label_WALK",
-                    "Properties": {},
+                    "Name": "Preview_Label_Middle",
+                    "Properties": {
+                        "bTickInEditor": false
+                    },
                     "RootComponent": "DefaultSceneRoot"
                 },
                 {
@@ -4004,19 +4158,19 @@
                             "Properties": {
                                 "Transform": {
                                     "Location": {
-                                        "X": 1.0999999999999999,
-                                        "Y": -2.22,
-                                        "Z": 0.37
+                                        "X": 1.100000023841858,
+                                        "Y": -2.2200000286102295,
+                                        "Z": 0.3700000047683716
                                     },
                                     "Rotation": {
-                                        "Pitch": 0,
-                                        "Roll": 0,
-                                        "Yaw": 0
+                                        "Pitch": 0.0,
+                                        "Roll": 0.0,
+                                        "Yaw": 0.0
                                     },
                                     "Scale": {
-                                        "X": 0.025,
-                                        "Y": 0.14,
-                                        "Z": 0.018
+                                        "X": 0.02500000037252903,
+                                        "Y": 0.14000000059604645,
+                                        "Z": 0.017999999225139618
                                     }
                                 }
                             }
@@ -4029,10 +4183,10 @@
                                     "Base": "DefaultMaterial",
                                     "Instance": {
                                         "BaseColor": {
-                                            "R": 0.62,
-                                            "G": 0.73,
-                                            "B": 0.84,
-                                            "A": 1.0
+                                            "A": 1.0,
+                                            "B": 0.8399999737739563,
+                                            "G": 0.7300000190734863,
+                                            "R": 0.6200000047683716
                                         },
                                         "BlendState": "Opaque",
                                         "DecalColorBlendMode": "Alpha",
@@ -4041,10 +4195,10 @@
                                         "SamplerState": "LinearClamp",
                                         "Shininess": 32.0,
                                         "SpecularColor": {
-                                            "R": 0.08,
-                                            "G": 0.08,
-                                            "B": 0.08,
-                                            "A": 1.0
+                                            "A": 1.0,
+                                            "B": 0.07999999821186066,
+                                            "G": 0.07999999821186066,
+                                            "R": 0.07999999821186066
                                         },
                                         "Textures": [
                                             "WhiteTexture",
@@ -4092,7 +4246,7 @@
                             }
                         }
                     ],
-                    "Name": "Preview_Tick_JOG",
+                    "Name": "Preview_Tick_End",
                     "Properties": {
                         "bTickInEditor": false
                     },
@@ -4108,19 +4262,19 @@
                             "Properties": {
                                 "Transform": {
                                     "Location": {
-                                        "X": 1.0999999999999999,
-                                        "Y": -2.45,
-                                        "Z": 0.2
+                                        "X": 1.100000023841858,
+                                        "Y": -2.450000047683716,
+                                        "Z": 0.20000000298023224
                                     },
                                     "Rotation": {
-                                        "Pitch": 0,
-                                        "Roll": 0,
-                                        "Yaw": 90
+                                        "Pitch": 0.0,
+                                        "Roll": 0.0,
+                                        "Yaw": 90.0
                                     },
                                     "Scale": {
-                                        "X": 1,
-                                        "Y": 1,
-                                        "Z": 1
+                                        "X": 1.0,
+                                        "Y": 1.0,
+                                        "Z": 1.0
                                     }
                                 }
                             }
@@ -4134,8 +4288,8 @@
                                 "ShowBeginOverlapLog": false,
                                 "ShowEndOverlapLog": false,
                                 "ShowHitLog": false,
-                                "Text": "JOG 200",
-                                "TextSize": 0.13,
+                                "Text": "100%",
+                                "TextSize": 0.1599999964237213,
                                 "Transform": {
                                     "Location": {
                                         "X": 0.0,
@@ -4157,12 +4311,15 @@
                                 "bCastShadow": false,
                                 "bGenerateOverlapEvents": false,
                                 "bReceiveShadow": true,
+                                "bReceivesDecals": true,
                                 "bVisible": true
                             }
                         }
                     ],
-                    "Name": "Preview_Label_JOG",
-                    "Properties": {},
+                    "Name": "Preview_Label_End",
+                    "Properties": {
+                        "bTickInEditor": false
+                    },
                     "RootComponent": "DefaultSceneRoot"
                 },
                 {
@@ -4175,19 +4332,19 @@
                             "Properties": {
                                 "Transform": {
                                     "Location": {
-                                        "X": -2.65,
-                                        "Y": -2.06,
-                                        "Z": 0.18
+                                        "X": -2.6500000953674316,
+                                        "Y": -2.059999942779541,
+                                        "Z": 0.18000000715255737
                                     },
                                     "Rotation": {
-                                        "Pitch": 0,
-                                        "Roll": 0,
-                                        "Yaw": 0
+                                        "Pitch": 0.0,
+                                        "Roll": 0.0,
+                                        "Yaw": 0.0
                                     },
                                     "Scale": {
-                                        "X": 4.05,
+                                        "X": 4.050000190734863,
                                         "Y": 0.75,
-                                        "Z": 0.36
+                                        "Z": 0.36000001430511475
                                     }
                                 }
                             }
@@ -4200,10 +4357,10 @@
                                     "Base": "DefaultMaterial",
                                     "Instance": {
                                         "BaseColor": {
-                                            "R": 0.026,
-                                            "G": 0.074,
-                                            "B": 0.14,
-                                            "A": 1.0
+                                            "A": 1.0,
+                                            "B": 0.14000000059604645,
+                                            "G": 0.07400000095367432,
+                                            "R": 0.026000000536441803
                                         },
                                         "BlendState": "Opaque",
                                         "DecalColorBlendMode": "Alpha",
@@ -4212,10 +4369,10 @@
                                         "SamplerState": "LinearClamp",
                                         "Shininess": 32.0,
                                         "SpecularColor": {
-                                            "R": 0.08,
-                                            "G": 0.08,
-                                            "B": 0.08,
-                                            "A": 1.0
+                                            "A": 1.0,
+                                            "B": 0.07999999821186066,
+                                            "G": 0.07999999821186066,
+                                            "R": 0.07999999821186066
                                         },
                                         "Textures": [
                                             "WhiteTexture",
@@ -4263,7 +4420,7 @@
                             }
                         }
                     ],
-                    "Name": "Movement_Speed_Base",
+                    "Name": "Movement_Progress_Base",
                     "Properties": {
                         "bTickInEditor": false
                     },
@@ -4279,19 +4436,19 @@
                             "Properties": {
                                 "Transform": {
                                     "Location": {
-                                        "X": -2.65,
-                                        "Y": -2.06,
-                                        "Z": 0.372
+                                        "X": -2.6500000953674316,
+                                        "Y": -2.059999942779541,
+                                        "Z": 0.3720000088214874
                                     },
                                     "Rotation": {
-                                        "Pitch": 0,
-                                        "Roll": 0,
-                                        "Yaw": 0
+                                        "Pitch": 0.0,
+                                        "Roll": 0.0,
+                                        "Yaw": 0.0
                                     },
                                     "Scale": {
                                         "X": 3.25,
-                                        "Y": 0.1,
-                                        "Z": 0.024
+                                        "Y": 0.10000000149011612,
+                                        "Z": 0.024000000208616257
                                     }
                                 }
                             }
@@ -4304,10 +4461,10 @@
                                     "Base": "DefaultMaterial",
                                     "Instance": {
                                         "BaseColor": {
-                                            "R": 0.09,
-                                            "G": 0.6,
-                                            "B": 0.88,
-                                            "A": 1.0
+                                            "A": 1.0,
+                                            "B": 0.8799999952316284,
+                                            "G": 0.6000000238418579,
+                                            "R": 0.09000000357627869
                                         },
                                         "BlendState": "Opaque",
                                         "DecalColorBlendMode": "Alpha",
@@ -4316,10 +4473,10 @@
                                         "SamplerState": "LinearClamp",
                                         "Shininess": 32.0,
                                         "SpecularColor": {
-                                            "R": 0.08,
-                                            "G": 0.08,
-                                            "B": 0.08,
-                                            "A": 1.0
+                                            "A": 1.0,
+                                            "B": 0.07999999821186066,
+                                            "G": 0.07999999821186066,
+                                            "R": 0.07999999821186066
                                         },
                                         "Textures": [
                                             "WhiteTexture",
@@ -4367,7 +4524,7 @@
                             }
                         }
                     ],
-                    "Name": "Movement_Speed_Rail",
+                    "Name": "Movement_Progress_Rail",
                     "Properties": {
                         "bTickInEditor": false
                     },
@@ -4383,19 +4540,19 @@
                             "Properties": {
                                 "Transform": {
                                     "Location": {
-                                        "X": -2.65,
-                                        "Y": -2.06,
-                                        "Z": 0.45
+                                        "X": -2.6500000953674316,
+                                        "Y": -2.059999942779541,
+                                        "Z": 0.44999998807907104
                                     },
                                     "Rotation": {
-                                        "Pitch": 0,
-                                        "Roll": 0,
-                                        "Yaw": 0
+                                        "Pitch": 0.0,
+                                        "Roll": 0.0,
+                                        "Yaw": 0.0
                                     },
                                     "Scale": {
-                                        "X": 0.22,
-                                        "Y": 0.24,
-                                        "Z": 0.13
+                                        "X": 0.2199999988079071,
+                                        "Y": 0.23999999463558197,
+                                        "Z": 0.12999999523162842
                                     }
                                 }
                             }
@@ -4408,10 +4565,10 @@
                                     "Base": "DefaultMaterial",
                                     "Instance": {
                                         "BaseColor": {
-                                            "R": 1.0,
-                                            "G": 0.65,
-                                            "B": 0.095,
-                                            "A": 1.0
+                                            "A": 1.0,
+                                            "B": 0.0949999988079071,
+                                            "G": 0.6499999761581421,
+                                            "R": 1.0
                                         },
                                         "BlendState": "Opaque",
                                         "DecalColorBlendMode": "Alpha",
@@ -4420,10 +4577,10 @@
                                         "SamplerState": "LinearClamp",
                                         "Shininess": 32.0,
                                         "SpecularColor": {
-                                            "R": 0.08,
-                                            "G": 0.08,
-                                            "B": 0.08,
-                                            "A": 1.0
+                                            "A": 1.0,
+                                            "B": 0.07999999821186066,
+                                            "G": 0.07999999821186066,
+                                            "R": 0.07999999821186066
                                         },
                                         "Textures": [
                                             "WhiteTexture",
@@ -4471,7 +4628,7 @@
                             }
                         }
                     ],
-                    "Name": "Movement_Speed_Handle",
+                    "Name": "Movement_Progress_Handle",
                     "Properties": {
                         "bTickInEditor": false
                     },
@@ -4487,19 +4644,19 @@
                             "Properties": {
                                 "Transform": {
                                     "Location": {
-                                        "X": -2.65,
-                                        "Y": -2.45,
-                                        "Z": 0.06
+                                        "X": -2.6500000953674316,
+                                        "Y": -2.450000047683716,
+                                        "Z": 0.05999999865889549
                                     },
                                     "Rotation": {
-                                        "Pitch": 0,
-                                        "Roll": 0,
-                                        "Yaw": 90
+                                        "Pitch": 0.0,
+                                        "Roll": 0.0,
+                                        "Yaw": 90.0
                                     },
                                     "Scale": {
-                                        "X": 1,
-                                        "Y": 1,
-                                        "Z": 1
+                                        "X": 1.0,
+                                        "Y": 1.0,
+                                        "Z": 1.0
                                     }
                                 }
                             }
@@ -4513,8 +4670,8 @@
                                 "ShowBeginOverlapLog": false,
                                 "ShowEndOverlapLog": false,
                                 "ShowHitLog": false,
-                                "Text": "SPEED",
-                                "TextSize": 0.16,
+                                "Text": "CLIP PROGRESS",
+                                "TextSize": 0.1599999964237213,
                                 "Transform": {
                                     "Location": {
                                         "X": 0.0,
@@ -4536,12 +4693,15 @@
                                 "bCastShadow": false,
                                 "bGenerateOverlapEvents": false,
                                 "bReceiveShadow": true,
+                                "bReceivesDecals": true,
                                 "bVisible": true
                             }
                         }
                     ],
-                    "Name": "Movement_Speed_Caption",
-                    "Properties": {},
+                    "Name": "Movement_Progress_Caption",
+                    "Properties": {
+                        "bTickInEditor": false
+                    },
                     "RootComponent": "DefaultSceneRoot"
                 },
                 {
@@ -4554,19 +4714,19 @@
                             "Properties": {
                                 "Transform": {
                                     "Location": {
-                                        "X": -1.0999999999999999,
-                                        "Y": -2.22,
-                                        "Z": 0.37
+                                        "X": -1.100000023841858,
+                                        "Y": -2.2200000286102295,
+                                        "Z": 0.3700000047683716
                                     },
                                     "Rotation": {
-                                        "Pitch": 0,
-                                        "Roll": 0,
-                                        "Yaw": 0
+                                        "Pitch": 0.0,
+                                        "Roll": 0.0,
+                                        "Yaw": 0.0
                                     },
                                     "Scale": {
-                                        "X": 0.025,
-                                        "Y": 0.14,
-                                        "Z": 0.018
+                                        "X": 0.02500000037252903,
+                                        "Y": 0.14000000059604645,
+                                        "Z": 0.017999999225139618
                                     }
                                 }
                             }
@@ -4579,10 +4739,10 @@
                                     "Base": "DefaultMaterial",
                                     "Instance": {
                                         "BaseColor": {
-                                            "R": 0.62,
-                                            "G": 0.73,
-                                            "B": 0.84,
-                                            "A": 1.0
+                                            "A": 1.0,
+                                            "B": 0.8399999737739563,
+                                            "G": 0.7300000190734863,
+                                            "R": 0.6200000047683716
                                         },
                                         "BlendState": "Opaque",
                                         "DecalColorBlendMode": "Alpha",
@@ -4591,10 +4751,10 @@
                                         "SamplerState": "LinearClamp",
                                         "Shininess": 32.0,
                                         "SpecularColor": {
-                                            "R": 0.08,
-                                            "G": 0.08,
-                                            "B": 0.08,
-                                            "A": 1.0
+                                            "A": 1.0,
+                                            "B": 0.07999999821186066,
+                                            "G": 0.07999999821186066,
+                                            "R": 0.07999999821186066
                                         },
                                         "Textures": [
                                             "WhiteTexture",
@@ -4642,7 +4802,7 @@
                             }
                         }
                     ],
-                    "Name": "Movement_Tick_BACK",
+                    "Name": "Movement_Tick_Start",
                     "Properties": {
                         "bTickInEditor": false
                     },
@@ -4658,19 +4818,19 @@
                             "Properties": {
                                 "Transform": {
                                     "Location": {
-                                        "X": -1.0999999999999999,
-                                        "Y": -2.45,
-                                        "Z": 0.2
+                                        "X": -1.100000023841858,
+                                        "Y": -2.450000047683716,
+                                        "Z": 0.20000000298023224
                                     },
                                     "Rotation": {
-                                        "Pitch": 0,
-                                        "Roll": 0,
-                                        "Yaw": 90
+                                        "Pitch": 0.0,
+                                        "Roll": 0.0,
+                                        "Yaw": 90.0
                                     },
                                     "Scale": {
-                                        "X": 1,
-                                        "Y": 1,
-                                        "Z": 1
+                                        "X": 1.0,
+                                        "Y": 1.0,
+                                        "Z": 1.0
                                     }
                                 }
                             }
@@ -4684,8 +4844,8 @@
                                 "ShowBeginOverlapLog": false,
                                 "ShowEndOverlapLog": false,
                                 "ShowHitLog": false,
-                                "Text": "BACK -200",
-                                "TextSize": 0.13,
+                                "Text": "0%",
+                                "TextSize": 0.1599999964237213,
                                 "Transform": {
                                     "Location": {
                                         "X": 0.0,
@@ -4707,12 +4867,15 @@
                                 "bCastShadow": false,
                                 "bGenerateOverlapEvents": false,
                                 "bReceiveShadow": true,
+                                "bReceivesDecals": true,
                                 "bVisible": true
                             }
                         }
                     ],
-                    "Name": "Movement_Label_BACK",
-                    "Properties": {},
+                    "Name": "Movement_Label_Start",
+                    "Properties": {
+                        "bTickInEditor": false
+                    },
                     "RootComponent": "DefaultSceneRoot"
                 },
                 {
@@ -4725,19 +4888,19 @@
                             "Properties": {
                                 "Transform": {
                                     "Location": {
-                                        "X": -2.65,
-                                        "Y": -2.22,
-                                        "Z": 0.37
+                                        "X": -2.6500000953674316,
+                                        "Y": -2.2200000286102295,
+                                        "Z": 0.3700000047683716
                                     },
                                     "Rotation": {
-                                        "Pitch": 0,
-                                        "Roll": 0,
-                                        "Yaw": 0
+                                        "Pitch": 0.0,
+                                        "Roll": 0.0,
+                                        "Yaw": 0.0
                                     },
                                     "Scale": {
-                                        "X": 0.025,
-                                        "Y": 0.14,
-                                        "Z": 0.018
+                                        "X": 0.02500000037252903,
+                                        "Y": 0.14000000059604645,
+                                        "Z": 0.017999999225139618
                                     }
                                 }
                             }
@@ -4750,10 +4913,10 @@
                                     "Base": "DefaultMaterial",
                                     "Instance": {
                                         "BaseColor": {
-                                            "R": 0.62,
-                                            "G": 0.73,
-                                            "B": 0.84,
-                                            "A": 1.0
+                                            "A": 1.0,
+                                            "B": 0.8399999737739563,
+                                            "G": 0.7300000190734863,
+                                            "R": 0.6200000047683716
                                         },
                                         "BlendState": "Opaque",
                                         "DecalColorBlendMode": "Alpha",
@@ -4762,10 +4925,10 @@
                                         "SamplerState": "LinearClamp",
                                         "Shininess": 32.0,
                                         "SpecularColor": {
-                                            "R": 0.08,
-                                            "G": 0.08,
-                                            "B": 0.08,
-                                            "A": 1.0
+                                            "A": 1.0,
+                                            "B": 0.07999999821186066,
+                                            "G": 0.07999999821186066,
+                                            "R": 0.07999999821186066
                                         },
                                         "Textures": [
                                             "WhiteTexture",
@@ -4813,7 +4976,7 @@
                             }
                         }
                     ],
-                    "Name": "Movement_Tick_IDLE",
+                    "Name": "Movement_Tick_Middle",
                     "Properties": {
                         "bTickInEditor": false
                     },
@@ -4829,19 +4992,19 @@
                             "Properties": {
                                 "Transform": {
                                     "Location": {
-                                        "X": -2.65,
-                                        "Y": -2.45,
-                                        "Z": 0.2
+                                        "X": -2.6500000953674316,
+                                        "Y": -2.450000047683716,
+                                        "Z": 0.20000000298023224
                                     },
                                     "Rotation": {
-                                        "Pitch": 0,
-                                        "Roll": 0,
-                                        "Yaw": 90
+                                        "Pitch": 0.0,
+                                        "Roll": 0.0,
+                                        "Yaw": 90.0
                                     },
                                     "Scale": {
-                                        "X": 1,
-                                        "Y": 1,
-                                        "Z": 1
+                                        "X": 1.0,
+                                        "Y": 1.0,
+                                        "Z": 1.0
                                     }
                                 }
                             }
@@ -4855,8 +5018,8 @@
                                 "ShowBeginOverlapLog": false,
                                 "ShowEndOverlapLog": false,
                                 "ShowHitLog": false,
-                                "Text": "IDLE 0",
-                                "TextSize": 0.13,
+                                "Text": "50%",
+                                "TextSize": 0.1599999964237213,
                                 "Transform": {
                                     "Location": {
                                         "X": 0.0,
@@ -4878,12 +5041,15 @@
                                 "bCastShadow": false,
                                 "bGenerateOverlapEvents": false,
                                 "bReceiveShadow": true,
+                                "bReceivesDecals": true,
                                 "bVisible": true
                             }
                         }
                     ],
-                    "Name": "Movement_Label_IDLE",
-                    "Properties": {},
+                    "Name": "Movement_Label_Middle",
+                    "Properties": {
+                        "bTickInEditor": false
+                    },
                     "RootComponent": "DefaultSceneRoot"
                 },
                 {
@@ -4896,19 +5062,19 @@
                             "Properties": {
                                 "Transform": {
                                     "Location": {
-                                        "X": -3.425,
-                                        "Y": -2.22,
-                                        "Z": 0.37
+                                        "X": -4.199999809265137,
+                                        "Y": -2.2200000286102295,
+                                        "Z": 0.3700000047683716
                                     },
                                     "Rotation": {
-                                        "Pitch": 0,
-                                        "Roll": 0,
-                                        "Yaw": 0
+                                        "Pitch": 0.0,
+                                        "Roll": 0.0,
+                                        "Yaw": 0.0
                                     },
                                     "Scale": {
-                                        "X": 0.025,
-                                        "Y": 0.14,
-                                        "Z": 0.018
+                                        "X": 0.02500000037252903,
+                                        "Y": 0.14000000059604645,
+                                        "Z": 0.017999999225139618
                                     }
                                 }
                             }
@@ -4921,10 +5087,10 @@
                                     "Base": "DefaultMaterial",
                                     "Instance": {
                                         "BaseColor": {
-                                            "R": 0.62,
-                                            "G": 0.73,
-                                            "B": 0.84,
-                                            "A": 1.0
+                                            "A": 1.0,
+                                            "B": 0.8399999737739563,
+                                            "G": 0.7300000190734863,
+                                            "R": 0.6200000047683716
                                         },
                                         "BlendState": "Opaque",
                                         "DecalColorBlendMode": "Alpha",
@@ -4933,10 +5099,10 @@
                                         "SamplerState": "LinearClamp",
                                         "Shininess": 32.0,
                                         "SpecularColor": {
-                                            "R": 0.08,
-                                            "G": 0.08,
-                                            "B": 0.08,
-                                            "A": 1.0
+                                            "A": 1.0,
+                                            "B": 0.07999999821186066,
+                                            "G": 0.07999999821186066,
+                                            "R": 0.07999999821186066
                                         },
                                         "Textures": [
                                             "WhiteTexture",
@@ -4984,7 +5150,7 @@
                             }
                         }
                     ],
-                    "Name": "Movement_Tick_WALK",
+                    "Name": "Movement_Tick_End",
                     "Properties": {
                         "bTickInEditor": false
                     },
@@ -5000,19 +5166,19 @@
                             "Properties": {
                                 "Transform": {
                                     "Location": {
-                                        "X": -3.425,
-                                        "Y": -2.45,
-                                        "Z": 0.2
+                                        "X": -4.199999809265137,
+                                        "Y": -2.450000047683716,
+                                        "Z": 0.20000000298023224
                                     },
                                     "Rotation": {
-                                        "Pitch": 0,
-                                        "Roll": 0,
-                                        "Yaw": 90
+                                        "Pitch": 0.0,
+                                        "Roll": 0.0,
+                                        "Yaw": 90.0
                                     },
                                     "Scale": {
-                                        "X": 1,
-                                        "Y": 1,
-                                        "Z": 1
+                                        "X": 1.0,
+                                        "Y": 1.0,
+                                        "Z": 1.0
                                     }
                                 }
                             }
@@ -5026,109 +5192,8 @@
                                 "ShowBeginOverlapLog": false,
                                 "ShowEndOverlapLog": false,
                                 "ShowHitLog": false,
-                                "Text": "WALK 100",
-                                "TextSize": 0.13,
-                                "Transform": {
-                                    "Location": {
-                                        "X": 0.0,
-                                        "Y": 0.0,
-                                        "Z": 0.0
-                                    },
-                                    "Rotation": {
-                                        "Pitch": 0.0,
-                                        "Roll": 0.0,
-                                        "Yaw": 0.0
-                                    },
-                                    "Scale": {
-                                        "X": 1.0,
-                                        "Y": 1.0,
-                                        "Z": 1.0
-                                    }
-                                },
-                                "bBlockComponet": false,
-                                "bCastShadow": false,
-                                "bGenerateOverlapEvents": false,
-                                "bReceiveShadow": true,
-                                "bVisible": true
-                            }
-                        }
-                    ],
-                    "Name": "Movement_Label_WALK",
-                    "Properties": {},
-                    "RootComponent": "DefaultSceneRoot"
-                },
-                {
-                    "Class": "AStaticMeshActor",
-                    "Components": [
-                        {
-                            "Class": "USceneComponent",
-                            "Name": "DefaultSceneRoot",
-                            "Parent": "",
-                            "Properties": {
-                                "Transform": {
-                                    "Location": {
-                                        "X": -4.2,
-                                        "Y": -2.22,
-                                        "Z": 0.37
-                                    },
-                                    "Rotation": {
-                                        "Pitch": 0,
-                                        "Roll": 0,
-                                        "Yaw": 0
-                                    },
-                                    "Scale": {
-                                        "X": 0.025,
-                                        "Y": 0.14,
-                                        "Z": 0.018
-                                    }
-                                }
-                            }
-                        },
-                        {
-                            "Class": "UStaticMeshComponent",
-                            "Name": "UStaticMeshComponent",
-                            "OverrideMaterials": [
-                                {
-                                    "Base": "DefaultMaterial",
-                                    "Instance": {
-                                        "BaseColor": {
-                                            "R": 0.62,
-                                            "G": 0.73,
-                                            "B": 0.84,
-                                            "A": 1.0
-                                        },
-                                        "BlendState": "Opaque",
-                                        "DecalColorBlendMode": "Alpha",
-                                        "MaterialDomain": "Surface",
-                                        "Properties": {},
-                                        "SamplerState": "LinearClamp",
-                                        "Shininess": 32.0,
-                                        "SpecularColor": {
-                                            "R": 0.08,
-                                            "G": 0.08,
-                                            "B": 0.08,
-                                            "A": 1.0
-                                        },
-                                        "Textures": [
-                                            "WhiteTexture",
-                                            ""
-                                        ],
-                                        "UVScrollSpeed": [
-                                            0.0,
-                                            0.0
-                                        ],
-                                        "bAffectBaseColor": true,
-                                        "bAffectNormal": true,
-                                        "bFlipNormalGreen": false
-                                    }
-                                }
-                            ],
-                            "Parent": "DefaultSceneRoot",
-                            "Properties": {
-                                "ShowBeginOverlapLog": false,
-                                "ShowEndOverlapLog": false,
-                                "ShowHitLog": false,
-                                "StaticMesh": "Cube",
+                                "Text": "100%",
+                                "TextSize": 0.1599999964237213,
                                 "Transform": {
                                     "Location": {
                                         "X": 0.0,
@@ -5155,14 +5220,14 @@
                             }
                         }
                     ],
-                    "Name": "Movement_Tick_JOG",
+                    "Name": "Movement_Label_End",
                     "Properties": {
                         "bTickInEditor": false
                     },
                     "RootComponent": "DefaultSceneRoot"
                 },
                 {
-                    "Class": "ATextRenderActor",
+                    "Class": "ADirectionalLightActor",
                     "Components": [
                         {
                             "Class": "USceneComponent",
@@ -5171,34 +5236,102 @@
                             "Properties": {
                                 "Transform": {
                                     "Location": {
-                                        "X": -4.2,
-                                        "Y": -2.45,
-                                        "Z": 0.2
+                                        "X": 0.0,
+                                        "Y": 0.0,
+                                        "Z": 0.0
                                     },
                                     "Rotation": {
-                                        "Pitch": 0,
-                                        "Roll": 0,
-                                        "Yaw": 90
+                                        "Pitch": 0.0,
+                                        "Roll": 0.0,
+                                        "Yaw": 0.0
                                     },
                                     "Scale": {
-                                        "X": 1,
-                                        "Y": 1,
-                                        "Z": 1
+                                        "X": 1.0,
+                                        "Y": 1.0,
+                                        "Z": 1.0
                                     }
                                 }
                             }
                         },
                         {
-                            "Class": "UTextRenderComponent",
-                            "Name": "TextRenderComponent",
-                            "Parent": "DefaultSceneRoot",
+                            "Class": "UDirectionalLightComponent",
+                            "Name": "UDirectionalLightComponent",
+                            "Parent": "",
                             "Properties": {
-                                "Font": "Resources/Fonts/Pretendard.json",
+                                "Intensity": 1.0,
+                                "LightColor": {
+                                    "A": 255,
+                                    "B": 255,
+                                    "G": 255,
+                                    "R": 255
+                                },
+                                "OrthoWidth": 2000.0,
+                                "ShadowBias": 0.0010000000474974513,
+                                "ShadowNormalBias": 2.0,
+                                "ShadowResolution": 2048,
+                                "Transform": {
+                                    "Location": {
+                                        "X": -13.190164566040039,
+                                        "Y": 0.9664163589477539,
+                                        "Z": -1.0540461540222168
+                                    },
+                                    "Rotation": {
+                                        "Pitch": 52.06965255737305,
+                                        "Roll": 180.0000457763672,
+                                        "Yaw": 180.0000457763672
+                                    },
+                                    "Scale": {
+                                        "X": 1.0,
+                                        "Y": 1.0,
+                                        "Z": 1.0
+                                    }
+                                },
+                                "bCastShadows": true,
+                                "bVisible": true
+                            }
+                        },
+                        {
+                            "Class": "UBillboardComponent",
+                            "Material": {
+                                "Base": "BillboardMaterial",
+                                "Instance": {
+                                    "BaseColor": {
+                                        "A": 1.0,
+                                        "B": 1.0,
+                                        "G": 1.0,
+                                        "R": 1.0
+                                    },
+                                    "BlendState": "AlphaBlend",
+                                    "DecalColorBlendMode": "Alpha",
+                                    "MaterialDomain": "Surface",
+                                    "Properties": {},
+                                    "SamplerState": "LinearClamp",
+                                    "Shininess": 32.0,
+                                    "SpecularColor": {
+                                        "A": 1.0,
+                                        "B": 0.5,
+                                        "G": 0.5,
+                                        "R": 0.5
+                                    },
+                                    "Textures": [
+                                        "Resources/Icons/S_LightDirectional.png"
+                                    ],
+                                    "UVScrollSpeed": [
+                                        0.0,
+                                        0.0
+                                    ],
+                                    "bAffectBaseColor": true,
+                                    "bAffectNormal": true,
+                                    "bFlipNormalGreen": false
+                                }
+                            },
+                            "Name": "UBillboardComponent",
+                            "Parent": "UDirectionalLightComponent",
+                            "Properties": {
+                                "Material": null,
                                 "ShowBeginOverlapLog": false,
                                 "ShowEndOverlapLog": false,
                                 "ShowHitLog": false,
-                                "Text": "JOG 200",
-                                "TextSize": 0.13,
                                 "Transform": {
                                     "Location": {
                                         "X": 0.0,
@@ -5217,16 +5350,19 @@
                                     }
                                 },
                                 "bBlockComponet": false,
-                                "bCastShadow": false,
-                                "bGenerateOverlapEvents": false,
+                                "bCastShadow": true,
+                                "bGenerateOverlapEvents": true,
                                 "bReceiveShadow": true,
+                                "bReceivesDecals": true,
                                 "bVisible": true
                             }
                         }
                     ],
-                    "Name": "Movement_Label_JOG",
-                    "Properties": {},
-                    "RootComponent": "DefaultSceneRoot"
+                    "Name": "ADirectionalLightActor_2",
+                    "Properties": {
+                        "bTickInEditor": false
+                    },
+                    "RootComponent": "UDirectionalLightComponent"
                 }
             ],
             "Properties": {}

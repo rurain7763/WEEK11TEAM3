@@ -1,0 +1,41 @@
+{
+    "AnimGraph": {
+        "AnimSequencePlayers": [
+            {
+                "Looping": false,
+                "SequencePath": "Models/FbxTest/UAL1_RM_Armature|Jog_Fwd_Loop",
+                "Speed": 0.5
+            }
+        ],
+        "AnimTwoWayBlends": [],
+        "BlendSpacePlayers": [],
+        "Nodes": [
+            { "ActualType": 0, "NodeID": 1, "Type": 0 },
+            { "ActualType": 0, "NodeID": 2, "Type": 3 }
+        ],
+        "Parameters": [],
+        "Properties": {},
+        "RootNodeID": 2,
+        "StateMachines": [
+            {
+                "AnyTransitions": [],
+                "InitStateID": 0,
+                "Name": "Comparison",
+                "States": [
+                    { "Name": "Jog", "NodeID": 1, "StateID": 0 }
+                ],
+                "Transitions": []
+            }
+        ]
+    },
+    "Editor": {
+        "Nodes": [
+            { "NodeID": 1, "X": 60.0, "Y": 100.0 },
+            { "NodeID": 2, "X": 420.0, "Y": 100.0 }
+        ],
+        "States": [
+            { "MachineNodeID": 2, "StateID": 0, "X": 360.0, "Y": 150.0 }
+        ]
+    },
+    "Version": 1
+}

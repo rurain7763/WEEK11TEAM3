@@ -2,6 +2,7 @@
 #include "Animation/AnimInstance.h"
 #include "Animation/AnimNodes/AnimNode_Base.h"
 #include "Animation/AnimNodes/AnimNode_StateMachine.h"
+#include "Component/SkeletalMeshComponent.h"
 
 void UAnimInstance::NativeInitializeAnimation()
 {
@@ -27,6 +28,7 @@ void UAnimInstance::NativeUpdateAnimation(float DeltaTime)
 	UpdateContext.bHasRootMotion = false;
 	UpdateContext.RootMotion = FTransform::Identity;
 	UpdateContext.DeltaTime = DeltaTime;
+	UpdateContext.bExtractRootMotion = !MeshComp || MeshComp->ShouldExtractRootMotion();
 
 	RootNode->Update(UpdateContext);
 
@@ -42,6 +44,11 @@ void UAnimInstance::Evaluate(FPoseContext& OutPoseContext)
 	}
 
 	RootNode->Evaluate(OutPoseContext);
+}
+
+float UAnimInstance::GetNormalizedTime() const
+{
+	return RootNode ? RootNode->GetNormalizedTime() : -1.f;
 }
 
 void UAnimInstance::DispatchQueuedAnimEvents()

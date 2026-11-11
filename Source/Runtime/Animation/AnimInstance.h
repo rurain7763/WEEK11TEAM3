@@ -38,6 +38,7 @@ public:
 	virtual void NativeUpdateAnimation(float DeltaTime);
 
 	virtual void Evaluate(FPoseContext& OutPoseContext);
+	float GetNormalizedTime() const;
 
 	void DispatchQueuedAnimEvents();
 
@@ -143,7 +144,7 @@ private:
 		uint32 Version = 0;
 	};
 
-	USkeletalMeshComponent* MeshComp;
+	USkeletalMeshComponent* MeshComp = nullptr;
 	TMap<FName, FAnimNode_StateMachine*, FNameHash> StateMachines;
 	FAnimationUpdateContext UpdateContext;
 	TArray<FAnimNotifyEventReference> EventQueue;
