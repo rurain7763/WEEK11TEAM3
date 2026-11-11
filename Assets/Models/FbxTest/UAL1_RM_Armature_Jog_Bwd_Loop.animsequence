@@ -1,0 +1,9 @@
+{
+    "AnimSequence": {
+        "EnableRootMotion": true,
+        "Notifies": [],
+        "Properties": {},
+        "Skeleton": "Models/FbxTest/UAL1_RM_Skeleton"
+    },
+    "Version": 1
+}
